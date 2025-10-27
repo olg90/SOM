@@ -3380,7 +3380,7 @@ print(naps)
 
 #%% Plot of the currents for r and different f values
 r=0
-fsimlist=[10, 40]
+fsimlist=[10,20,30, 40]
 iexts=[]
 for i,f in enumerate(fsimlist):
     Iext, _, _, _, _ = getiext(f, taui0,tauy0,kiy0,taui1,tauy1,kiy1, dt, r, m01,b01,m04,b04,m11,b11,m14,b14)
@@ -5018,7 +5018,7 @@ plt.legend()
 plt.tight_layout()
 plt.show()
 
-#%% Get the best fit line slopes for the slope data from fig. 3 in the paper (Meeting 7)
+#%% (Meeting 7) Get the best fit line slopes for the slope data from fig. 3 in the paper
 import pandas as pd
 import numpy as np
 from scipy.stats import linregress
@@ -5070,6 +5070,70 @@ slope1 = process_file(r'C:\Users\ogamb\OneDrive\Desktop\Research\FSM_pyramidal\s
 
 print("Slow synapses", slope0)
 print("Fast synapses", slope1)
+
+#%% All in one plot
+
+import pandas as pd
+import numpy as np
+from scipy.stats import linregress
+import matplotlib.pyplot as plt
+
+def get_slopes_and_fit(file_path):
+    # Load the Excel file
+    df = pd.read_excel(file_path)
+    col_slopes = []
+    for col in df.columns:
+        y = df[col].dropna().values
+        x = np.arange(len(y))
+        if len(y) > 1:
+            slope, _, _, _, _ = linregress(x, y)
+            col_slopes.append(slope)
+        else:
+            col_slopes.append(np.nan)
+    col_slopes = np.array(col_slopes)
+
+    # Frequencies
+    freq = np.array([5, 10, 20, 40])
+    valid = ~np.isnan(col_slopes)
+    slope_fit, intercept_fit, _, _, _ = linregress(freq[valid], col_slopes[valid])
+    best_fit_line = intercept_fit + slope_fit * freq
+
+    return freq, col_slopes, best_fit_line, slope_fit, intercept_fit
+
+# Load both datasets
+freq_slow, slopes_slow, bestfit_slow, slope_slow, int_slow = get_slopes_and_fit(
+    r'C:\Users\ogamb\OneDrive\Desktop\Research\FSM_pyramidal\slopes4.xlsx')
+freq_fast, slopes_fast, bestfit_fast, slope_fast, int_fast = get_slopes_and_fit(
+    r'C:\Users\ogamb\OneDrive\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx')
+
+# Plot both on the same figure
+colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red']
+
+plt.figure(figsize=(6, 4))
+
+# --- Slow synapses (white face, colored edge)
+for i, f in enumerate(freq_slow):
+    plt.plot(f, slopes_slow[i], 'o', 
+             markerfacecolor='white', markeredgecolor=colors[i],
+             markersize=8, label='Slow synapses' if i == 0 else "")
+plt.plot(freq_slow, bestfit_slow, '--', color='black', label=f'Slow fit: y={slope_slow:.4f}x+{int_slow:.4f}')
+
+# --- Fast synapses (solid color)
+for i, f in enumerate(freq_fast):
+    plt.plot(f, slopes_fast[i], 'o', 
+             color=colors[i], markersize=8, label='Fast synapses' if i == 0 else "")
+plt.plot(freq_fast, bestfit_fast, '-', color='gray', label=f'Fast fit: y={slope_fast:.4f}x+{int_fast:.4f}')
+
+plt.xlabel('Input frequency (Hz)')
+plt.ylabel('Slope of best fit line')
+plt.title('Slopes Across Frequencies: Slow vs Fast Synapses')
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+print("Slow synapses slope:", slope_slow)
+print("Fast synapses slope:", slope_fast)
+
 
 
 #%% Plot the best fit lines for each input frequency
@@ -5132,14 +5196,14 @@ def zform(z1,z2, f1,f2,f):
 
 def getiext(f, taui0, tauy0, kiy0,
             taui1, tauy1, kiy1,
-            dt, r, m0, m1):
+            dt, r, m0, m1, b):
 
     pretimes = [int(i / f / dt) + 10 for i in range(0, 10)]
     extra = 500
     runtime = pretimes[-1] + extra
 
     # Frequency scaling for slopes and intercepts
-    b0f = 1
+    b0f = b
     b1f = b0f
 
     # Presizes for each current
@@ -5175,10 +5239,9 @@ def getiext(f, taui0, tauy0, kiy0,
 
     return Iext, I0, I1, y0, y1, runtime, presizes0, presizes1
 
-
 def getstats(f, taui0, tauy0, kiy0, taui1, tauy1, kiy1, dt, r, 
-                                 m01, b01, m04, b04, m11, 
-                                 b11, m14, b14, g, vb, dnum, C, Cr, vd):
+                                 g, vb, C, Cr,
+                                 m0, m1, b):
     # Fix fin plot
     rlist=np.linspace(0,1,100)
     tlist=[]
@@ -5186,23 +5249,27 @@ def getstats(f, taui0, tauy0, kiy0, taui1, tauy1, kiy1, dt, r,
     napslist=[]
     for ind,r in enumerate(rlist):
         print(ind, len(rlist))
-        Iext, _, _, _, _, runtime, _, _ = getiext(f, taui0, tauy0, kiy0, 
-                                         taui1, tauy1, kiy1, dt, r, 
-                                         m01, b01, m04, b04, m11, 
-                                         b11, m14, b14)
-        _, tmean, naps, _ = gettmean(r, Iext, g, vb, dnum, C, Cr, vd, f)
+        Iext, _, _, _, _, runtime, _, _ = getiext(f, taui0, tauy0, kiy0, taui1,
+                                                  tauy1, kiy1, dt, r, m0, m1, b)
+        peaks, _ = find_peaks(Iext)
+        Inorm=Iext/Iext[peaks[0]]*b
+        _, tmean, naps, _ = gettmean(r, Inorm, g, vb, C, Cr, f)
         rateslist.append(naps/runtime/dt)
         tlist.append(tmean)
         napslist.append(naps)
     foutlist=1/np.array(tlist)
     return rlist, foutlist, napslist
 
+def linfun(s1,s4,fast1,fast4,f,r):
+    return zform(s1,s4, 10,40,f)*(1-r)+zform(fast1,fast4, 10,40,f)*r
+
+
 # New function
-def gettmean(r, Iext, g, vb, dnum, C, Cr, vd, f):
+def gettmean(r, Iext, g, vb, C, Cr, f):
     v=np.zeros(len(Iext))
-    v[0]=vd[0]
+    v[0]=-60
     apinds=[]
-    refper=40
+    refper=40 # refper *dt (sec) = 4ms
     aptimer=np.inf
     posttimer=False
     gfast=zform(g[6], g[7], 10, 40, f)
@@ -5232,10 +5299,6 @@ def gettmean(r, Iext, g, vb, dnum, C, Cr, vd, f):
 
         if aptimer != np.inf:
             aptimer-=1
-# =============================================================================
-#         if v[i-1]>vth[dnum]:
-#             v[i]=vbr[dnum] # vb[dnum]
-# =============================================================================
         if v[i-1]>linfun(vth[10], vth[11], vth[6], vth[7], f, r):
             v[i]=linfun(vbr[10], vbr[11], vbr[6], vbr[7], f, r)
             apinds.append(i)
@@ -5243,20 +5306,12 @@ def gettmean(r, Iext, g, vb, dnum, C, Cr, vd, f):
             posttimer=True
         if aptimer==0:
             aptimer=np.inf
-# =============================================================================
-#     # Comment out
-#     fig,ax=plt.subplots(2,1)
-#     ax[0].plot(Iext)
-#     ax[1].plot(range(len(vd)), v)
-# =============================================================================
     aptimes=np.array(apinds)*dt
     naps=len(aptimes)
     ssaptimes=aptimes[int(0.3*len(aptimes)):]
     tmean = np.mean(np.diff(ssaptimes))
     return v, tmean, naps, aptimes
 
-def linfun(s1,s4,fast1,fast4,f,r):
-    return zform(s1,s4, 10,40,f)*(1-r)+zform(fast1,fast4, 10,40,f)*r
 
 def geti(dnum):
 
@@ -5322,35 +5377,218 @@ gr=[0.0037,  0.0037,  0.0037,  0.0037,  0.0037,  0.0037,
 #     0    1    2     3    4    5    6    7    8   9    10   11
 vth=[-40, -40, -40, -40, -40, -40, -40, -40, -41, -40, -40, -39]
 
-dt=0.1e-3
+dt=1e-4 # 10 kHz = 10 x 10^3 Hz = 1x10^4 Hz = 10000 Hz yields dt = 1x10^(-4) = 0.0001
+
+# Original values which fit the current data from the datasets
+# Fixed 
+# =============================================================================
+# taui0 = 0.00265 # Slow
+# tauy0 = 0.00075
+# kiy0 = 360 #360 #2100 for matching
+# 
+# taui1 = 0.0014 # Fast
+# tauy1 = 0.00034
+# kiy1 = 860 #860 #4300 for matching
+# =============================================================================
 
 # Fixed 
 taui0 = 0.00265 # Slow
 tauy0 = 0.00075
-kiy0 = 360
+kiy0 = 360 #360 #2100 for matching # k's controls the transition from y to I
 
 taui1 = 0.0014 # Fast
 tauy1 = 0.00034
-kiy1 = 860
+kiy1 = 860 #860 #4300 for matching # k's controls the transition from y to I
+
+b=0.2
 
 r=0
-f=20
+f=60
+
+m0=slope0
+m1=slope1
 
 # set the slope for the fast synapses to 0
-ret = getiext(f, taui0, tauy0, kiy0, taui1, tauy1, kiy1, dt, r, slope0, 1)
+ret = getiext(f, taui0, tauy0, kiy0, taui1, tauy1, kiy1, dt, r, m0, m1, b)
 
-r3=ret[3] #slow
-r4=ret[4] #fast
 Iext=ret[0]
-r6=ret[6]
-r7=ret[7]
 
-plt.title('r={}'.format(r))
-# plt.plot(np.linspace(0,len(Iext), len(Iext))*dt, Iext, label='I')
-plt.plot(np.linspace(0,len(r3), len(r3))*dt, r4*r+(1-r)*r3, label='y')
+r3=ret[3] # slow
+r4=ret[4] # fast
+
+r6=ret[6] # slow
+r7=ret[7] # fast
+
+yplot=r4*r+(1-r)*r3
+peaks, _ = find_peaks(Iext)
+Iplot=Iext/Iext[peaks[0]]*b
+
+fs=15
+plt.title('r={}, f={}'.format(r, f), fontsize=fs)
+plt.plot(np.linspace(0,len(Iext), len(Iext))*dt, Iplot, label='I', color='k')
+# plt.plot(np.linspace(0,len(r3), len(r3))*dt, yplot , label='y')
 plt.plot(np.linspace(0,len(r6), len(r6))*dt, r6, label='slow')
 plt.plot(np.linspace(0,len(r7), len(r7))*dt, r7, label='fast')
-plt.legend()
+plt.ylabel('Current', fontsize=fs)
+plt.xlabel('Time (sec)', fontsize=fs)
+plt.legend(fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
 plt.show()
 
+# =============================================================================
+# v, tmean, naps, aptimes = gettmean(r, Iplot, g, vb, C, Cr, f)
+# plt.plot(np.linspace(0,len(v), len(v))*dt, v, linewidth=2)
+# # plt.plot(np.linspace(0,len(v), len(v))*dt, vth*np.ones(len(v)))
+# plt.tick_params(axis='both', labelsize=fs)
+# plt.xlabel('Time (sec)', fontsize=fs)
+# plt.ylabel('Membrane potential (mV)', fontsize=fs)
+# plt.title('r={}, f={}'.format(r,f), fontsize=fs)
+# plt.show()
+# =============================================================================
+
+# =============================================================================
+# #Plot vout
+# 
+# dnum= 8 # <----------------------------------- neuron number
+# dsize= 'z' # f full, z zoomed
+# dsnum= 1 if dnum in [0, 2, 4,6,8,10] else 0
+# dlens=[4000,12000]
+# 
+# if dsize=='f':
+#     I=data[:, dnum]
+#     vd=data[:, dnum+13]
+# if dsize=='z':
+#     I=data[:, dnum][:dlens[dsnum]]
+#     vd=data[:, dnum+13][:dlens[dsnum]]
+#     
+# I = 25*I
+# vd=50*vd
+# 
+# plt.plot(v, label='vsim')
+# plt.plot(vd, label='vd')
+# plt.legend()
+# plt.tight_layout()
+# plt.show()
+# 
+# =============================================================================
+#%% #APs vs proportion of fast synapses (7)
+rlist=np.linspace(0,1,100)
+flist=[10,20,30,40,50]
+# flist=np.linspace(10,25, 12)
+aps=[]
+for ind, f in enumerate(flist):
+    print(ind, len(flist))
+    _, _, napslist = getstats(f, taui0, tauy0, kiy0, taui1, tauy1, kiy1, 
+                              dt, r, g, vb, C, Cr, m0, m1, b)
+    aps.append(napslist)
+
+#naps
+fs=15
+plt.plot([], [], ' ', label='Input:')
+for i, apl in enumerate(aps):
+    plt.plot(rlist, apl, label='{} Hz'.format(flist[i]))
+plt.xlabel('Proportion of fast synapses', fontsize=fs)
+plt.ylabel('# of APs', fontsize=fs)
+plt.legend(fontsize=fs-5)
+plt.tick_params(axis='both', labelsize=fs)
+plt.title('Injections with fit parameters', fontsize=fs)
+# plt.title('Spike injection', fontsize=fs)
+plt.show()
+
+#%%
+#(# of APs) vs (f) for fixed r values (data fit parameters) (NEW)
+
+rlist2=[0, 0.25, 0.5, 0.75, 1]
+# rlist2=np.linspace(0.8, 1, 5)
+flist=np.linspace(1, 50, 100)
+foutlist=[]
+napslist=[]
+for i,r in enumerate(rlist2):
+    print(i, len(rlist2))
+    tlist=[]
+    napslisti=[]
+    for j, f in enumerate(flist):
+        print(i, len(rlist2), j, len(flist))
+        Iext, _, _, _, _, _, _, _ =getiext(f, taui0, tauy0, kiy0, taui1, tauy1, kiy1, dt, r, m0, m1, b)
+        peaks, _ = find_peaks(Iext)
+        Inorm=Iext/Iext[peaks[0]]*b
+        v, tmean, naps, aptimes = gettmean(r, Inorm, g, vb, C, Cr, f)
+        tlist.append(tmean)
+        napslisti.append(naps)
+    fout=1/np.array(tlist)  
+    foutlist.append(fout)
+    napslist.append(napslisti)
+
+for i,fout in enumerate(foutlist):
+    plt.plot(flist, napslist[i], label='r={}'.format(np.around(rlist2[i],2)), marker='o')
+
+plt.legend(fontsize=fs-3)
+plt.xlabel('Input frequency (Hz)', fontsize=fs)
+plt.ylabel('# of APs', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+plt.show()
+
+#%%
+# Statistics on the number of APs for each proportion (NEW)
+import matplotlib.pyplot as plt
+import numpy as np
+
+fs = 15  # font size
+
+napslist2 = []
+for naps in napslist:
+    # remove all zeros
+    naps2 = [x for x in naps if x != 0]
+    napslist2.append(naps2)
+
+n = len(napslist2)
+
+# Flatten all lists to find the global min and max
+all_values = np.concatenate(napslist2)
+min_val, max_val = np.min(all_values), np.max(all_values)
+
+# Create bin edges to include every integer in the full range
+bins = np.arange(min_val, max_val + 2)  # +2 so rightmost bin includes max
+
+# Calculate the global max count for consistent ylim
+max_count = 0
+for data in napslist2:
+    counts, _ = np.histogram(data, bins=bins)
+    max_count = max(max_count, counts.max())
+
+# Set up vertical subplots
+fig, axes = plt.subplots(n, 1, figsize=(6, 2.5 * n), sharex=True)
+
+# Get the default color cycle from matplotlib
+prop_cycle = plt.rcParams['axes.prop_cycle']
+colors = prop_cycle.by_key()['color']
+
+# Plot each histogram with cycling colors
+for i, data in enumerate(napslist2):
+    ax = axes[i] if n > 1 else axes
+    color = colors[i % len(colors)]
+    ax.hist(data, bins=bins, align='left', edgecolor='black', rwidth=0.8, color=color)
+    ax.set_ylabel(f'Counts, r={np.around(rlist2[i], 3)}', fontsize=fs)
+    ax.set_ylim(0, max_count + 1)  # Same ylim for all
+    ax.tick_params(axis='both', labelsize=fs)
+    ax.grid(axis='y', linestyle='--', alpha=0.5)
+
+# Common x-axis settings
+plt.xticks(np.arange(min_val, max_val + 1), fontsize=fs)
+axes[-1].set_xlabel('# of APs', fontsize=fs)
+axes[0].set_title('Histograms of # of APs for each r (zeros removed)', fontsize=fs)
+plt.show()
+
+# --- Stats section ---
+variances = []
+means = []
+cvs = []
+
+for i, data in enumerate(napslist2):
+    counts, _ = np.histogram(data, bins=bins)
+    vari = np.var(counts)
+    meani = np.mean(counts)
+    variances.append(vari)
+    means.append(meani)
+    cvs.append(vari / meani**2 if meani != 0 else np.nan)
 
