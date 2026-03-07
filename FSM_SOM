@@ -29,9 +29,9 @@ def getiext(sper, runtime, y0, taui, tauy, kiy):
 
 dtype=0
 if dtype==0:
-    dir1=r'C:\Users\ogamb\OneDrive\Desktop\Research\FSM_pyramidal'
+    dir1=r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal'
 if dtype == 1:
-    dir1=r'C:\Users\olgud\OneDrive\Desktop\PhD\3-Research\Neuron\SOM'
+    dir1=r'C:\Users\Oliver\Desktop\PhD\3-Research\Neuron\SOM'
 os.chdir(dir1)
 
 df = pd.read_csv("Table0.csv")
@@ -270,9 +270,9 @@ import pandas as pd
 
 dtype=0
 if dtype==0:
-    dir1=r'C:\Users\ogamb\OneDrive\Desktop\Research\FSM_pyramidal'
+    dir1=r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal'
 if dtype == 1:
-    dir1=r'C:\Users\olgud\OneDrive\Desktop\PhD\3-Research\Neuron\SOM'
+    dir1=r'C:\Users\Oliver\Desktop\PhD\3-Research\Neuron\SOM'
 os.chdir(dir1)
 
 df = pd.read_csv("Table0.csv")
@@ -358,7 +358,7 @@ plt.show()
 # 0-DF1, 1-DF4, 2-DM1, 3-DM4, 4-DS1, 5-DS4,
 # 6-NF1, 7-NF4, 8-NM1, 9-NM4, 10-NS1, 11-NS4
 
-dnum= 8 # <----------------------------------- neuron number (8 or 9 here)
+dnum= 9 # <----------------------------------- neuron number (8 or 9 here)
 dsize= 'z' # f full, z zoomed
 dsnum= 1 if dnum in [0, 2, 4,6,8,10] else 0
 dlens=[4000,12000]
@@ -2774,10 +2774,15 @@ def gettmean(r, Iext, g, vb, dnum, C, Cr):
 
 dtype=0
 if dtype==0:
-    dir1=r'C:\Users\ogamb\OneDrive\Desktop\Research\FSM_pyramidal'
+    dir1=r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal'
 if dtype == 1:
-    dir1=r'C:\Users\olgud\OneDrive\Desktop\PhD\3-Research\Neuron\SOM'
+    dir1=r'C:\Users\Oliver\Desktop\PhD\3-Research\Neuron\SOM'
 os.chdir(dir1)
+
+
+
+
+
 
 df = pd.read_csv("Table0.csv")
 data=np.array(df)
@@ -3147,10 +3152,11 @@ def geti(dnum):
 
 dtype=0
 if dtype==0:
-    dir1=r'C:\Users\ogamb\OneDrive\Desktop\Research\FSM_pyramidal'
+    dir1=r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal'
 if dtype == 1:
-    dir1=r'C:\Users\olgud\OneDrive\Desktop\PhD\3-Research\Neuron\SOM'
+    dir1=r'C:\Users\Oliver\Desktop\PhD\3-Research\Neuron\SOM'
 os.chdir(dir1)
+
 
 df = pd.read_csv("Table0.csv")
 data=np.array(df)
@@ -3520,7 +3526,7 @@ import pandas as pd
 import os
 
 # Load data
-dir1 = r'C:\Users\ogamb\OneDrive\Desktop\Research\FSM_pyramidal'
+dir1=r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal'
 os.chdir(dir1)
 df = pd.read_csv("Table0.csv")
 data = np.array(df)
@@ -3761,10 +3767,11 @@ def geti(dnum):
 
 dtype=0
 if dtype==0:
-    dir1=r'C:\Users\ogamb\OneDrive\Desktop\Research\FSM_pyramidal'
+    dir1=r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal'
 if dtype == 1:
-    dir1=r'C:\Users\olgud\OneDrive\Desktop\PhD\3-Research\Neuron\SOM'
+    dir1=r'C:\Users\Oliver\Desktop\PhD\3-Research\Neuron\SOM'
 os.chdir(dir1)
+
 
 df = pd.read_csv("Table0.csv")
 data=np.array(df)
@@ -4260,10 +4267,11 @@ def geti(dnum):
 
 dtype=0
 if dtype==0:
-    dir1=r'C:\Users\ogamb\OneDrive\Desktop\Research\FSM_pyramidal'
+    dir1=r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal'
 if dtype == 1:
-    dir1=r'C:\Users\olgud\OneDrive\Desktop\PhD\3-Research\Neuron\SOM'
+    dir1=r'C:\Users\Oliver\Desktop\PhD\3-Research\Neuron\SOM'
 os.chdir(dir1)
+
 
 df = pd.read_csv("Table0.csv")
 data=np.array(df)
@@ -4522,10 +4530,11 @@ def geti(dnum):
 
 dtype=0
 if dtype==0:
-    dir1=r'C:\Users\ogamb\OneDrive\Desktop\Research\FSM_pyramidal'
+    dir1=r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal'
 if dtype == 1:
-    dir1=r'C:\Users\olgud\OneDrive\Desktop\PhD\3-Research\Neuron\SOM'
+    dir1=r'C:\Users\Oliver\Desktop\PhD\3-Research\Neuron\SOM'
 os.chdir(dir1)
+
 
 df = pd.read_csv("Table0.csv")
 data=np.array(df)
@@ -4908,10 +4917,11 @@ def geti(dnum):
 
 dtype=0
 if dtype==0:
-    dir1=r'C:\Users\ogamb\OneDrive\Desktop\Research\FSM_pyramidal'
+    dir1=r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal'
 if dtype == 1:
-    dir1=r'C:\Users\olgud\OneDrive\Desktop\PhD\3-Research\Neuron\SOM'
+    dir1=r'C:\Users\Oliver\Desktop\PhD\3-Research\Neuron\SOM'
 os.chdir(dir1)
+
 
 df = pd.read_csv("Table0.csv")
 data=np.array(df)
@@ -5065,8 +5075,9 @@ def process_file(file_path, title):
     return slope_fit
 
 # Run for both datasets
-slope0 = process_file(r'C:\Users\ogamb\OneDrive\Desktop\Research\FSM_pyramidal\slopes4.xlsx', 'Slow synapses')
-slope1 = process_file(r'C:\Users\ogamb\OneDrive\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx', 'Fast synapses')
+slope0 = process_file(r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx', 'Slow synapses')
+slope1 = process_file(r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx', 'Fast synapses')
+
 
 print("Slow synapses", slope0)
 print("Fast synapses", slope1)
@@ -5102,9 +5113,9 @@ def get_slopes_and_fit(file_path):
 
 # Load both datasets
 freq_slow, slopes_slow, bestfit_slow, slope_slow, int_slow = get_slopes_and_fit(
-    r'C:\Users\ogamb\OneDrive\Desktop\Research\FSM_pyramidal\slopes4.xlsx')
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx')
 freq_fast, slopes_fast, bestfit_fast, slope_fast, int_fast = get_slopes_and_fit(
-    r'C:\Users\ogamb\OneDrive\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx')
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx')
 
 # Plot both on the same figure
 colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red']
@@ -5173,12 +5184,12 @@ def process_file(file_path, title):
 
 # --- Run for both datasets (two plots) ---
 process_file(
-    r'C:\Users\ogamb\OneDrive\Desktop\Research\FSM_pyramidal\slopes4.xlsx',
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx',
     'Slow synapses'
 )
 
 process_file(
-    r'C:\Users\ogamb\OneDrive\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx',
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx',
     'Fast synapses'
 )
 
@@ -5208,7 +5219,7 @@ def getiext(f, taui0, tauy0, kiy0,
 
     # Presizes for each current
     presizes0 = m0*f * np.linspace(0, runtime * dt, runtime) + b0f
-    presizes1 = m1* np.linspace(0, runtime * dt, runtime) + b1f
+    presizes1 = m1*f* np.linspace(0, runtime * dt, runtime) + b1f
 
     # Initialize arrays
     I0 = np.zeros(runtime)
@@ -5332,10 +5343,11 @@ def geti(dnum):
 
 dtype=0
 if dtype==0:
-    dir1=r'C:\Users\ogamb\OneDrive\Desktop\Research\FSM_pyramidal'
+    dir1=r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal'
 if dtype == 1:
-    dir1=r'C:\Users\olgud\OneDrive\Desktop\PhD\3-Research\Neuron\SOM'
+    dir1=r'C:\Users\Oliver\Desktop\PhD\3-Research\Neuron\SOM'
 os.chdir(dir1)
+
 
 df = pd.read_csv("Table0.csv")
 data=np.array(df)
@@ -5403,7 +5415,7 @@ kiy1 = 860 #860 #4300 for matching # k's controls the transition from y to I
 b=0.2
 
 r=0
-f=60
+f=55
 
 m0=slope0
 m1=slope1
@@ -5426,7 +5438,7 @@ Iplot=Iext/Iext[peaks[0]]*b
 fs=15
 plt.title('r={}, f={}'.format(r, f), fontsize=fs)
 plt.plot(np.linspace(0,len(Iext), len(Iext))*dt, Iplot, label='I', color='k')
-# plt.plot(np.linspace(0,len(r3), len(r3))*dt, yplot , label='y')
+plt.plot(np.linspace(0,len(r3), len(r3))*dt, yplot , label='y')
 plt.plot(np.linspace(0,len(r6), len(r6))*dt, r6, label='slow')
 plt.plot(np.linspace(0,len(r7), len(r7))*dt, r7, label='fast')
 plt.ylabel('Current', fontsize=fs)
@@ -5435,17 +5447,18 @@ plt.legend(fontsize=fs)
 plt.tick_params(axis='both', labelsize=fs)
 plt.show()
 
-# =============================================================================
-# v, tmean, naps, aptimes = gettmean(r, Iplot, g, vb, C, Cr, f)
-# plt.plot(np.linspace(0,len(v), len(v))*dt, v, linewidth=2)
-# # plt.plot(np.linspace(0,len(v), len(v))*dt, vth*np.ones(len(v)))
-# plt.tick_params(axis='both', labelsize=fs)
-# plt.xlabel('Time (sec)', fontsize=fs)
-# plt.ylabel('Membrane potential (mV)', fontsize=fs)
-# plt.title('r={}, f={}'.format(r,f), fontsize=fs)
-# plt.show()
-# =============================================================================
+v, tmean, naps, aptimes = gettmean(r, Iplot, g, vb, C, Cr, f)
+plt.plot(np.linspace(0,len(v), len(v))*dt, v, linewidth=2)
+# plt.plot(np.linspace(0,len(v), len(v))*dt, vth*np.ones(len(v)))
+plt.tick_params(axis='both', labelsize=fs)
+plt.xlabel('Time (sec)', fontsize=fs)
+plt.ylabel('Membrane potential (mV)', fontsize=fs)
+plt.title('r={}, f={}'.format(r,f), fontsize=fs)
+plt.show()
 
+plt.figure()
+plt.plot(np.linspace(0,len(r3), len(r3))*dt, yplot , label='y')
+plt.show()
 # =============================================================================
 # #Plot vout
 # 
@@ -5460,7 +5473,7 @@ plt.show()
 # if dsize=='z':
 #     I=data[:, dnum][:dlens[dsnum]]
 #     vd=data[:, dnum+13][:dlens[dsnum]]
-#     
+# 
 # I = 25*I
 # vd=50*vd
 # 
@@ -5592,3 +5605,2625 @@ for i, data in enumerate(napslist2):
     means.append(meani)
     cvs.append(vari / meani**2 if meani != 0 else np.nan)
 
+#%% Meeting 8 - Randomly arriving fast and slow at different times
+import pandas as pd
+import numpy as np
+from scipy.stats import linregress
+import matplotlib.pyplot as plt
+
+def process_file(file_path, title):
+    # Load the Excel file
+    df = pd.read_excel(file_path)
+    colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red']  # match previous color scheme
+    
+    # Step 1: Get slope of best-fit line for each column
+    col_slopes = []
+    for col in df.columns:
+        y = df[col].dropna().values
+        x = np.arange(len(y))
+        if len(y) > 1:
+            slope, intercept, _, _, _ = linregress(x, y)
+            col_slopes.append(slope)
+        else:
+            col_slopes.append(np.nan)
+    
+    col_slopes = np.array(col_slopes)
+    
+    # Step 2: Fit a best-fit line across the column slopes (x = 5,10,20,40)
+    freq = np.array([5, 10, 20, 40])
+    valid = ~np.isnan(col_slopes)
+    slope_fit, intercept_fit, _, _, _ = linregress(freq[valid], col_slopes[valid])
+    best_fit_line = intercept_fit + slope_fit * freq
+
+    # Step 3: Plot results with matching colors
+    plt.figure(figsize=(6, 4))
+    for i, f in enumerate(freq):
+        plt.plot(f, col_slopes[i], 'o', color=colors[i], label=f'{f} Hz point' if i == 0 else None)
+    plt.plot(freq, best_fit_line, '-', color='black', label=f'Best-fit line: y={slope_fit:.4f}x+{intercept_fit:.4f}')
+    
+    plt.xlabel('Input frequency (Hz)')
+    plt.ylabel('Slope of best fit line')
+    plt.title(f'{title}: Slopes Across Frequencies')
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+    # Step 4: Return the final slope
+    return slope_fit
+
+# Run for both datasets
+slope0 = process_file(r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx', 'Slow synapses')
+slope1 = process_file(r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx', 'Fast synapses')
+
+
+print("Slow synapses", slope0)
+print("Fast synapses", slope1)
+
+def get_slopes_and_fit(file_path):
+    # Load the Excel file
+    df = pd.read_excel(file_path)
+    col_slopes = []
+    for col in df.columns:
+        y = df[col].dropna().values
+        x = np.arange(len(y))
+        if len(y) > 1:
+            slope, _, _, _, _ = linregress(x, y)
+            col_slopes.append(slope)
+        else:
+            col_slopes.append(np.nan)
+    col_slopes = np.array(col_slopes)
+
+    # Frequencies
+    freq = np.array([5, 10, 20, 40])
+    valid = ~np.isnan(col_slopes)
+    slope_fit, intercept_fit, _, _, _ = linregress(freq[valid], col_slopes[valid])
+    best_fit_line = intercept_fit + slope_fit * freq
+
+    return freq, col_slopes, best_fit_line, slope_fit, intercept_fit
+
+# Load both datasets
+freq_slow, slopes_slow, bestfit_slow, slope_slow, int_slow = get_slopes_and_fit(
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx')
+freq_fast, slopes_fast, bestfit_fast, slope_fast, int_fast = get_slopes_and_fit(
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx')
+
+# Plot both on the same figure
+colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red']
+
+plt.figure(figsize=(6, 4))
+
+# --- Slow synapses (white face, colored edge)
+for i, f in enumerate(freq_slow):
+    plt.plot(f, slopes_slow[i], 'o', 
+             markerfacecolor='white', markeredgecolor=colors[i],
+             markersize=8, label='Slow synapses' if i == 0 else "")
+plt.plot(freq_slow, bestfit_slow, '--', color='black', label=f'Slow fit: y={slope_slow:.4f}x+{int_slow:.4f}')
+
+# --- Fast synapses (solid color)
+for i, f in enumerate(freq_fast):
+    plt.plot(f, slopes_fast[i], 'o', 
+             color=colors[i], markersize=8, label='Fast synapses' if i == 0 else "")
+plt.plot(freq_fast, bestfit_fast, '-', color='gray', label=f'Fast fit: y={slope_fast:.4f}x+{int_fast:.4f}')
+
+plt.xlabel('Input frequency (Hz)')
+plt.ylabel('Slope of best fit line')
+plt.title('Slopes Across Frequencies: Slow vs Fast Synapses')
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+print("Slow synapses slope:", slope_slow)
+print("Fast synapses slope:", slope_fast)
+
+#%% Plot the best fit lines for each input frequency - 8
+
+import pandas as pd
+import numpy as np
+from scipy.stats import linregress
+import matplotlib.pyplot as plt
+
+def process_file(file_path, title):
+    # Load the Excel file
+    df = pd.read_excel(file_path)
+    freq_labels = [5, 10, 20, 40]  # One per column
+    colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red']  # Consistent color mapping
+
+    plt.figure(figsize=(6, 4))
+
+    # For each column (each input frequency)
+    for i, col in enumerate(df.columns):
+        y = df[col].dropna().values
+        x = np.arange(len(y))
+        if len(y) > 1:
+            slope, intercept, _, _, _ = linregress(x, y)
+            fit_line = intercept + slope * x
+
+            # Plot connected data points
+            plt.plot(x, y, 'o-', color=colors[i], markersize=3, label=f'{freq_labels[i]} Hz data')
+            # Plot best-fit line
+            plt.plot(x, fit_line, '--', color=colors[i], linewidth=2, label=f'{freq_labels[i]} Hz fit (slope={slope:.4f})')
+
+    plt.xlabel('Time (a.u.)')
+    plt.ylabel('Signal amplitude')
+    plt.title(f'{title}: Individual Frequency Fits')
+    plt.legend(fontsize=8)
+    plt.tight_layout()
+    plt.show()
+
+# --- Run for both datasets (two plots) ---
+process_file(
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx',
+    'Slow synapses'
+)
+
+process_file(
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx',
+    'Fast synapses'
+)
+
+
+#%% Normalize current amplitudes to the same first frequency - 8
+
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+import pandas as pd
+from scipy.signal import find_peaks
+
+def zform(z1,z2, f1,f2,f):
+    return z1+(z2-z1)/(f2-f1)*(f-f1)
+
+def getiext(f, taui0, tauy0, kiy0,
+            taui1, tauy1, kiy1,
+            dt, r, ss0, ss1,
+            T, extra=0, seed=None):
+
+    if seed is not None:
+        np.random.seed(seed)
+
+    # Generate Poisson spike times
+    pretimes = []
+    t = 0.0
+    while t < T:
+        t += np.random.exponential(1.0 / f)
+        pretimes.append(t)
+
+    pretimes = np.array(pretimes)
+    spike_idx = (pretimes / dt).astype(int)
+
+    # IMPORTANT FIX: +1 to avoid out-of-bounds
+    runtime = int(spike_idx.max() + extra + 1)
+
+    # Random routing
+    route = np.random.rand(len(spike_idx)) < r
+
+    spike_to_y0 = np.zeros(runtime, dtype=bool)
+    spike_to_y1 = np.zeros(runtime, dtype=bool)
+
+    spike_to_y0[spike_idx[~route]] = True
+    spike_to_y1[spike_idx[route]] = True
+
+    y0 = np.zeros(runtime)
+    y1 = np.zeros(runtime)
+    I0 = np.zeros(runtime)
+    I1 = np.zeros(runtime)
+
+    for i in range(1, runtime):
+
+        if spike_to_y0[i]:
+            y0[i-1] = ss0
+        if spike_to_y1[i]:
+            y1[i-1] = ss1
+
+        y0[i] = y0[i-1] + dt * (-y0[i-1] / tauy0)
+        y1[i] = y1[i-1] + dt * (-y1[i-1] / tauy1)
+
+        I0[i] = I0[i-1] + dt * (-I0[i-1] / taui0 + kiy0 * y0[i-1])
+        I1[i] = I1[i-1] + dt * (-I1[i-1] / taui1 + kiy1 * y1[i-1])
+
+    Iext = (1 - r) * I0 + r * I1
+
+    return Iext, I0, I1, y0, y1, runtime, spike_idx
+
+
+
+
+def getstats(f, taui0, tauy0, kiy0, taui1, tauy1, kiy1, dt, r, 
+                                 g, vb, C, Cr,
+                                 m0, m1, b):
+    # Fix fin plot
+    rlist=np.linspace(0,1,100)
+    tlist=[]
+    rateslist=[]
+    napslist=[]
+    for ind,r in enumerate(rlist):
+        print(ind, len(rlist))
+        Iext, _, _, _, _, runtime, _, _ = getiext(f, taui0, tauy0, kiy0, taui1,
+                                                  tauy1, kiy1, dt, r, m0, m1, b)
+        peaks, _ = find_peaks(Iext)
+        Inorm=Iext/Iext[peaks[0]]*b
+        _, tmean, naps, _ = gettmean(r, Inorm, g, vb, C, Cr, f)
+        rateslist.append(naps/runtime/dt)
+        tlist.append(tmean)
+        napslist.append(naps)
+    foutlist=1/np.array(tlist)
+    return rlist, foutlist, napslist
+
+def linfun(s1,s4,fast1,fast4,f,r):
+    return zform(s1,s4, 10,40,f)*(1-r)+zform(fast1,fast4, 10,40,f)*r
+
+
+# New function
+def gettmean(r, Iext, g, vb, C, Cr, f):
+    v=np.zeros(len(Iext))
+    v[0]=-60
+    apinds=[]
+    refper=40 # refper *dt (sec) = 4ms
+    aptimer=np.inf
+    posttimer=False
+    gfast=zform(g[6], g[7], 10, 40, f)
+    gslow=zform(g[10], g[11], 10, 40, f)
+    gfast2=zform(gr[6], gr[7], 10, 40, f)
+    gslow2=zform(gr[10], gr[11], 10, 40, f)
+    vbslow=zform(vb[10], vb[11], 10, 40, f)
+    vbfast=zform(vb[6], vb[7], 10, 40, f)
+    C1=linfun(C[10], C[11], C[6], C[7], f, r)
+    C2=linfun(Cr[10], Cr[11], Cr[6], Cr[7], f, r)
+    vreset=linfun(vbr[10], vbr[11], vbr[6], vbr[7], f, r)
+    
+    for i in range(1,len(Iext)):
+        if posttimer==False:
+            icurr = r*gfast*(v[i-1]-vbfast)+(1-r)*gslow*(v[i-1]-vbslow)
+            dvdt=((-icurr+Iext[i-1]))/C1
+        if posttimer==True:
+            icurr = r*gfast2*(v[i-1]-vbfast)+(1-r)*gslow2*(v[i-1]-vbslow)
+            dvdt=((-icurr+Iext[i-1]))/C2
+            
+        if aptimer == np.inf:
+            v[i] = v[i-1]+dvdt*dt
+        else:
+            v[i] = v[i-1]
+
+        if Iext[i]>Iext[i-1]:
+            posttimer=False
+
+        if aptimer != np.inf:
+            aptimer-=1
+        if v[i-1]>linfun(vth[10], vth[11], vth[6], vth[7], f, r):
+            v[i]=vreset
+            apinds.append(i)
+            aptimer=refper
+            posttimer=True
+        if aptimer==0:
+            aptimer=np.inf
+    aptimes=np.array(apinds)*dt
+    naps=len(aptimes)
+    ssaptimes=aptimes[int(0.3*len(aptimes)):]
+    tmean = np.mean(np.diff(ssaptimes))
+    return v, tmean, naps, aptimes
+
+
+def geti(dnum):
+
+    dsize= 'z' # f full, z zoomed
+    dsnum= 1 if dnum in [0, 2, 4,6,8,10] else 0 # Fixed
+    dlens=[4000,12000]
+    if dsize=='f':
+        I=data[:, dnum]
+        vd=data[:, dnum+13]
+    if dsize=='z':
+        I=data[:, dnum][:dlens[dsnum]]
+        vd=data[:, dnum+13][:dlens[dsnum]]
+
+    # Processing the data
+    I = 25*I
+    vd=50*vd
+    return I, vd
+
+dtype=0
+if dtype==0:
+    dir1=r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal'
+if dtype == 1:
+    dir1=r'C:\Users\Oliver\Desktop\PhD\3-Research\Neuron\SOM'
+os.chdir(dir1)
+
+
+df = pd.read_csv("Table0.csv")
+data=np.array(df)
+
+names = {
+    0: 'DE-F-10 Hz', 1: 'DE-F-40 Hz',
+    2: 'DE-M-10 Hz', 3: 'DE-M-40 Hz',
+    4: 'DE-S-10 Hz', 5: 'DE-S-40 Hz',
+
+    6: 'NR-F-10 Hz', 7: 'NR-F-40 Hz',
+    8: 'NR-M-10 Hz', 9: 'NR-M-40 Hz',
+    10: 'NR-S-10 Hz', 11: 'NR-S-40 Hz'
+}
+
+# 0-DF1, 1-DF4, 2-DM1, 3-DM4, 4-DS1, 5-DS4, 
+# 6-NF1, 7-NF4, 8-NM1, 9-NM4, 10-NS1, 11-NS4
+
+# Different parameters for each dataset
+#                0   1   2   3   4    5     6      7    8   9  10  11
+vb=np.array([-60.5,-60,-60,-60,-64.2,-64.2,-61.75,-63,-64,-65.5,-64,-63.8])
+#                0   1   2   3   4    5     6       7    8   9     10    11
+vbr=np.array([-60.5,-60,-60,-60,-64.2,-64.2,-61.75,-50,-50,-47,-64,-50])
+#    0        1           2          3        4         5
+C=[0.00011,  0.00011,  0.00011,  0.00011,  0.00011,  0.00011,
+   0.00009, 0.0001,  0.00011,  0.00011,  0.00011, 0.000111]
+#    6        7          8        9          10       11
+#    0        1           2          3        4         5
+Cr=[0.00011,  0.00011,  0.00011,  0.00011,  0.00011,  0.00011,
+   0.00009, 0.0001,  0.00011,  0.00011,  0.00011, 0.0001]
+#    6        7          8        9          10       11
+#    0        1          2      3        4        5
+g=[0.0037,  0.0037,  0.0037,  0.0037,  0.0037,  0.0037,
+   0.0035, 0.0037,  0.0037,  0.0037,  0.0037, 0.003]
+#    6        7       8        9       10       11
+    # 0        1          2      3        4        5
+gr=[0.0037,  0.0037,  0.0037,  0.0037,  0.0037,  0.0037,
+   0.0035, 0.004,  0.0037,  0.0037,  0.0037, 0.005]
+#    6        7       8        9       10       11
+#     0    1    2     3    4    5    6    7    8   9    10   11
+vth=[-40, -40, -40, -40, -40, -40, -40, -40, -41, -40, -40, -39]
+
+dt=1e-4 # 10 kHz = 10 x 10^3 Hz = 1x10^4 Hz = 10000 Hz yields dt = 1x10^(-4) = 0.0001
+
+# Original values which fit the current data from the datasets
+# Fixed 
+# =============================================================================
+# taui0 = 0.00265 # Slow
+# tauy0 = 0.00075
+# kiy0 = 360 #360 #2100 for matching
+# 
+# taui1 = 0.0014 # Fast
+# tauy1 = 0.00034
+# kiy1 = 860 #860 #4300 for matching
+# =============================================================================
+
+# Fixed 
+taui0 = 0.00265 # Slow
+tauy0 = 0.00075
+kiy0 = 360 #360 #2100 for matching # k's controls the transition from y to I
+
+taui1 = 0.0014 # Fast
+tauy1 = 0.00034
+kiy1 = 860 #860 #4300 for matching # k's controls the transition from y to I
+
+r=1
+f=50
+
+m0=slope0
+m1=slope1
+
+ss0=5
+ss1=2
+
+tmax=20
+navgs=1
+
+# set the slope for the fast synapses to 0
+ret = getiext(f, taui0, tauy0, kiy0,
+              taui1, tauy1, kiy1,
+              dt, r, ss0, ss1, tmax)
+
+Iext=ret[0]
+# plt.subplot(3,1,1)
+# plt.plot(Iext)
+# plt.subplot(3,1,2)
+# plt.plot(ret[1])
+# plt.subplot(3,1,3)
+# plt.plot(ret[2])
+# plt.show()
+
+v, tmean, naps, aptimes = gettmean(r, Iext, g, vb, C, Cr, f)
+
+
+fs=15
+lw=2
+plt.subplot(4,1,1)
+plt.title('Fast synapse proprtion (r)={}, Input frequency={} Hz'.format(r,f), fontsize=fs)
+plt.plot(np.linspace(0,len(v), len(v))*dt, ret[1], linewidth=lw)
+plt.ylabel('Slow\ncurrent', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+plt.xticks([])
+plt.subplot(4,1,2)
+plt.plot(np.linspace(0,len(v), len(v))*dt, ret[2], linewidth=lw)
+plt.ylabel('Fast\ncurrent', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+plt.xticks([])
+plt.subplot(4,1,3)
+plt.plot(np.linspace(0,len(v), len(v))*dt, Iext, linewidth=lw)
+plt.tick_params(axis='both', labelsize=fs)
+plt.ylabel('Slow\n+\nFast\nCurrent', fontsize=fs)
+plt.xticks([])
+plt.subplot(4,1,4)
+plt.plot(np.linspace(0,len(v), len(v))*dt*1000, v, linewidth=lw)
+# plt.plot(np.linspace(0,len(v), len(v))*dt, vth*np.ones(len(v)))
+plt.tick_params(axis='both', labelsize=fs)
+plt.xlabel('Time (ms)', fontsize=fs)
+plt.ylabel('Membrane\npotential (mV)', fontsize=fs)
+plt.show()
+
+
+#%% Run the simulation - 8
+
+flist = np.linspace(10,50, 5)
+foutlists=[]
+cv2lists=[]
+napslists=[]
+for j, f in enumerate(flist):
+    rlist=np.linspace(0,1,10)
+    napslist=[]
+    fouts=[]
+    cv2s=[]
+    for i,r in enumerate(rlist):
+        fav=[]
+        cav=[]
+        nav=[]
+        for q in range(navgs):
+            print(j, len(flist), i, len(rlist), q, navgs)
+            ret = getiext(f, taui0, tauy0, kiy0, taui1, tauy1, kiy1,
+                          dt, r, ss0, ss1, tmax)
+            v, tmean, naps, aptimes = gettmean(r, Iext, g, vb, C, Cr, f)
+            fav.append(1/np.mean(np.diff(aptimes)))
+            cav.append(np.var(np.diff(aptimes))/np.mean(np.diff(aptimes))**2)
+            nav.append(naps)
+        fouts.append(np.mean(fav))
+        cv2s.append(np.mean(cav))
+        napslist.append(np.mean(nav))
+    foutlists.append(fouts)
+    cv2lists.append(cv2s)
+    napslists.append(napslist)
+    
+# =============================================================================
+# # plt.plot(rlist, napslist)
+# plt.subplot(2,1,1)
+# plt.plot(rlist, fouts)
+# plt.ylabel('Mean firing\nrate')
+# plt.xticks([])
+# plt.subplot(2,1,2)
+# plt.plot(rlist, cv2s)
+# plt.xlabel('Proportion of fast synapses (r)')
+# plt.ylabel('Variance / Mean')
+# plt.show()
+# =============================================================================
+# =============================================================================
+# #%%  Plot the output
+# =============================================================================
+
+fs=15
+# plt.plot(rlist, napslist)
+plt.subplot(2,1,1)
+plt.title('Random presynaptic arrival times')
+for i, fouts in enumerate(foutlists):
+    plt.plot(rlist, fouts, label='f={}'.format(flist[i]), marker='o')
+plt.ylabel('Mean firing rate', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+plt.legend()
+plt.subplot(2,1,2)
+for i, cv2s in enumerate(cv2lists):
+    plt.plot(rlist, cv2s, label='f={}'.format(flist[i]), marker='o')
+plt.xlabel('Proportion of fast synapses (r)', fontsize=fs)
+plt.ylabel('Noise (Variance / Mean^2)', fontsize=fs)
+plt.legend()
+plt.tick_params(axis='both', labelsize=fs)
+plt.show()
+
+#%% Plot the simulation - 8
+plt.figure()
+for i, naps in enumerate(napslists):
+    plt.step(rlist, naps, label='f={}'.format(flist[i]), where='post', marker='o')
+    plt.legend()
+plt.xlabel('Proportion of fast synapses (r)', fontsize=fs)
+plt.ylabel('# of postsynaptic APs', fontsize=fs)
+plt.title('Random input simulations', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+plt.show()
+#%% Meeting 9 - Change in level of dependency of exc+inh - Setup
+import pandas as pd
+import numpy as np
+from scipy.stats import linregress
+import matplotlib.pyplot as plt
+
+def process_file(file_path, title):
+    # Load the Excel file
+    df = pd.read_excel(file_path)
+    colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red']  # match previous color scheme
+    
+    # Step 1: Get slope of best-fit line for each column
+    col_slopes = []
+    for col in df.columns:
+        y = df[col].dropna().values
+        x = np.arange(len(y))
+        if len(y) > 1:
+            slope, intercept, _, _, _ = linregress(x, y)
+            col_slopes.append(slope)
+        else:
+            col_slopes.append(np.nan)
+    
+    col_slopes = np.array(col_slopes)
+    
+    # Step 2: Fit a best-fit line across the column slopes (x = 5,10,20,40)
+    freq = np.array([5, 10, 20, 40])
+    valid = ~np.isnan(col_slopes)
+    slope_fit, intercept_fit, _, _, _ = linregress(freq[valid], col_slopes[valid])
+    best_fit_line = intercept_fit + slope_fit * freq
+
+    # Step 3: Plot results with matching colors
+    plt.figure(figsize=(6, 4))
+    for i, f in enumerate(freq):
+        plt.plot(f, col_slopes[i], 'o', color=colors[i], label=f'{f} Hz point' if i == 0 else None)
+    plt.plot(freq, best_fit_line, '-', color='black', label=f'Best-fit line: y={slope_fit:.4f}x+{intercept_fit:.4f}')
+    
+    plt.xlabel('Input frequency (Hz)')
+    plt.ylabel('Slope of best fit line')
+    plt.title(f'{title}: Slopes Across Frequencies')
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+    # Step 4: Return the final slope
+    return slope_fit
+
+# Run for both datasets
+slope0 = process_file(r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx', 'Slow synapses')
+slope1 = process_file(r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx', 'Fast synapses')
+
+
+print("Slow synapses", slope0)
+print("Fast synapses", slope1)
+
+def get_slopes_and_fit(file_path):
+    # Load the Excel file
+    df = pd.read_excel(file_path)
+    col_slopes = []
+    for col in df.columns:
+        y = df[col].dropna().values
+        x = np.arange(len(y))
+        if len(y) > 1:
+            slope, _, _, _, _ = linregress(x, y)
+            col_slopes.append(slope)
+        else:
+            col_slopes.append(np.nan)
+    col_slopes = np.array(col_slopes)
+
+    # Frequencies
+    freq = np.array([5, 10, 20, 40])
+    valid = ~np.isnan(col_slopes)
+    slope_fit, intercept_fit, _, _, _ = linregress(freq[valid], col_slopes[valid])
+    best_fit_line = intercept_fit + slope_fit * freq
+
+    return freq, col_slopes, best_fit_line, slope_fit, intercept_fit
+
+# Load both datasets
+freq_slow, slopes_slow, bestfit_slow, slope_slow, int_slow = get_slopes_and_fit(
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx')
+freq_fast, slopes_fast, bestfit_fast, slope_fast, int_fast = get_slopes_and_fit(
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx')
+
+# Plot both on the same figure
+colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red']
+
+plt.figure(figsize=(6, 4))
+
+# --- Slow synapses (white face, colored edge)
+for i, f in enumerate(freq_slow):
+    plt.plot(f, slopes_slow[i], 'o', 
+             markerfacecolor='white', markeredgecolor=colors[i],
+             markersize=8, label='Slow synapses' if i == 0 else "")
+plt.plot(freq_slow, bestfit_slow, '--', color='black', label=f'Slow fit: y={slope_slow:.4f}x+{int_slow:.4f}')
+
+# --- Fast synapses (solid color)
+for i, f in enumerate(freq_fast):
+    plt.plot(f, slopes_fast[i], 'o', 
+             color=colors[i], markersize=8, label='Fast synapses' if i == 0 else "")
+plt.plot(freq_fast, bestfit_fast, '-', color='gray', label=f'Fast fit: y={slope_fast:.4f}x+{int_fast:.4f}')
+
+plt.xlabel('Input frequency (Hz)')
+plt.ylabel('Slope of best fit line')
+plt.title('Slopes Across Frequencies: Slow vs Fast Synapses')
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+print("Slow synapses slope:", slope_slow)
+print("Fast synapses slope:", slope_fast)
+
+#%% Plot the best fit lines for each input frequency - 9
+
+import pandas as pd
+import numpy as np
+from scipy.stats import linregress
+import matplotlib.pyplot as plt
+
+def process_file(file_path, title):
+    # Load the Excel file
+    df = pd.read_excel(file_path)
+    freq_labels = [5, 10, 20, 40]  # One per column
+    colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red']  # Consistent color mapping
+
+    plt.figure(figsize=(6, 4))
+
+    # For each column (each input frequency)
+    for i, col in enumerate(df.columns):
+        y = df[col].dropna().values
+        x = np.arange(len(y))
+        if len(y) > 1:
+            slope, intercept, _, _, _ = linregress(x, y)
+            fit_line = intercept + slope * x
+
+            # Plot connected data points
+            plt.plot(x, y, 'o-', color=colors[i], markersize=3, label=f'{freq_labels[i]} Hz data')
+            # Plot best-fit line
+            plt.plot(x, fit_line, '--', color=colors[i], linewidth=2, label=f'{freq_labels[i]} Hz fit (slope={slope:.4f})')
+
+    plt.xlabel('Time (a.u.)')
+    plt.ylabel('Signal amplitude')
+    plt.title(f'{title}: Individual Frequency Fits')
+    plt.legend(fontsize=8)
+    plt.tight_layout()
+    plt.show()
+
+# --- Run for both datasets (two plots) ---
+process_file(
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx',
+    'Slow synapses'
+)
+
+process_file(
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx',
+    'Fast synapses'
+)
+
+
+#%% Plot the currents and membrane potentials for (r) - 9
+
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+import pandas as pd
+from scipy.signal import find_peaks
+
+def zform(z1,z2, f1,f2,f):
+    return z1+(z2-z1)/(f2-f1)*(f-f1)
+
+def getiext(f, taui0, tauy0, kiy0,
+            taui1, tauy1, kiy1,
+            dt, r, p1, ss0, ss1,
+            tmax, extra=0, seed=None):
+    T=tmax
+
+    if seed is not None:
+        np.random.seed(seed)
+
+    # Generate Poisson spike times
+    pretimes = []
+    t = 0.0
+    while t < T:
+        t += np.random.exponential(1.0 / f)
+        pretimes.append(t)
+
+    pretimes = np.array(pretimes)
+    spike_idx = (pretimes / dt).astype(int)
+
+    runtime = int(spike_idx.max() + extra + 1)
+
+    # Primary routing (fast vs slow)
+    route = np.random.rand(len(spike_idx)) < r
+
+    # Secondary duplication probability
+    duplicate = np.random.rand(len(spike_idx)) < p1
+
+    spike_to_y0 = np.zeros(runtime, dtype=bool)
+    spike_to_y1 = np.zeros(runtime, dtype=bool)
+
+    # Primary assignment
+    spike_to_y0[spike_idx[~route]] = True
+    spike_to_y1[spike_idx[route]] = True
+
+    # If duplicate is true, also add to the other pathway
+    spike_to_y0[spike_idx[route & duplicate]] = True
+    spike_to_y1[spike_idx[~route & duplicate]] = True
+
+    y0 = np.zeros(runtime)
+    y1 = np.zeros(runtime)
+    I0 = np.zeros(runtime)
+    I1 = np.zeros(runtime)
+
+    for i in range(1, runtime):
+
+        if spike_to_y0[i]:
+            y0[i-1] = ss0 # spike size for slow
+        if spike_to_y1[i]:
+            y1[i-1] = ss1 # spike size for fast
+
+        y0[i] = y0[i-1] + dt * (-y0[i-1] / tauy0)
+        y1[i] = y1[i-1] + dt * (-y1[i-1] / tauy1)
+
+        I0[i] = I0[i-1] + dt * (-I0[i-1] / taui0 + kiy0 * y0[i-1])
+        I1[i] = I1[i-1] + dt * (-I1[i-1] / taui1 + kiy1 * y1[i-1])
+
+    Iext = (1 - r) * I0 + r * I1
+
+    return Iext, I0, I1, y0, y1, runtime, spike_idx
+
+
+
+
+
+def getstats(f, taui0, tauy0, kiy0, taui1, tauy1, kiy1, dt, r, 
+                                 g, vb, C, Cr,
+                                 m0, m1, b):
+    # Fix fin plot
+    rlist=np.linspace(0,1,100)
+    tlist=[]
+    rateslist=[]
+    napslist=[]
+    for ind,r in enumerate(rlist):
+        print(ind, len(rlist))
+        Iext, _, _, _, _, runtime, _, _ = getiext(f, taui0, tauy0, kiy0, taui1,
+                                                  tauy1, kiy1, dt, r, m0, m1, b)
+        peaks, _ = find_peaks(Iext)
+        Inorm=Iext/Iext[peaks[0]]*b
+        _, tmean, naps, _ = gettmean(r, Inorm, g, vb, C, Cr, f)
+        rateslist.append(naps/runtime/dt)
+        tlist.append(tmean)
+        napslist.append(naps)
+    foutlist=1/np.array(tlist)
+    return rlist, foutlist, napslist
+
+def linfun(s1,s4,fast1,fast4,f,r):
+    return zform(s1,s4, 10,40,f)*(1-r)+zform(fast1,fast4, 10,40,f)*r
+
+
+# New function
+def gettmean(r, Iext, g, vb, C, Cr, f):
+    v=np.zeros(len(Iext))
+    v[0]=-60
+    apinds=[]
+    refper=40 # refper *dt (sec) = 4ms
+    aptimer=np.inf
+    posttimer=False
+    gfast=zform(g[6], g[7], 10, 40, f)
+    gslow=zform(g[10], g[11], 10, 40, f)
+    gfast2=zform(gr[6], gr[7], 10, 40, f)
+    gslow2=zform(gr[10], gr[11], 10, 40, f)
+    vbslow=zform(vb[10], vb[11], 10, 40, f)
+    vbfast=zform(vb[6], vb[7], 10, 40, f)
+    C1=linfun(C[10], C[11], C[6], C[7], f, r)
+    C2=linfun(Cr[10], Cr[11], Cr[6], Cr[7], f, r)
+    vreset=linfun(vbr[10], vbr[11], vbr[6], vbr[7], f, r)
+    
+    for i in range(1,len(Iext)):
+        if posttimer==False:
+            icurr = r*gfast*(v[i-1]-vbfast)+(1-r)*gslow*(v[i-1]-vbslow)
+            dvdt=((-icurr+Iext[i-1]))/C1
+        if posttimer==True:
+            icurr = r*gfast2*(v[i-1]-vbfast)+(1-r)*gslow2*(v[i-1]-vbslow)
+            dvdt=((-icurr+Iext[i-1]))/C2
+            
+        if aptimer == np.inf:
+            v[i] = v[i-1]+dvdt*dt
+        else:
+            v[i] = v[i-1]
+
+        if Iext[i]>Iext[i-1]:
+            posttimer=False
+
+        if aptimer != np.inf:
+            aptimer-=1
+        if v[i-1]>linfun(vth[10], vth[11], vth[6], vth[7], f, r):
+            v[i]=vreset
+            apinds.append(i)
+            aptimer=refper
+            posttimer=True
+        if aptimer==0:
+            aptimer=np.inf
+    aptimes=np.array(apinds)*dt
+    naps=len(aptimes)
+    ssaptimes=aptimes[int(0.3*len(aptimes)):]
+    tmean = np.mean(np.diff(ssaptimes))
+    return v, tmean, naps, aptimes
+
+
+def geti(dnum):
+
+    dsize= 'z' # f full, z zoomed
+    dsnum= 1 if dnum in [0, 2, 4,6,8,10] else 0 # Fixed
+    dlens=[4000,12000]
+    if dsize=='f':
+        I=data[:, dnum]
+        vd=data[:, dnum+13]
+    if dsize=='z':
+        I=data[:, dnum][:dlens[dsnum]]
+        vd=data[:, dnum+13][:dlens[dsnum]]
+
+    # Processing the data
+    I = 25*I
+    vd=50*vd
+    return I, vd
+
+dtype=0
+if dtype==0:
+    dir1=r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal'
+if dtype == 1:
+    dir1=r'C:\Users\Oliver\Desktop\PhD\3-Research\Neuron\SOM'
+os.chdir(dir1)
+
+
+df = pd.read_csv("Table0.csv")
+data=np.array(df)
+
+names = {
+    0: 'DE-F-10 Hz', 1: 'DE-F-40 Hz',
+    2: 'DE-M-10 Hz', 3: 'DE-M-40 Hz',
+    4: 'DE-S-10 Hz', 5: 'DE-S-40 Hz',
+
+    6: 'NR-F-10 Hz', 7: 'NR-F-40 Hz',
+    8: 'NR-M-10 Hz', 9: 'NR-M-40 Hz',
+    10: 'NR-S-10 Hz', 11: 'NR-S-40 Hz'
+}
+
+# 0-DF1, 1-DF4, 2-DM1, 3-DM4, 4-DS1, 5-DS4, 
+# 6-NF1, 7-NF4, 8-NM1, 9-NM4, 10-NS1, 11-NS4
+
+# Different parameters for each dataset
+#                0   1   2   3   4    5     6      7    8   9  10  11
+vb=np.array([-60.5,-60,-60,-60,-64.2,-64.2,-61.75,-63,-64,-65.5,-64,-63.8])
+#                0   1   2   3   4    5     6       7    8   9     10    11
+vbr=np.array([-60.5,-60,-60,-60,-64.2,-64.2,-61.75,-50,-50,-47,-64,-50])
+#    0        1           2          3        4         5
+C=[0.00011,  0.00011,  0.00011,  0.00011,  0.00011,  0.00011,
+   0.00009, 0.0001,  0.00011,  0.00011,  0.00011, 0.000111]
+#    6        7          8        9          10       11
+#    0        1           2          3        4         5
+Cr=[0.00011,  0.00011,  0.00011,  0.00011,  0.00011,  0.00011,
+   0.00009, 0.0001,  0.00011,  0.00011,  0.00011, 0.0001]
+#    6        7          8        9          10       11
+#    0        1          2      3        4        5
+g=[0.0037,  0.0037,  0.0037,  0.0037,  0.0037,  0.0037,
+   0.0035, 0.0037,  0.0037,  0.0037,  0.0037, 0.003]
+#    6        7       8        9       10       11
+    # 0        1          2      3        4        5
+gr=[0.0037,  0.0037,  0.0037,  0.0037,  0.0037,  0.0037,
+   0.0035, 0.004,  0.0037,  0.0037,  0.0037, 0.005]
+#    6        7       8        9       10       11
+#     0    1    2     3    4    5    6    7    8   9    10   11
+vth=[-40, -40, -40, -40, -40, -40, -40, -40, -41, -40, -40, -39]
+
+dt=1e-4 # 10 kHz = 10 x 10^3 Hz = 1x10^4 Hz = 10000 Hz yields dt = 1x10^(-4) = 0.0001
+
+# Original values which fit the current data from the datasets
+# Fixed 
+# =============================================================================
+# taui0 = 0.00265 # Slow
+# tauy0 = 0.00075
+# kiy0 = 360 #360 #2100 for matching
+# 
+# taui1 = 0.0014 # Fast
+# tauy1 = 0.00034
+# kiy1 = 860 #860 #4300 for matching
+# =============================================================================
+
+# Fixed 
+taui0 = 0.00265 # Slow
+tauy0 = 0.00075
+kiy0 = 360 #360 #2100 for matching # k's controls the transition from y to I
+
+taui1 = 0.0014 # Fast
+tauy1 = 0.00034
+kiy1 = 860 #860 #4300 for matching # k's controls the transition from y to I
+
+r=1
+p1=0.5
+f=50
+
+tmax=10
+navgs=1
+
+m0=slope0
+m1=slope1
+
+ss0=5
+ss1=2
+
+# set the slope for the fast synapses to 0
+ret = getiext(f, taui0, tauy0, kiy0, taui1, tauy1, kiy1, dt, r, p1, ss0, ss1, tmax)
+Iext=ret[0]
+# plt.subplot(3,1,1)
+# plt.plot(Iext)
+# plt.subplot(3,1,2)
+# plt.plot(ret[1])
+# plt.subplot(3,1,3)
+# plt.plot(ret[2])
+# plt.show()
+
+v, tmean, naps, aptimes = gettmean(r, Iext, g, vb, C, Cr, f)
+
+
+fs=15
+lw=2
+plt.subplot(4,1,1)
+plt.title('Fast synapse proprtion (r)={}\nCoincidence proportion (c) = {}\nInput frequency={} Hz'.format(r,p1, f), fontsize=fs)
+plt.plot(np.linspace(0,len(v), len(v))*dt, ret[1], linewidth=lw)
+plt.ylabel('Slow\ncurrent', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+plt.xticks([])
+plt.subplot(4,1,2)
+plt.plot(np.linspace(0,len(v), len(v))*dt, ret[2], linewidth=lw)
+plt.ylabel('Fast\ncurrent', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+plt.xticks([])
+plt.subplot(4,1,3)
+plt.plot(np.linspace(0,len(v), len(v))*dt, Iext, linewidth=lw)
+plt.tick_params(axis='both', labelsize=fs)
+plt.ylabel('Slow\n+\nFast\nCurrent', fontsize=fs)
+plt.xticks([])
+plt.subplot(4,1,4)
+plt.plot(np.linspace(0,len(v), len(v))*dt*1000, v, linewidth=lw)
+# plt.plot(np.linspace(0,len(v), len(v))*dt, vth*np.ones(len(v)))
+plt.tick_params(axis='both', labelsize=fs)
+plt.xlabel('Time (ms)', fontsize=fs)
+plt.ylabel('Membrane\npotential (mV)', fontsize=fs)
+plt.show()
+
+
+#%% Run the simulation - 9
+
+p1=1
+tmax=10
+navgs=1
+
+flist = np.linspace(10,50, 5)
+foutlists=[]
+cv2lists=[]
+napslists=[]
+for j, f in enumerate(flist):
+    rlist=np.linspace(0,1,10)
+    napslist=[]
+    fouts=[]
+    cv2s=[]
+    for i,r in enumerate(rlist):
+        fav=[]
+        cav=[]
+        nav=[]
+        for q in range(navgs):
+            print(j, len(flist), i, len(rlist), q, navgs)
+            ret = getiext(f, taui0, tauy0, kiy0, taui1, tauy1, kiy1, dt, r, p1, ss0, ss1, tmax)
+            v, tmean, naps, aptimes = gettmean(r, ret[0], g, vb, C, Cr, f)
+            fav.append(1/np.mean(np.diff(aptimes)))
+            cav.append(np.var(np.diff(aptimes))/np.mean(np.diff(aptimes))**2)
+            nav.append(naps)
+        fouts.append(np.mean(fav))
+        cv2s.append(np.mean(cav))
+        napslist.append(np.mean(nav))
+    foutlists.append(fouts)
+    cv2lists.append(cv2s)
+    napslists.append(napslist)
+    
+# =============================================================================
+# # plt.plot(rlist, napslist)
+# plt.subplot(2,1,1)
+# plt.plot(rlist, fouts)
+# plt.ylabel('Mean firing\nrate')
+# plt.xticks([])
+# plt.subplot(2,1,2)
+# plt.plot(rlist, cv2s)
+# plt.xlabel('Proportion of fast synapses (r)')
+# plt.ylabel('Variance / Mean')
+# plt.show()
+# =============================================================================
+# =============================================================================
+# #%%  Plot the output
+# =============================================================================
+
+fs=15
+# plt.plot(rlist, napslist)
+plt.subplot(2,1,1)
+plt.title('Random presynaptic arrival times')
+for i, fouts in enumerate(foutlists):
+    plt.plot(rlist, fouts, label='f={}'.format(flist[i]), marker='o')
+plt.ylabel('Mean firing rate', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+plt.legend()
+plt.subplot(2,1,2)
+for i, cv2s in enumerate(cv2lists):
+    plt.plot(rlist, cv2s, label='f={}'.format(flist[i]), marker='o')
+plt.xlabel('Proportion of fast synapses (r)', fontsize=fs)
+plt.ylabel('Noise (Variance / Mean^2)', fontsize=fs)
+plt.legend()
+plt.tick_params(axis='both', labelsize=fs)
+plt.show()
+
+#%% Calculate heatmap - 9 
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# ======================
+# Parameters
+# ======================
+
+tmax = 20
+navgs = 5
+f = 40  # fixed input rate for heatmap (change if needed)
+
+rlist = np.linspace(0, 1, 40)
+p1list = np.linspace(0, 1, 40)
+
+fout_matrix = np.zeros((len(p1list), len(rlist)))
+
+# ======================
+# Sweep r and p1
+# ======================
+
+for i, p1 in enumerate(p1list):
+    for j, r in enumerate(rlist):
+
+        fav = []
+
+        for q in range(navgs):
+            print(i, len(p1list), j, len(rlist), q, navgs)
+            ret = getiext(
+                f,
+                taui0, tauy0, kiy0,
+                taui1, tauy1, kiy1,
+                dt, r, p1,
+                ss0, ss1,
+                tmax
+            )
+
+            v, tmean, naps, aptimes = gettmean(
+                r, ret[0], g, vb, C, Cr, f
+            )
+
+            if len(aptimes) > 1:
+                fav.append(1 / np.mean(np.diff(aptimes)))
+
+        if len(fav) > 0:
+            fout_matrix[i, j] = np.mean(fav)
+        else:
+            fout_matrix[i, j] = 0
+
+#%% 9 - Plot the heatmap
+plt.figure()
+fs = 15
+im = plt.imshow(
+    fout_matrix,
+    cmap='nipy_spectral',
+    origin='lower',
+    aspect='auto',
+    extent=[rlist.min(), rlist.max(),
+            p1list.min(), p1list.max()]
+)
+
+plt.xlabel('Proportion of fast synapses (r)', fontsize=fs)
+plt.ylabel('Coincidence probability (c)', fontsize=fs)
+plt.title('Input frequency = {}'.format(f), fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+
+# Create colorbar and set label size
+cbar = plt.colorbar(im)
+cbar.set_label('Output firing rate', fontsize=fs)          # label size
+cbar.ax.tick_params(labelsize=fs)            # tick label size
+
+plt.show()
+
+
+#%% 9 - Contour plot
+
+# ======================
+# Contour plot
+# ======================
+
+plt.figure()
+fs = 15
+
+R, P1 = np.meshgrid(rlist, p1list)
+
+im = plt.contourf(
+    R,
+    P1,
+    fout_matrix,
+    levels=40,              # number of contour levels
+    cmap='nipy_spectral'
+)
+
+plt.xlabel('Proportion of fast synapses (r)', fontsize=fs)
+plt.ylabel('Coincidence proportion (c)', fontsize=fs)
+plt.title('Input frequency = {}'.format(f), fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+
+cbar = plt.colorbar(im)
+cbar.set_label('Output firing rate', fontsize=fs)
+cbar.ax.tick_params(labelsize=fs)
+
+plt.show()
+
+#%% 9 - Fout vs p1 for different f values : calculate
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# ======================
+# Parameters
+# ======================
+
+tmax = 10
+navgs = 10
+
+flist = [10, 20, 30, 40, 50]
+p1list = np.linspace(0, 1, 20)
+r = 0.5
+
+fs = 15
+
+# Preallocate result matrix
+fout_all = np.zeros((len(flist), len(p1list)))
+
+# ======================
+# Compute everything first
+# ======================
+
+for j, f in enumerate(flist):
+
+    for i, p1 in enumerate(p1list):
+
+        fav = []
+
+        for q in range(navgs):
+            print(j, len(flist), i, len(p1list), q, navgs)
+
+            ret = getiext(
+                f,
+                taui0, tauy0, kiy0,
+                taui1, tauy1, kiy1,
+                dt, r, p1,
+                ss0, ss1,
+                tmax
+            )
+
+            v, tmean, naps, aptimes = gettmean(
+                r, ret[0], g, vb, C, Cr, f
+            )
+
+            if len(aptimes) > 1:
+                fav.append(1 / np.mean(np.diff(aptimes)))
+
+        if len(fav) > 0:
+            fout_all[j, i] = np.mean(fav)
+        else:
+            fout_all[j, i] = 0
+
+
+# =============================================================================
+# # %% 9 - Plot everything together (only once)
+# =============================================================================
+
+plt.figure()
+
+for j, f in enumerate(flist):
+    plt.plot(p1list, fout_all[j, :], marker='o', label=f'f = {f}')
+
+plt.xlabel('Coincidence proportion (c)', fontsize=fs)
+plt.ylabel('Output firing rate (fout)', fontsize=fs)
+plt.title('Proportion of fast synapses (r) = {}'.format(r), fontsize=fs)
+plt.legend(fontsize=fs, framealpha=0.9)
+plt.tick_params(axis='both', labelsize=fs)
+
+plt.show()
+
+
+#%% 9 - Currents and membrane potential plot (deterministic)
+
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+import pandas as pd
+from scipy.signal import find_peaks
+
+def zform(z1,z2, f1,f2,f):
+    return z1+(z2-z1)/(f2-f1)*(f-f1)
+
+def getiext(f, taui0, tauy0, kiy0,
+            taui1, tauy1, kiy1,
+            dt, r, p1, ss0, ss1,
+            tmax, extra=0, seed=None):
+
+    T = tmax
+
+    if seed is not None:
+        np.random.seed(seed)
+
+    # --------------------------------------------------
+    # Deterministic spike times (periodic instead of Poisson)
+    # --------------------------------------------------
+    isi = 1.0 / f
+    pretimes = np.arange(isi, T, isi)
+
+    spike_idx = (pretimes / dt).astype(int)
+    runtime = int(spike_idx.max() + extra + 1)
+
+    # --------------------------------------------------
+    # Keep routing random
+    # --------------------------------------------------
+    route = np.random.rand(len(spike_idx)) < r
+
+    # --------------------------------------------------
+    # Keep coincidence random
+    # --------------------------------------------------
+    duplicate = np.random.rand(len(spike_idx)) < p1
+
+    spike_to_y0 = np.zeros(runtime, dtype=bool)
+    spike_to_y1 = np.zeros(runtime, dtype=bool)
+
+    # Primary assignment
+    spike_to_y0[spike_idx[~route]] = True
+    spike_to_y1[spike_idx[route]] = True
+
+    # Coincidence duplication
+    spike_to_y0[spike_idx[route & duplicate]] = True
+    spike_to_y1[spike_idx[~route & duplicate]] = True
+
+    # --------------------------------------------------
+    # Dynamics (unchanged)
+    # --------------------------------------------------
+    y0 = np.zeros(runtime)
+    y1 = np.zeros(runtime)
+    I0 = np.zeros(runtime)
+    I1 = np.zeros(runtime)
+
+    for i in range(1, runtime):
+
+        if spike_to_y0[i]:
+            y0[i-1] = ss0
+        if spike_to_y1[i]:
+            y1[i-1] = ss1
+
+        y0[i] = y0[i-1] + dt * (-y0[i-1] / tauy0)
+        y1[i] = y1[i-1] + dt * (-y1[i-1] / tauy1)
+
+        I0[i] = I0[i-1] + dt * (-I0[i-1] / taui0 + kiy0 * y0[i-1])
+        I1[i] = I1[i-1] + dt * (-I1[i-1] / taui1 + kiy1 * y1[i-1])
+
+    Iext = (1 - r) * I0 + r * I1
+
+    return Iext, I0, I1, y0, y1, runtime, spike_idx
+
+
+
+
+def getstats(f, taui0, tauy0, kiy0, taui1, tauy1, kiy1, dt, r, 
+                                 g, vb, C, Cr,
+                                 m0, m1, b):
+    # Fix fin plot
+    rlist=np.linspace(0,1,100)
+    tlist=[]
+    rateslist=[]
+    napslist=[]
+    for ind,r in enumerate(rlist):
+        print(ind, len(rlist))
+        Iext, _, _, _, _, runtime, _, _ = getiext(f, taui0, tauy0, kiy0, taui1,
+                                                  tauy1, kiy1, dt, r, m0, m1, b)
+        peaks, _ = find_peaks(Iext)
+        Inorm=Iext/Iext[peaks[0]]*b
+        _, tmean, naps, _ = gettmean(r, Inorm, g, vb, C, Cr, f)
+        rateslist.append(naps/runtime/dt)
+        tlist.append(tmean)
+        napslist.append(naps)
+    foutlist=1/np.array(tlist)
+    return rlist, foutlist, napslist
+
+def linfun(s1,s4,fast1,fast4,f,r):
+    return zform(s1,s4, 10,40,f)*(1-r)+zform(fast1,fast4, 10,40,f)*r
+
+
+# New function
+def gettmean(r, Iext, g, vb, C, Cr, f):
+    v=np.zeros(len(Iext))
+    v[0]=-60
+    apinds=[]
+    refper=40 # refper *dt (sec) = 4ms
+    aptimer=np.inf
+    posttimer=False
+    gfast=zform(g[6], g[7], 10, 40, f)
+    gslow=zform(g[10], g[11], 10, 40, f)
+    gfast2=zform(gr[6], gr[7], 10, 40, f)
+    gslow2=zform(gr[10], gr[11], 10, 40, f)
+    vbslow=zform(vb[10], vb[11], 10, 40, f)
+    vbfast=zform(vb[6], vb[7], 10, 40, f)
+    C1=linfun(C[10], C[11], C[6], C[7], f, r)
+    C2=linfun(Cr[10], Cr[11], Cr[6], Cr[7], f, r)
+    vreset=linfun(vbr[10], vbr[11], vbr[6], vbr[7], f, r)
+    
+    for i in range(1,len(Iext)):
+        if posttimer==False:
+            icurr = r*gfast*(v[i-1]-vbfast)+(1-r)*gslow*(v[i-1]-vbslow)
+            dvdt=((-icurr+Iext[i-1]))/C1
+        if posttimer==True:
+            icurr = r*gfast2*(v[i-1]-vbfast)+(1-r)*gslow2*(v[i-1]-vbslow)
+            dvdt=((-icurr+Iext[i-1]))/C2
+            
+        if aptimer == np.inf:
+            v[i] = v[i-1]+dvdt*dt
+        else:
+            v[i] = v[i-1]
+
+        if Iext[i]>Iext[i-1]:
+            posttimer=False
+
+        if aptimer != np.inf:
+            aptimer-=1
+        if v[i-1]>linfun(vth[10], vth[11], vth[6], vth[7], f, r):
+            v[i]=vreset
+            apinds.append(i)
+            aptimer=refper
+            posttimer=True
+        if aptimer==0:
+            aptimer=np.inf
+    aptimes=np.array(apinds)*dt
+    naps=len(aptimes)
+    ssaptimes=aptimes[int(0.3*len(aptimes)):]
+    tmean = np.mean(np.diff(ssaptimes))
+    return v, tmean, naps, aptimes
+
+
+def geti(dnum):
+
+    dsize= 'z' # f full, z zoomed
+    dsnum= 1 if dnum in [0, 2, 4,6,8,10] else 0 # Fixed
+    dlens=[4000,12000]
+    if dsize=='f':
+        I=data[:, dnum]
+        vd=data[:, dnum+13]
+    if dsize=='z':
+        I=data[:, dnum][:dlens[dsnum]]
+        vd=data[:, dnum+13][:dlens[dsnum]]
+
+    # Processing the data
+    I = 25*I
+    vd=50*vd
+    return I, vd
+
+dtype=0
+if dtype==0:
+    dir1=r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal'
+if dtype == 1:
+    dir1=r'C:\Users\Oliver\Desktop\PhD\3-Research\Neuron\SOM'
+os.chdir(dir1)
+
+
+df = pd.read_csv("Table0.csv")
+data=np.array(df)
+
+names = {
+    0: 'DE-F-10 Hz', 1: 'DE-F-40 Hz',
+    2: 'DE-M-10 Hz', 3: 'DE-M-40 Hz',
+    4: 'DE-S-10 Hz', 5: 'DE-S-40 Hz',
+
+    6: 'NR-F-10 Hz', 7: 'NR-F-40 Hz',
+    8: 'NR-M-10 Hz', 9: 'NR-M-40 Hz',
+    10: 'NR-S-10 Hz', 11: 'NR-S-40 Hz'
+}
+
+# 0-DF1, 1-DF4, 2-DM1, 3-DM4, 4-DS1, 5-DS4, 
+# 6-NF1, 7-NF4, 8-NM1, 9-NM4, 10-NS1, 11-NS4
+
+# Different parameters for each dataset
+#                0   1   2   3   4    5     6      7    8   9  10  11
+vb=np.array([-60.5,-60,-60,-60,-64.2,-64.2,-61.75,-63,-64,-65.5,-64,-63.8])
+#                0   1   2   3   4    5     6       7    8   9     10    11
+vbr=np.array([-60.5,-60,-60,-60,-64.2,-64.2,-61.75,-50,-50,-47,-64,-50])
+#    0        1           2          3        4         5
+C=[0.00011,  0.00011,  0.00011,  0.00011,  0.00011,  0.00011,
+   0.00009, 0.0001,  0.00011,  0.00011,  0.00011, 0.000111]
+#    6        7          8        9          10       11
+#    0        1           2          3        4         5
+Cr=[0.00011,  0.00011,  0.00011,  0.00011,  0.00011,  0.00011,
+   0.00009, 0.0001,  0.00011,  0.00011,  0.00011, 0.0001]
+#    6        7          8        9          10       11
+#    0        1          2      3        4        5
+g=[0.0037,  0.0037,  0.0037,  0.0037,  0.0037,  0.0037,
+   0.0035, 0.0037,  0.0037,  0.0037,  0.0037, 0.003]
+#    6        7       8        9       10       11
+    # 0        1          2      3        4        5
+gr=[0.0037,  0.0037,  0.0037,  0.0037,  0.0037,  0.0037,
+   0.0035, 0.004,  0.0037,  0.0037,  0.0037, 0.005]
+#    6        7       8        9       10       11
+#     0    1    2     3    4    5    6    7    8   9    10   11
+vth=[-40, -40, -40, -40, -40, -40, -40, -40, -41, -40, -40, -39]
+
+dt=1e-4 # 10 kHz = 10 x 10^3 Hz = 1x10^4 Hz = 10000 Hz yields dt = 1x10^(-4) = 0.0001
+
+# Original values which fit the current data from the datasets
+# Fixed 
+# =============================================================================
+# taui0 = 0.00265 # Slow
+# tauy0 = 0.00075
+# kiy0 = 360 #360 #2100 for matching
+# 
+# taui1 = 0.0014 # Fast
+# tauy1 = 0.00034
+# kiy1 = 860 #860 #4300 for matching
+# =============================================================================
+
+# Fixed 
+taui0 = 0.00265 # Slow
+tauy0 = 0.00075
+kiy0 = 360 #360 #2100 for matching # k's controls the transition from y to I
+
+taui1 = 0.0014 # Fast
+tauy1 = 0.00034
+kiy1 = 860 #860 #4300 for matching # k's controls the transition from y to I
+
+r=0
+p1=0.5
+f=50
+
+tmax=1
+navgs=1
+
+m0=slope0
+m1=slope1
+
+ss0=5
+ss1=2
+
+# set the slope for the fast synapses to 0
+ret = getiext(f, taui0, tauy0, kiy0, taui1, tauy1, kiy1, dt, r, p1, ss0, ss1, tmax)
+Iext=ret[0]
+# plt.subplot(3,1,1)
+# plt.plot(Iext)
+# plt.subplot(3,1,2)
+# plt.plot(ret[1])
+# plt.subplot(3,1,3)
+# plt.plot(ret[2])
+# plt.show()
+
+v, tmean, naps, aptimes = gettmean(r, Iext, g, vb, C, Cr, f)
+
+
+fs=15
+lw=2
+plt.subplot(4,1,1)
+plt.title('Fast synapse proprtion (r)={}\nCoincidence proportion (c) = {}\nInput frequency={} Hz\nfout={}'.format(r,p1, f, np.around(1/np.mean(np.diff(aptimes))),3), fontsize=fs)
+plt.plot(np.linspace(0,len(v), len(v))*dt, ret[1], linewidth=lw)
+plt.ylabel('Slow\ncurrent', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+plt.xticks([])
+plt.subplot(4,1,2)
+plt.plot(np.linspace(0,len(v), len(v))*dt, ret[2], linewidth=lw)
+plt.ylabel('Fast\ncurrent', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+plt.xticks([])
+plt.subplot(4,1,3)
+plt.plot(np.linspace(0,len(v), len(v))*dt, Iext, linewidth=lw)
+plt.tick_params(axis='both', labelsize=fs)
+plt.ylabel('Slow\n+\nFast\nCurrent', fontsize=fs)
+plt.xticks([])
+plt.subplot(4,1,4)
+plt.plot(np.linspace(0,len(v), len(v))*dt*1000, v, linewidth=lw)
+# plt.plot(np.linspace(0,len(v), len(v))*dt, vth*np.ones(len(v)))
+plt.tick_params(axis='both', labelsize=fs)
+plt.xlabel('Time (ms)', fontsize=fs)
+plt.ylabel('Membrane\npotential (mV)', fontsize=fs)
+plt.show()
+
+#%% Fout vs proportion of fast synapses r (deterministic) - 9
+
+p1=0
+tmax=10
+navgs=1
+
+flist = np.linspace(10,50, 5)
+rlist=np.linspace(0,1,10)
+foutlists=[]
+cv2lists=[]
+napslists=[]
+for j, f in enumerate(flist):
+    napslist=[]
+    fouts=[]
+    cv2s=[]
+    for i,r in enumerate(rlist):
+        fav=[]
+        cav=[]
+        nav=[]
+        for q in range(navgs):
+            print(j, len(flist), i, len(rlist), q, navgs)
+            ret = getiext(f, taui0, tauy0, kiy0, taui1, tauy1, kiy1, dt, r, p1, ss0, ss1, tmax)
+            v, tmean, naps, aptimes = gettmean(r, ret[0], g, vb, C, Cr, f)
+            fav.append(1/np.mean(np.diff(aptimes)))
+            cav.append(np.var(np.diff(aptimes))/np.mean(np.diff(aptimes))**2)
+            nav.append(naps)
+        fouts.append(np.mean(fav))
+        cv2s.append(np.mean(cav))
+        napslist.append(np.mean(nav))
+    foutlists.append(fouts)
+    cv2lists.append(cv2s)
+    napslists.append(napslist)
+    
+# =============================================================================
+# # plt.plot(rlist, napslist)
+# plt.subplot(2,1,1)
+# plt.plot(rlist, fouts)
+# plt.ylabel('Mean firing\nrate')
+# plt.xticks([])
+# plt.subplot(2,1,2)
+# plt.plot(rlist, cv2s)
+# plt.xlabel('Proportion of fast synapses (r)')
+# plt.ylabel('Variance / Mean')
+# plt.show()
+# =============================================================================
+# =============================================================================
+# #%%  Plot the output
+# =============================================================================
+
+fs=15
+# plt.plot(rlist, napslist)
+plt.subplot(2,1,1)
+plt.title('Deterministic presynaptic arrival times')
+for i, fouts in enumerate(foutlists):
+    plt.plot(rlist, fouts, label='f={}'.format(flist[i]), marker='o')
+plt.ylabel('Mean firing rate', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+plt.legend()
+plt.subplot(2,1,2)
+for i, cv2s in enumerate(cv2lists):
+    plt.plot(rlist, cv2s, label='f={}'.format(flist[i]), marker='o')
+plt.xlabel('Proportion of fast synapses (r)', fontsize=fs)
+plt.ylabel('Noise (Variance / Mean^2)', fontsize=fs)
+plt.legend()
+plt.tick_params(axis='both', labelsize=fs)
+plt.show()
+
+#%% Calculate heatmap (deterministic) - 9 
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# ======================
+# Parameters
+# ======================
+
+tmax = 10
+navgs = 1
+f = 40  # fixed input rate for heatmap (change if needed)
+
+rlist = np.linspace(0, 1, 40)
+p1list = np.linspace(0, 1, 40)
+
+fout_matrix = np.zeros((len(p1list), len(rlist)))
+
+# ======================
+# Sweep r and p1
+# ======================
+
+for i, p1 in enumerate(p1list):
+    for j, r in enumerate(rlist):
+
+        fav = []
+
+        for q in range(navgs):
+            print(i, len(p1list), j, len(rlist), q, navgs)
+            ret = getiext(
+                f,
+                taui0, tauy0, kiy0,
+                taui1, tauy1, kiy1,
+                dt, r, p1,
+                ss0, ss1,
+                tmax
+            )
+
+            v, tmean, naps, aptimes = gettmean(
+                r, ret[0], g, vb, C, Cr, f
+            )
+
+            if len(aptimes) > 1:
+                fav.append(1 / np.mean(np.diff(aptimes)))
+
+        if len(fav) > 0:
+            fout_matrix[i, j] = np.mean(fav)
+        else:
+            fout_matrix[i, j] = 0
+
+#%% 9 - Plot the heatmap (deterministic)
+plt.figure()
+fs = 15
+im = plt.imshow(
+    fout_matrix,
+    cmap='nipy_spectral',
+    origin='lower',
+    aspect='auto',
+    extent=[rlist.min(), rlist.max(),
+            p1list.min(), p1list.max()]
+)
+
+plt.xlabel('Proportion of fast synapses (r)', fontsize=fs)
+plt.ylabel('Coincidence probability (c)', fontsize=fs)
+plt.title('Input frequency = {}'.format(f), fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+
+# Create colorbar and set label size
+cbar = plt.colorbar(im)
+cbar.set_label('Output firing rate', fontsize=fs)          # label size
+cbar.ax.tick_params(labelsize=fs)            # tick label size
+
+plt.show()
+
+
+#%% 9 - Contour  (deterministic)
+
+# ======================
+# Contour plot
+# ======================
+
+plt.figure()
+fs = 15
+
+R, P1 = np.meshgrid(rlist, p1list)
+
+im = plt.contourf(
+    R,
+    P1,
+    fout_matrix,
+    levels=40,              # number of contour levels
+    cmap='nipy_spectral'
+)
+
+plt.xlabel('Proportion of fast synapses (r)', fontsize=fs)
+plt.ylabel('Coincidence proportion (c)', fontsize=fs)
+plt.title('Input frequency = {}'.format(f), fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+
+cbar = plt.colorbar(im)
+cbar.set_label('Output firing rate', fontsize=fs)
+cbar.ax.tick_params(labelsize=fs)
+
+plt.show()
+
+#%% 9 - Fout vs p1 for different f values : calculate (deterministic)
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# ======================
+# Parameters
+# ======================
+
+tmax = 10
+navgs = 10
+
+flist = [10, 20, 30, 40, 50]
+p1list = np.linspace(0, 1, 20)
+r = 1
+
+fs = 15
+
+# Preallocate result matrix
+fout_all = np.zeros((len(flist), len(p1list)))
+
+# ======================
+# Compute everything first
+# ======================
+
+for j, f in enumerate(flist):
+
+    for i, p1 in enumerate(p1list):
+
+        fav = []
+
+        for q in range(navgs):
+            print(j, len(flist), i, len(p1list), q, navgs)
+
+            ret = getiext(
+                f,
+                taui0, tauy0, kiy0,
+                taui1, tauy1, kiy1,
+                dt, r, p1,
+                ss0, ss1,
+                tmax
+            )
+
+            v, tmean, naps, aptimes = gettmean(
+                r, ret[0], g, vb, C, Cr, f
+            )
+
+            if len(aptimes) > 1:
+                fav.append(1 / np.mean(np.diff(aptimes)))
+
+        if len(fav) > 0:
+            fout_all[j, i] = np.mean(fav)
+        else:
+            fout_all[j, i] = 0
+
+
+# =============================================================================
+# # %% 9 - Plot everything together (only once)
+# =============================================================================
+
+plt.figure()
+
+for j, f in enumerate(flist):
+    plt.plot(p1list, fout_all[j, :], marker='o', label=f'f = {f}')
+
+plt.xlabel('Coincidence proportion (c)', fontsize=fs)
+plt.ylabel('Output firing rate (fout)', fontsize=fs)
+plt.title('Proportion of fast synapses (r) = {}'.format(r), fontsize=fs)
+plt.legend(fontsize=fs, framealpha=0.9)
+plt.tick_params(axis='both', labelsize=fs)
+
+plt.show()
+
+#%% Meeting 10 - Fix the slow facilitation to depend on the input frequency somehow
+
+import pandas as pd
+import numpy as np
+from scipy.stats import linregress
+import matplotlib.pyplot as plt
+
+def process_file(file_path, title):
+    # Load the Excel file
+    df = pd.read_excel(file_path)
+    colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red']  # match previous color scheme
+    
+    # Step 1: Get slope of best-fit line for each column
+    col_slopes = []
+    for col in df.columns:
+        y = df[col].dropna().values
+        x = np.arange(len(y))
+        if len(y) > 1:
+            slope, intercept, _, _, _ = linregress(x, y)
+            col_slopes.append(slope)
+        else:
+            col_slopes.append(np.nan)
+    
+    col_slopes = np.array(col_slopes)
+    
+    # Step 2: Fit a best-fit line across the column slopes (x = 5,10,20,40)
+    freq = np.array([5, 10, 20, 40])
+    valid = ~np.isnan(col_slopes)
+    slope_fit, intercept_fit, _, _, _ = linregress(freq[valid], col_slopes[valid])
+    best_fit_line = intercept_fit + slope_fit * freq
+
+    # Step 3: Plot results with matching colors
+    plt.figure(figsize=(6, 4))
+    for i, f in enumerate(freq):
+        plt.plot(f, col_slopes[i], 'o', color=colors[i], label=f'{f} Hz point' if i == 0 else None)
+    plt.plot(freq, best_fit_line, '-', color='black', label=f'Best-fit line: y={slope_fit:.4f}x+{intercept_fit:.4f}')
+    
+    plt.xlabel('Input frequency (Hz)')
+    plt.ylabel('Slope of best fit line')
+    plt.title(f'{title}: Slopes Across Frequencies')
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+    # Step 4: Return the final slope
+    return slope_fit
+
+# Run for both datasets
+slope0 = process_file(r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx', 'Slow synapses')
+slope1 = process_file(r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx', 'Fast synapses')
+
+
+print("Slow synapses", slope0)
+print("Fast synapses", slope1)
+
+def get_slopes_and_fit(file_path):
+    # Load the Excel file
+    df = pd.read_excel(file_path)
+    col_slopes = []
+    for col in df.columns:
+        y = df[col].dropna().values
+        x = np.arange(len(y))
+        if len(y) > 1:
+            slope, _, _, _, _ = linregress(x, y)
+            col_slopes.append(slope)
+        else:
+            col_slopes.append(np.nan)
+    col_slopes = np.array(col_slopes)
+
+    # Frequencies
+    freq = np.array([5, 10, 20, 40])
+    valid = ~np.isnan(col_slopes)
+    slope_fit, intercept_fit, _, _, _ = linregress(freq[valid], col_slopes[valid])
+    best_fit_line = intercept_fit + slope_fit * freq
+
+    return freq, col_slopes, best_fit_line, slope_fit, intercept_fit
+
+# Load both datasets
+freq_slow, slopes_slow, bestfit_slow, slope_slow, int_slow = get_slopes_and_fit(
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx')
+freq_fast, slopes_fast, bestfit_fast, slope_fast, int_fast = get_slopes_and_fit(
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx')
+
+# Plot both on the same figure
+colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red']
+
+plt.figure(figsize=(6, 4))
+
+# --- Slow synapses (white face, colored edge)
+for i, f in enumerate(freq_slow):
+    plt.plot(f, slopes_slow[i], 'o', 
+             markerfacecolor='white', markeredgecolor=colors[i],
+             markersize=8, label='Slow synapses' if i == 0 else "")
+plt.plot(freq_slow, bestfit_slow, '--', color='black', label=f'Slow fit: y={slope_slow:.4f}x+{int_slow:.4f}')
+
+# --- Fast synapses (solid color)
+for i, f in enumerate(freq_fast):
+    plt.plot(f, slopes_fast[i], 'o', 
+             color=colors[i], markersize=8, label='Fast synapses' if i == 0 else "")
+plt.plot(freq_fast, bestfit_fast, '-', color='gray', label=f'Fast fit: y={slope_fast:.4f}x+{int_fast:.4f}')
+
+plt.xlabel('Input frequency (Hz)')
+plt.ylabel('Slope of best fit line')
+plt.title('Slopes Across Frequencies: Slow vs Fast Synapses')
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+print("Slow synapses slope:", slope_slow)
+print("Fast synapses slope:", slope_fast)
+
+#%% 10 - Plot the best fit lines for each input frequency 
+
+import pandas as pd
+import numpy as np
+from scipy.stats import linregress
+import matplotlib.pyplot as plt
+
+def process_file(file_path, title):
+    # Load the Excel file
+    df = pd.read_excel(file_path)
+    freq_labels = [5, 10, 20, 40]  # One per column
+    colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red']  # Consistent color mapping
+
+    plt.figure(figsize=(6, 4))
+
+    # For each column (each input frequency)
+    for i, col in enumerate(df.columns):
+        y = df[col].dropna().values
+        x = np.arange(len(y))
+        if len(y) > 1:
+            slope, intercept, _, _, _ = linregress(x, y)
+            fit_line = intercept + slope * x
+
+            # Plot connected data points
+            plt.plot(x, y, 'o-', color=colors[i], markersize=3, label=f'{freq_labels[i]} Hz data')
+            # Plot best-fit line
+            plt.plot(x, fit_line, '--', color=colors[i], linewidth=2, label=f'{freq_labels[i]} Hz fit (slope={slope:.4f})')
+
+    plt.xlabel('Time (a.u.)')
+    plt.ylabel('Signal amplitude')
+    plt.title(f'{title}: Individual Frequency Fits')
+    plt.legend(fontsize=8)
+    plt.tight_layout()
+    plt.show()
+
+# --- Run for both datasets (two plots) ---
+process_file(
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx',
+    'Slow synapses'
+)
+
+process_file(
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx',
+    'Fast synapses'
+)
+
+
+#%% 10 - Plot the currents and membrane potentials for (r) 
+
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+import pandas as pd
+from scipy.signal import find_peaks
+
+def zform(z1,z2, f1,f2,f):
+    return z1+(z2-z1)/(f2-f1)*(f-f1)
+
+def getiext(f, taui0, tauy0, kiy0,
+            taui1, tauy1, kiy1,
+            dt, r, p1, ss0, ss1,
+            tmax, extra=0, seed=None):
+    T=tmax
+
+    if seed is not None:
+        np.random.seed(seed)
+
+    # Generate Poisson spike times
+    pretimes = []
+    t = 0.0
+    while t < T:
+        t += np.random.exponential(1.0 / f)
+        pretimes.append(t)
+
+    pretimes = np.array(pretimes)
+    spike_idx = (pretimes / dt).astype(int)
+
+    runtime = int(spike_idx.max() + extra + 1)
+
+    # Primary routing (fast vs slow)
+    route = np.random.rand(len(spike_idx)) < r
+
+    # Secondary duplication probability
+    duplicate = np.random.rand(len(spike_idx)) < p1
+
+    spike_to_y0 = np.zeros(runtime, dtype=bool)
+    spike_to_y1 = np.zeros(runtime, dtype=bool)
+
+    # Primary assignment
+    spike_to_y0[spike_idx[~route]] = True
+    spike_to_y1[spike_idx[route]] = True
+
+    # If duplicate is true, also add to the other pathway
+    spike_to_y0[spike_idx[route & duplicate]] = True
+    spike_to_y1[spike_idx[~route & duplicate]] = True
+
+    y0 = np.zeros(runtime)
+    y1 = np.zeros(runtime)
+    I0 = np.zeros(runtime)
+    I1 = np.zeros(runtime)
+
+    for i in range(1, runtime):
+
+        if spike_to_y0[i]:
+            y0[i-1] = ss0 # spike amplitude for slow
+        if spike_to_y1[i]:
+            y1[i-1] = ss1 # spike amplidue for fast
+
+        y0[i] = y0[i-1] + dt * (-y0[i-1] / tauy0)
+        y1[i] = y1[i-1] + dt * (-y1[i-1] / tauy1)
+
+        I0[i] = I0[i-1] + dt * (-I0[i-1] / taui0 + kiy0 * y0[i-1])
+        I1[i] = I1[i-1] + dt * (-I1[i-1] / taui1 + kiy1 * y1[i-1])
+
+    Iext = (1 - r) * I0 + r * I1
+
+    return Iext, I0, I1, y0, y1, runtime, spike_idx
+
+
+def getstats(f, taui0, tauy0, kiy0, taui1, tauy1, kiy1, dt, r, 
+                                 g, vb, C, Cr,
+                                 m0, m1, b):
+    # Fix fin plot
+    rlist=np.linspace(0,1,100)
+    tlist=[]
+    rateslist=[]
+    napslist=[]
+    for ind,r in enumerate(rlist):
+        print(ind, len(rlist))
+        Iext, _, _, _, _, runtime, _, _ = getiext(f, taui0, tauy0, kiy0, taui1,
+                                                  tauy1, kiy1, dt, r, m0, m1, b)
+        peaks, _ = find_peaks(Iext)
+        Inorm=Iext/Iext[peaks[0]]*b
+        _, tmean, naps, _ = gettmean(r, Inorm, g, vb, C, Cr, f)
+        rateslist.append(naps/runtime/dt)
+        tlist.append(tmean)
+        napslist.append(naps)
+    foutlist=1/np.array(tlist)
+    return rlist, foutlist, napslist
+
+def linfun(s1,s4,fast1,fast4,f,r):
+    return zform(s1,s4, 10,40,f)*(1-r)+zform(fast1,fast4, 10,40,f)*r
+
+
+# New function
+def gettmean(r, Iext, g, vb, C, Cr, f):
+    v=np.zeros(len(Iext))
+    v[0]=-60
+    apinds=[]
+    refper=40 # refper *dt (sec) = 4ms
+    aptimer=np.inf
+    posttimer=False
+    gfast=zform(g[6], g[7], 10, 40, f)
+    gslow=zform(g[10], g[11], 10, 40, f)
+    gfast2=zform(gr[6], gr[7], 10, 40, f)
+    gslow2=zform(gr[10], gr[11], 10, 40, f)
+    vbslow=zform(vb[10], vb[11], 10, 40, f)
+    vbfast=zform(vb[6], vb[7], 10, 40, f)
+    C1=linfun(C[10], C[11], C[6], C[7], f, r)
+    C2=linfun(Cr[10], Cr[11], Cr[6], Cr[7], f, r)
+    vreset=linfun(vbr[10], vbr[11], vbr[6], vbr[7], f, r)
+    
+    for i in range(1,len(Iext)):
+        if posttimer==False:
+            icurr = r*gfast*(v[i-1]-vbfast)+(1-r)*gslow*(v[i-1]-vbslow)
+            dvdt=((-icurr+Iext[i-1]))/C1
+        if posttimer==True:
+            icurr = r*gfast2*(v[i-1]-vbfast)+(1-r)*gslow2*(v[i-1]-vbslow)
+            dvdt=((-icurr+Iext[i-1]))/C2
+            
+        if aptimer == np.inf:
+            v[i] = v[i-1]+dvdt*dt
+        else:
+            v[i] = v[i-1]
+
+        if Iext[i]>Iext[i-1]:
+            posttimer=False
+
+        if aptimer != np.inf:
+            aptimer-=1
+        if v[i-1]>linfun(vth[10], vth[11], vth[6], vth[7], f, r):
+            v[i]=vreset
+            apinds.append(i)
+            aptimer=refper
+            posttimer=True
+        if aptimer==0:
+            aptimer=np.inf
+    aptimes=np.array(apinds)*dt
+    naps=len(aptimes)
+    ssaptimes=aptimes[int(0.3*len(aptimes)):]
+    tmean = np.mean(np.diff(ssaptimes))
+    return v, tmean, naps, aptimes
+
+
+def geti(dnum):
+
+    dsize= 'z' # f full, z zoomed
+    dsnum= 1 if dnum in [0, 2, 4,6,8,10] else 0 # Fixed
+    dlens=[4000,12000]
+    if dsize=='f':
+        I=data[:, dnum]
+        vd=data[:, dnum+13]
+    if dsize=='z':
+        I=data[:, dnum][:dlens[dsnum]]
+        vd=data[:, dnum+13][:dlens[dsnum]]
+
+    # Processing the data
+    I = 25*I
+    vd=50*vd
+    return I, vd
+
+dtype=0
+if dtype==0:
+    dir1=r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal'
+if dtype == 1:
+    dir1=r'C:\Users\Oliver\Desktop\PhD\3-Research\Neuron\SOM'
+os.chdir(dir1)
+
+
+df = pd.read_csv("Table0.csv")
+data=np.array(df)
+
+names = {
+    0: 'DE-F-10 Hz', 1: 'DE-F-40 Hz',
+    2: 'DE-M-10 Hz', 3: 'DE-M-40 Hz',
+    4: 'DE-S-10 Hz', 5: 'DE-S-40 Hz',
+
+    6: 'NR-F-10 Hz', 7: 'NR-F-40 Hz',
+    8: 'NR-M-10 Hz', 9: 'NR-M-40 Hz',
+    10: 'NR-S-10 Hz', 11: 'NR-S-40 Hz'
+}
+
+# 0-DF1, 1-DF4, 2-DM1, 3-DM4, 4-DS1, 5-DS4, 
+# 6-NF1, 7-NF4, 8-NM1, 9-NM4, 10-NS1, 11-NS4
+
+# Different parameters for each dataset
+#                0   1   2   3   4    5     6      7    8   9  10  11
+vb=np.array([-60.5,-60,-60,-60,-64.2,-64.2,-61.75,-63,-64,-65.5,-64,-63.8])
+#                0   1   2   3   4    5     6       7    8   9     10    11
+vbr=np.array([-60.5,-60,-60,-60,-64.2,-64.2,-61.75,-50,-50,-47,-64,-50])
+#    0        1           2          3        4         5
+C=[0.00011,  0.00011,  0.00011,  0.00011,  0.00011,  0.00011,
+   0.00009, 0.0001,  0.00011,  0.00011,  0.00011, 0.000111]
+#    6        7          8        9          10       11
+#    0        1           2          3        4         5
+Cr=[0.00011,  0.00011,  0.00011,  0.00011,  0.00011,  0.00011,
+   0.00009, 0.0001,  0.00011,  0.00011,  0.00011, 0.0001]
+#    6        7          8        9          10       11
+#    0        1          2      3        4        5
+g=[0.0037,  0.0037,  0.0037,  0.0037,  0.0037,  0.0037,
+   0.0035, 0.0037,  0.0037,  0.0037,  0.0037, 0.003]
+#    6        7       8        9       10       11
+    # 0        1          2      3        4        5
+gr=[0.0037,  0.0037,  0.0037,  0.0037,  0.0037,  0.0037,
+   0.0035, 0.004,  0.0037,  0.0037,  0.0037, 0.005]
+#    6        7       8        9       10       11
+#     0    1    2     3    4    5    6    7    8   9    10   11
+vth=[-40, -40, -40, -40, -40, -40, -40, -40, -41, -40, -40, -39]
+
+dt=1e-4 # 10 kHz = 10 x 10^3 Hz = 1x10^4 Hz = 10000 Hz yields dt = 1x10^(-4) = 0.0001
+
+# Original values which fit the current data from the datasets
+# Fixed 
+# =============================================================================
+# taui0 = 0.00265 # Slow
+# tauy0 = 0.00075
+# kiy0 = 360 #360 #2100 for matching
+# 
+# taui1 = 0.0014 # Fast
+# tauy1 = 0.00034
+# kiy1 = 860 #860 #4300 for matching
+# =============================================================================
+
+# Fixed 
+taui0 = 0.00265 # Slow
+tauy0 = 0.00075
+kiy0 = 360 #360 #2100 for matching # k's controls the transition from y to I
+
+taui1 = 0.0014 # Fast
+tauy1 = 0.00034
+kiy1 = 860 #860 #4300 for matching # k's controls the transition from y to I
+
+r=1
+p1=0.5
+f=50
+
+tmax=10
+navgs=1
+
+m0=slope0
+m1=slope1
+
+ss0=100 # slow spike amplitude
+ss1=20 # fast spike amplitude
+
+# set the slope for the fast synapses to 0
+ret = getiext(f, taui0, tauy0, kiy0, taui1, tauy1, kiy1, dt, r, p1, ss0, ss1, tmax)
+Iext=ret[0]
+# plt.subplot(3,1,1)
+# plt.plot(Iext)
+# plt.subplot(3,1,2)
+# plt.plot(ret[1])
+# plt.subplot(3,1,3)
+# plt.plot(ret[2])
+# plt.show()
+
+v, tmean, naps, aptimes = gettmean(r, Iext, g, vb, C, Cr, f)
+
+
+fs=15
+lw=2
+plt.subplot(4,1,1)
+plt.title('Fast synapse proprtion (r)={}\nCoincidence proportion (c) = {}\nInput frequency={} Hz'.format(r,p1, f), fontsize=fs)
+plt.plot(np.linspace(0,len(v), len(v))*dt, ret[1], linewidth=lw)
+plt.ylabel('Slow\ncurrent', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+plt.xticks([])
+plt.subplot(4,1,2)
+plt.plot(np.linspace(0,len(v), len(v))*dt, ret[2], linewidth=lw)
+plt.ylabel('Fast\ncurrent', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+plt.xticks([])
+plt.subplot(4,1,3)
+plt.plot(np.linspace(0,len(v), len(v))*dt, Iext, linewidth=lw)
+plt.tick_params(axis='both', labelsize=fs)
+plt.ylabel('Slow\n+\nFast\nCurrent', fontsize=fs)
+plt.xticks([])
+plt.subplot(4,1,4)
+plt.plot(np.linspace(0,len(v), len(v))*dt*1000, v, linewidth=lw)
+# plt.plot(np.linspace(0,len(v), len(v))*dt, vth*np.ones(len(v)))
+plt.tick_params(axis='both', labelsize=fs)
+plt.xlabel('Time (ms)', fontsize=fs)
+plt.ylabel('Membrane\npotential (mV)', fontsize=fs)
+plt.show()
+
+#%% 10 - Mechanistic bouton model
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+import pandas as pd
+from scipy.signal import find_peaks
+
+def zform(z1,z2, f1,f2,f):
+    return z1+(z2-z1)/(f2-f1)*(f-f1)
+
+def getiext(f, taui0, tauy0, kiy0,
+            taui1, tauy1, kiy1,
+            dt, r, p1, ss0, ss1,
+            tmax, extra=0, seed=None):
+    # ps and pf are probability of slow and fast bouton firing upon the
+    # arrival of an AP 
+    T=tmax
+
+    if seed is not None:
+        np.random.seed(seed)
+
+    # Generate Poisson spike times
+    pretimes = []
+    t = 0.0
+    while t < T:
+        t += np.random.exponential(1.0 / f)
+        pretimes.append(t)
+
+    pretimes = np.array(pretimes)
+    spike_idx = (pretimes / dt).astype(int)
+
+    runtime = int(spike_idx.max() + extra + 1)
+
+    # Primary routing (fast vs slow)
+    route = np.random.rand(len(spike_idx)) < r
+
+    # Secondary duplication probability
+    duplicate = np.random.rand(len(spike_idx)) < p1
+
+    spike_to_y0 = np.zeros(runtime, dtype=bool)
+    spike_to_y1 = np.zeros(runtime, dtype=bool)
+
+    # Primary assignment
+    spike_to_y0[spike_idx[~route]] = True
+    spike_to_y1[spike_idx[route]] = True
+
+    # If duplicate is true, also add to the other pathway
+    spike_to_y0[spike_idx[route & duplicate]] = True
+    spike_to_y1[spike_idx[~route & duplicate]] = True
+
+    y0 = np.zeros(runtime)
+    y1 = np.zeros(runtime)
+    I0 = np.zeros(runtime)
+    I1 = np.zeros(runtime)
+
+    for i in range(1, runtime):
+
+        if spike_to_y0[i]:
+            y0[i-1] = ss0 # spike amplitude for slow
+        if spike_to_y1[i]:
+            y1[i-1] = ss1 # spike amplidue for fast
+
+        y0[i] = y0[i-1] + dt * (-y0[i-1] / tauy0)
+        y1[i] = y1[i-1] + dt * (-y1[i-1] / tauy1)
+
+        I0[i] = I0[i-1] + dt * (-I0[i-1] / taui0 + kiy0 * y0[i-1])
+        I1[i] = I1[i-1] + dt * (-I1[i-1] / taui1 + kiy1 * y1[i-1])
+
+    Iext = (1 - r) * I0 + r * I1
+
+    return Iext, I0, I1, y0, y1, runtime, spike_idx
+
+
+def getiext2(f, taui0, tauy0, kiy0,
+            taui1, tauy1, kiy1,
+            dt, r, p1, ss0, ss1,
+            tmax, ps, pf, extra=0, seed=None):
+    # ps and pf are probability of slow and fast bouton firing upon the
+    # arrival of an AP 
+    T=tmax
+
+    if seed is not None:
+        np.random.seed(seed)
+
+    # Generate Poisson spike times
+    pretimes = []
+    t = 0.0
+    while t < T:
+        t += np.random.exponential(1.0 / f)
+        pretimes.append(t)
+
+    pretimes = np.array(pretimes)
+    spike_idx = (pretimes / dt).astype(int)
+
+    runtime = int(spike_idx.max() + extra + 1)
+
+    # Primary routing (fast vs slow)
+    route = np.random.rand(len(spike_idx)) < r
+
+    # Secondary duplication probability
+    duplicate = np.random.rand(len(spike_idx)) < p1
+
+    spike_to_y0 = np.zeros(runtime, dtype=bool)
+    spike_to_y1 = np.zeros(runtime, dtype=bool)
+
+    # Primary assignment
+    spike_to_y0[spike_idx[~route]] = True
+    spike_to_y1[spike_idx[route]] = True
+
+    # If duplicate is true, also add to the other pathway
+    spike_to_y0[spike_idx[route & duplicate]] = True
+    spike_to_y1[spike_idx[~route & duplicate]] = True
+
+    y0 = np.zeros(runtime)
+    y1 = np.zeros(runtime)
+    I0 = np.zeros(runtime)
+    I1 = np.zeros(runtime)
+
+    for i in range(1, runtime):
+
+        if spike_to_y0[i]:
+            y0[i-1] = ss0 # spike amplitude for slow
+        if spike_to_y1[i]:
+            y1[i-1] = ss1 # spike amplidue for fast
+
+        y0[i] = y0[i-1] + dt * (-y0[i-1] / tauy0)
+        y1[i] = y1[i-1] + dt * (-y1[i-1] / tauy1)
+
+        I0[i] = I0[i-1] + dt * (-I0[i-1] / taui0 + kiy0 * y0[i-1])
+        I1[i] = I1[i-1] + dt * (-I1[i-1] / taui1 + kiy1 * y1[i-1])
+
+    Iext = (1 - r) * I0 + r * I1
+
+    return Iext, I0, I1, y0, y1, runtime, spike_idx
+
+
+def getstats(f, taui0, tauy0, kiy0, taui1, tauy1, kiy1, dt, r, 
+                                 g, vb, C, Cr,
+                                 m0, m1, b):
+    # Fix fin plot
+    rlist=np.linspace(0,1,100)
+    tlist=[]
+    rateslist=[]
+    napslist=[]
+    for ind,r in enumerate(rlist):
+        print(ind, len(rlist))
+        Iext, _, _, _, _, runtime, _, _ = getiext(f, taui0, tauy0, kiy0, taui1,
+                                                  tauy1, kiy1, dt, r, m0, m1, b)
+        peaks, _ = find_peaks(Iext)
+        Inorm=Iext/Iext[peaks[0]]*b
+        _, tmean, naps, _ = gettmean(r, Inorm, g, vb, C, Cr, f)
+        rateslist.append(naps/runtime/dt)
+        tlist.append(tmean)
+        napslist.append(naps)
+    foutlist=1/np.array(tlist)
+    return rlist, foutlist, napslist
+
+def linfun(s1,s4,fast1,fast4,f,r):
+    return zform(s1,s4, 10,40,f)*(1-r)+zform(fast1,fast4, 10,40,f)*r
+
+
+# New function
+def gettmean(r, Iext, g, vb, C, Cr, f):
+    v=np.zeros(len(Iext))
+    v[0]=-60
+    apinds=[]
+    refper=40 # refper *dt (sec) = 4ms
+    aptimer=np.inf
+    posttimer=False
+    gfast=zform(g[6], g[7], 10, 40, f)
+    gslow=zform(g[10], g[11], 10, 40, f)
+    gfast2=zform(gr[6], gr[7], 10, 40, f)
+    gslow2=zform(gr[10], gr[11], 10, 40, f)
+    vbslow=zform(vb[10], vb[11], 10, 40, f)
+    vbfast=zform(vb[6], vb[7], 10, 40, f)
+    C1=linfun(C[10], C[11], C[6], C[7], f, r)
+    C2=linfun(Cr[10], Cr[11], Cr[6], Cr[7], f, r)
+    vreset=linfun(vbr[10], vbr[11], vbr[6], vbr[7], f, r)
+    
+    for i in range(1,len(Iext)):
+        if posttimer==False:
+            icurr = r*gfast*(v[i-1]-vbfast)+(1-r)*gslow*(v[i-1]-vbslow)
+            dvdt=((-icurr+Iext[i-1]))/C1
+        if posttimer==True:
+            icurr = r*gfast2*(v[i-1]-vbfast)+(1-r)*gslow2*(v[i-1]-vbslow)
+            dvdt=((-icurr+Iext[i-1]))/C2
+            
+        if aptimer == np.inf:
+            v[i] = v[i-1]+dvdt*dt
+        else:
+            v[i] = v[i-1]
+
+        if Iext[i]>Iext[i-1]:
+            posttimer=False
+
+        if aptimer != np.inf:
+            aptimer-=1
+        if v[i-1]>linfun(vth[10], vth[11], vth[6], vth[7], f, r):
+            v[i]=vreset
+            apinds.append(i)
+            aptimer=refper
+            posttimer=True
+        if aptimer==0:
+            aptimer=np.inf
+    aptimes=np.array(apinds)*dt
+    naps=len(aptimes)
+    ssaptimes=aptimes[int(0.3*len(aptimes)):]
+    tmean = np.mean(np.diff(ssaptimes))
+    return v, tmean, naps, aptimes
+
+
+def geti(dnum):
+
+    dsize= 'z' # f full, z zoomed
+    dsnum= 1 if dnum in [0, 2, 4,6,8,10] else 0 # Fixed
+    dlens=[4000,12000]
+    if dsize=='f':
+        I=data[:, dnum]
+        vd=data[:, dnum+13]
+    if dsize=='z':
+        I=data[:, dnum][:dlens[dsnum]]
+        vd=data[:, dnum+13][:dlens[dsnum]]
+
+    # Processing the data
+    I = 25*I
+    vd=50*vd
+    return I, vd
+
+dtype=0
+if dtype==0:
+    dir1=r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal'
+if dtype == 1:
+    dir1=r'C:\Users\Oliver\Desktop\PhD\3-Research\Neuron\SOM'
+os.chdir(dir1)
+
+
+df = pd.read_csv("Table0.csv")
+data=np.array(df)
+
+names = {
+    0: 'DE-F-10 Hz', 1: 'DE-F-40 Hz',
+    2: 'DE-M-10 Hz', 3: 'DE-M-40 Hz',
+    4: 'DE-S-10 Hz', 5: 'DE-S-40 Hz',
+
+    6: 'NR-F-10 Hz', 7: 'NR-F-40 Hz',
+    8: 'NR-M-10 Hz', 9: 'NR-M-40 Hz',
+    10: 'NR-S-10 Hz', 11: 'NR-S-40 Hz'
+}
+
+# 0-DF1, 1-DF4, 2-DM1, 3-DM4, 4-DS1, 5-DS4, 
+# 6-NF1, 7-NF4, 8-NM1, 9-NM4, 10-NS1, 11-NS4
+
+# Different parameters for each dataset
+#                0   1   2   3   4    5     6      7    8   9  10  11
+vb=np.array([-60.5,-60,-60,-60,-64.2,-64.2,-61.75,-63,-64,-65.5,-64,-63.8])
+#                0   1   2   3   4    5     6       7    8   9     10    11
+vbr=np.array([-60.5,-60,-60,-60,-64.2,-64.2,-61.75,-50,-50,-47,-64,-50])
+#    0        1           2          3        4         5
+C=[0.00011,  0.00011,  0.00011,  0.00011,  0.00011,  0.00011,
+   0.00009, 0.0001,  0.00011,  0.00011,  0.00011, 0.000111]
+#    6        7          8        9          10       11
+#    0        1           2          3        4         5
+Cr=[0.00011,  0.00011,  0.00011,  0.00011,  0.00011,  0.00011,
+   0.00009, 0.0001,  0.00011,  0.00011,  0.00011, 0.0001]
+#    6        7          8        9          10       11
+#    0        1          2      3        4        5
+g=[0.0037,  0.0037,  0.0037,  0.0037,  0.0037,  0.0037,
+   0.0035, 0.0037,  0.0037,  0.0037,  0.0037, 0.003]
+#    6        7       8        9       10       11
+    # 0        1          2      3        4        5
+gr=[0.0037,  0.0037,  0.0037,  0.0037,  0.0037,  0.0037,
+   0.0035, 0.004,  0.0037,  0.0037,  0.0037, 0.005]
+#    6        7       8        9       10       11
+#     0    1    2     3    4    5    6    7    8   9    10   11
+vth=[-40, -40, -40, -40, -40, -40, -40, -40, -41, -40, -40, -39]
+
+dt=1e-4 # 10 kHz = 10 x 10^3 Hz = 1x10^4 Hz = 10000 Hz yields dt = 1x10^(-4) = 0.0001
+
+# Original values which fit the current data from the datasets
+# Fixed 
+# =============================================================================
+# taui0 = 0.00265 # Slow
+# tauy0 = 0.00075
+# kiy0 = 360 #360 #2100 for matching
+# 
+# taui1 = 0.0014 # Fast
+# tauy1 = 0.00034
+# kiy1 = 860 #860 #4300 for matching
+# =============================================================================
+
+# Fixed 
+taui0 = 0.00265 # Slow
+tauy0 = 0.00075
+kiy0 = 360 #360 #2100 for matching # k's controls the transition from y to I
+
+taui1 = 0.0014 # Fast
+tauy1 = 0.00034
+kiy1 = 860 #860 #4300 for matching # k's controls the transition from y to I
+
+
+def make_normalized_template(td, tr, tmax, dt, scale_I):
+    # SynKernel = A * ( exp(-(x)/tauDecay) - exp(-(x)/tauRise) )
+    t = np.arange(0, tmax, dt)
+    A = scale_I / (-(tr/td)**(td/(td-tr)) + (tr/td)**(tr/(td-tr)))
+    template = A * (np.exp(-t / td) - np.exp(-t / tr))
+    return t, template
+
+def generate_spike_train(f, tmax, dt, template0, template1, p0, p1, M0, M1):
+    t = np.arange(0, tmax, dt)
+    out = np.zeros_like(t)
+    L = len(t)
+    Ltemp = len(template0)
+
+    tcurr = 0
+    timer = dt
+    e = 1e-6
+
+    while tcurr < tmax:
+        t0 = np.random.exponential(1/(f+e))
+
+        if t0 < timer:
+            pos = int(tcurr/dt)
+            end = min(pos + Ltemp, L)
+            
+            out[pos:end] += np.random.binomial(M0, p0)*template0[:end-pos]
+            out[pos:end] += np.random.binomial(M1, p1)*template1[:end-pos]
+            
+            timer -= t0
+            tcurr += t0
+        else:
+            tcurr += timer
+            timer = dt
+
+    return t, out
+
+
+dt=1e-3
+ttemp=10
+
+M0 = 1
+M1 = 10
+
+scale_I0 = 1
+scale_I1 = 10
+
+td0=0.5
+tr0=0.2
+td1=0.1
+tr1=0.2
+
+p0=0.1
+p1=0.1
+
+t, temp0 = make_normalized_template(td0, tr0, ttemp, dt, scale_I0)
+t, temp1 = make_normalized_template(td1, tr1, ttemp, dt, scale_I1)
+plt.plot(t, temp0)
+plt.plot(t, temp1)
+plt.show()
+
+t, Iext = generate_spike_train(f, tmax, dt, temp0, temp1, p0, p1, M0, M1)
+
+plt.plot(t, Iext)
+
+
+#%% test end
+
+
+
+
+r=0.5
+p1=0.5
+f=10
+
+tmax=0.5
+navgs=1
+
+m0=slope0
+m1=slope1
+
+ss0=5 # slow spike amplitude
+ss1=2 # fast spike amplitude
+
+# set the slope for the fast synapses to 0
+ret = getiext(f, taui0, tauy0, kiy0, taui1, tauy1, kiy1, dt, r, p1, ss0, ss1, tmax)
+Iext=ret[0]
+# plt.subplot(3,1,1)
+# plt.plot(Iext)
+# plt.subplot(3,1,2)
+# plt.plot(ret[1])
+# plt.subplot(3,1,3)
+# plt.plot(ret[2])
+# plt.show()
+
+v, tmean, naps, aptimes = gettmean(r, Iext, g, vb, C, Cr, f)
+
+
+
+
+fs=15
+lw=2
+plt.subplot(4,1,1)
+plt.title('Fast synapse proprtion (r)={}\nCoincidence proportion (c) = {}\nInput frequency={} Hz'.format(r,p1, f), fontsize=fs)
+plt.plot(np.linspace(0,len(v), len(v))*dt, ret[1], linewidth=lw)
+plt.ylabel('Slow\ncurrent', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+plt.xticks([])
+plt.subplot(4,1,2)
+plt.plot(np.linspace(0,len(v), len(v))*dt, ret[2], linewidth=lw)
+plt.ylabel('Fast\ncurrent', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+plt.xticks([])
+plt.subplot(4,1,3)
+plt.plot(np.linspace(0,len(v), len(v))*dt, Iext, linewidth=lw)
+plt.tick_params(axis='both', labelsize=fs)
+plt.ylabel('Slow\n+\nFast\nCurrent', fontsize=fs)
+plt.xticks([])
+plt.subplot(4,1,4)
+plt.plot(np.linspace(0,len(v), len(v))*dt*1000, v, linewidth=lw)
+# plt.plot(np.linspace(0,len(v), len(v))*dt, vth*np.ones(len(v)))
+plt.tick_params(axis='both', labelsize=fs)
+plt.xlabel('Time (ms)', fontsize=fs)
+plt.ylabel('Membrane\npotential (mV)', fontsize=fs)
+plt.show()
