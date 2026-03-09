@@ -8032,6 +8032,89 @@ def geti(dnum):
     vd=50*vd
     return I, vd
 
+def make_normalized_template(td, tr, tmax, dt, scale_I):
+    # SynKernel = A * ( exp(-(x)/tauDecay) - exp(-(x)/tauRise) )
+    t = np.arange(0, tmax, dt)
+    A = scale_I / (-(tr/td)**(td/(td-tr)) + (tr/td)**(tr/(td-tr)))
+    template = A * (np.exp(-t / td) - np.exp(-t / tr))
+    return t, template
+
+def generate_spike_train(f, tmax, dt, template0, template1, p0, p1, M0, M1):
+    t = np.arange(0, tmax, dt)
+    out = np.zeros_like(t)
+    L = len(t)
+    Ltemp = len(template0)
+
+    tcurr = 0
+    timer = dt
+    e = 1e-6
+
+    while tcurr < tmax:
+        t0 = np.random.exponential(1/(f+e))
+
+        if t0 < timer:
+            pos = int(tcurr/dt)
+            end = min(pos + Ltemp, L)
+            
+            out[pos:end] += np.random.binomial(M0, p0)*template0[:end-pos]
+            out[pos:end] += np.random.binomial(M1, p1)*template1[:end-pos]
+            
+            timer -= t0
+            tcurr += t0
+        else:
+            tcurr += timer
+            timer = dt
+
+    return t, out
+
+def gettmean(r, Iext, g, vb, C, Cr, f):
+    v=np.zeros(len(Iext))
+    v[0]=-60
+    apinds=[]
+    refper=40 # refper *dt (sec) = 4ms
+    aptimer=np.inf
+    posttimer=False
+    gfast=zform(g[6], g[7], 10, 40, f)
+    gslow=zform(g[10], g[11], 10, 40, f)
+    gfast2=zform(gr[6], gr[7], 10, 40, f)
+    gslow2=zform(gr[10], gr[11], 10, 40, f)
+    vbslow=zform(vb[10], vb[11], 10, 40, f)
+    vbfast=zform(vb[6], vb[7], 10, 40, f)
+    C1=linfun(C[10], C[11], C[6], C[7], f, r)
+    C2=linfun(Cr[10], Cr[11], Cr[6], Cr[7], f, r)
+    vreset=linfun(vbr[10], vbr[11], vbr[6], vbr[7], f, r)
+    
+    for i in range(1,len(Iext)):
+        if posttimer==False:
+            icurr = r*gfast*(v[i-1]-vbfast)+(1-r)*gslow*(v[i-1]-vbslow)
+            dvdt=((-icurr+Iext[i-1]))/C1
+        if posttimer==True:
+            icurr = r*gfast2*(v[i-1]-vbfast)+(1-r)*gslow2*(v[i-1]-vbslow)
+            dvdt=((-icurr+Iext[i-1]))/C2
+            
+        if aptimer == np.inf:
+            v[i] = v[i-1]+dvdt*dt
+        else:
+            v[i] = v[i-1]
+
+        if Iext[i]>Iext[i-1]:
+            posttimer=False
+
+        if aptimer != np.inf:
+            aptimer-=1
+        if v[i-1]>linfun(vth[10], vth[11], vth[6], vth[7], f, r):
+            v[i]=vreset
+            apinds.append(i)
+            aptimer=refper
+            posttimer=True
+        if aptimer==0:
+            aptimer=np.inf
+    aptimes=np.array(apinds)*dt
+    naps=len(aptimes)
+    ssaptimes=aptimes[int(0.3*len(aptimes)):]
+    tmean = np.mean(np.diff(ssaptimes))
+    return v, tmean, naps, aptimes
+
 dtype=0
 if dtype==0:
     dir1=r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal'
@@ -8104,58 +8187,25 @@ tauy1 = 0.00034
 kiy1 = 860 #860 #4300 for matching # k's controls the transition from y to I
 
 
-def make_normalized_template(td, tr, tmax, dt, scale_I):
-    # SynKernel = A * ( exp(-(x)/tauDecay) - exp(-(x)/tauRise) )
-    t = np.arange(0, tmax, dt)
-    A = scale_I / (-(tr/td)**(td/(td-tr)) + (tr/td)**(tr/(td-tr)))
-    template = A * (np.exp(-t / td) - np.exp(-t / tr))
-    return t, template
+tmax = 0.1
+ttemp=0.02
+dt=1e-4
 
-def generate_spike_train(f, tmax, dt, template0, template1, p0, p1, M0, M1):
-    t = np.arange(0, tmax, dt)
-    out = np.zeros_like(t)
-    L = len(t)
-    Ltemp = len(template0)
+f=40
 
-    tcurr = 0
-    timer = dt
-    e = 1e-6
+M0 = 5
+M1 = 5
 
-    while tcurr < tmax:
-        t0 = np.random.exponential(1/(f+e))
+scale_I0 = 0.5
+scale_I1 = 1
 
-        if t0 < timer:
-            pos = int(tcurr/dt)
-            end = min(pos + Ltemp, L)
-            
-            out[pos:end] += np.random.binomial(M0, p0)*template0[:end-pos]
-            out[pos:end] += np.random.binomial(M1, p1)*template1[:end-pos]
-            
-            timer -= t0
-            tcurr += t0
-        else:
-            tcurr += timer
-            timer = dt
+td0=3e-3
+tr0=0.5e-3
+td1=1e-3
+tr1=0.1e-3
 
-    return t, out
-
-
-dt=1e-3
-ttemp=10
-
-M0 = 1
-M1 = 10
-
-scale_I0 = 1
-scale_I1 = 10
-
-td0=0.5
-tr0=0.2
-td1=0.1
-tr1=0.2
-
-p0=0.1
-p1=0.1
+p0=0.2
+p1=0.2
 
 t, temp0 = make_normalized_template(td0, tr0, ttemp, dt, scale_I0)
 t, temp1 = make_normalized_template(td1, tr1, ttemp, dt, scale_I1)
@@ -8163,61 +8213,17 @@ plt.plot(t, temp0)
 plt.plot(t, temp1)
 plt.show()
 
+
 t, Iext = generate_spike_train(f, tmax, dt, temp0, temp1, p0, p1, M0, M1)
-
-plt.plot(t, Iext)
-# New function
-def gettmean(r, Iext, g, vb, C, Cr, f):
-    v=np.zeros(len(Iext))
-    v[0]=-60
-    apinds=[]
-    refper=40 # refper *dt (sec) = 4ms
-    aptimer=np.inf
-    posttimer=False
-    gfast=zform(g[6], g[7], 10, 40, f)
-    gslow=zform(g[10], g[11], 10, 40, f)
-    gfast2=zform(gr[6], gr[7], 10, 40, f)
-    gslow2=zform(gr[10], gr[11], 10, 40, f)
-    vbslow=zform(vb[10], vb[11], 10, 40, f)
-    vbfast=zform(vb[6], vb[7], 10, 40, f)
-    C1=linfun(C[10], C[11], C[6], C[7], f, r)
-    C2=linfun(Cr[10], Cr[11], Cr[6], Cr[7], f, r)
-    vreset=linfun(vbr[10], vbr[11], vbr[6], vbr[7], f, r)
-    
-    for i in range(1,len(Iext)):
-        if posttimer==False:
-            icurr = r*gfast*(v[i-1]-vbfast)+(1-r)*gslow*(v[i-1]-vbslow)
-            dvdt=((-icurr+Iext[i-1]))/C1
-        if posttimer==True:
-            icurr = r*gfast2*(v[i-1]-vbfast)+(1-r)*gslow2*(v[i-1]-vbslow)
-            dvdt=((-icurr+Iext[i-1]))/C2
-            
-        if aptimer == np.inf:
-            v[i] = v[i-1]+dvdt*dt
-        else:
-            v[i] = v[i-1]
-
-        if Iext[i]>Iext[i-1]:
-            posttimer=False
-
-        if aptimer != np.inf:
-            aptimer-=1
-        if v[i-1]>linfun(vth[10], vth[11], vth[6], vth[7], f, r):
-            v[i]=vreset
-            apinds.append(i)
-            aptimer=refper
-            posttimer=True
-        if aptimer==0:
-            aptimer=np.inf
-    aptimes=np.array(apinds)*dt
-    naps=len(aptimes)
-    ssaptimes=aptimes[int(0.3*len(aptimes)):]
-    tmean = np.mean(np.diff(ssaptimes))
-    return v, tmean, naps, aptimes
-
 v, tmean, naps, aptimes = gettmean(r, Iext, g, vb, C, Cr, f)
-plt.figure()
+
+plt.subplot(2,1,1)
+plt.plot(t, Iext)
+
+plt.subplot(2,1,2)
 plt.plot(t, v)
+plt.plot(t, linfun(vth[10], vth[11], vth[6], vth[7], f, r)*np.ones(len(t)), 
+         color='k')
 
 #%% test end
 
