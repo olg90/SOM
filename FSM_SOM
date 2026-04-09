@@ -9361,15 +9361,35 @@ def make_normalized_template(td, tr, tmax, dt, scale_I):
     template = A * (np.exp(-t / td) - np.exp(-t / tr))
     return t, template
 
-def spike_amplitude(delta_t):
-    slope = 100.0
-    intercept = 1.0
-    return slope * delta_t + intercept
+# def spike_amplitude(delta_t, A0, A1, c, H):
+#     x = (c * delta_t)**H
+#     return (A1 + A0 * x) / (1 + x)
+
+def spike_amplitude(delta_t, r,
+                    A0_max, A0_min,
+                    A1_max, A1_min,
+                    c0, c1,
+                    H0, H1):
+
+    # low-frequency (Δt large)
+    A_low = (1 - r) * A0_max + r * A1_max
+
+    # high-frequency (Δt small)
+    A_high = (1 - r) * A0_min + r * A1_min
+
+    # interpolate shape parameters
+    c = (1 - r) * c0 + r * c1
+    H = (1 - r) * H0 + r * H1
+
+    x = (c * delta_t)**H
+    return (A_high + A_low * x) / (1 + x)
 
 
 def getiext(f, template0, template1,
             dt, r, p1,
-            tmax, extra=0, seed=None):
+            tmax,
+            A0, A1, c, H,
+            extra=0, seed=None):
 
     if seed is not None:
         np.random.seed(seed)
@@ -9394,15 +9414,12 @@ def getiext(f, template0, template1,
     route = np.random.rand(len(spike_idx)) < r
     duplicate = np.random.rand(len(spike_idx)) < p1
 
-    # build branch spike trains FIRST
     spike_y0 = list(spike_idx[~route])
     spike_y1 = list(spike_idx[route])
 
-    # duplication adds spikes but DOES NOT share ISI
     spike_y0 += list(spike_idx[route & duplicate])
     spike_y1 += list(spike_idx[~route & duplicate])
 
-    # convert to arrays and sort
     spike_y0 = np.array(sorted(spike_y0))
     spike_y1 = np.array(sorted(spike_y1))
 
@@ -9411,8 +9428,8 @@ def getiext(f, template0, template1,
     isi_y1 = np.diff(np.concatenate(([0], spike_y1))) * dt
 
     # ---------- amplitudes per branch ----------
-    amps_y0 = np.array([spike_amplitude(dt_i) for dt_i in isi_y0])
-    amps_y1 = np.array([spike_amplitude(dt_i) for dt_i in isi_y1])
+    amps_y0 = np.array([spike_amplitude(dt_i, A0, A1, c, H) for dt_i in isi_y0])
+    amps_y1 = np.array([spike_amplitude(dt_i, A0, A1, c, H) for dt_i in isi_y1])
 
     # ---------- currents ----------
     I0 = np.zeros(runtime)
