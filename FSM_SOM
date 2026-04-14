@@ -9952,7 +9952,7 @@ dt=1e-4
 
 f=40 # <---------- Input frequency
 
-r = 0
+r = 1
 p1 = 0 # probability spikes occur together
 
 delta_t_slow, slopes_slow, dt_dense_slow, fit_slow, \
@@ -10097,10 +10097,11 @@ t, temp0 = make_normalized_template(td0, tr0, ttemp, dt, scale_I0)
 t, temp1 = make_normalized_template(td1, tr1, ttemp, dt, scale_I1)
 
 navgs = 10
-f = 40  # fixed input rate for heatmap (change if needed)
+f = 10  # fixed input rate for heatmap (change if needed)
 
 rlist = np.linspace(0, 1, 40)
 p1list = np.linspace(0, 1, 40)
+
 
 fout_matrix = np.zeros((len(p1list), len(rlist)))
 
@@ -10115,19 +10116,14 @@ for i, p1 in enumerate(p1list):
 
         for q in range(navgs):
             print(i, len(p1list), j, len(rlist), q, navgs)
-            ret = getiextd(f, temp0, temp1,
-                        dt, r, p1,
-                        scale_I0, scale_I1, 
-                        c0, c1,
-                        H0, H1,
-                        slope0, slope1)
+            ret = getiextd(f, temp0, temp1, dt, r, 
+                           p1, scale_I0, scale_I1, c0, c1, H0, H1, slope0, slope1)
 
             v, tmean, naps, aptimes = gettmean(
                 r, ret[0], g, vb, C, Cr, f
             )
 
-            if len(aptimes) > 1:
-                fav.append(naps)
+            fav.append(naps)
 
         if len(fav) > 0:
             fout_matrix[i, j] = np.mean(fav)
@@ -10153,7 +10149,9 @@ plt.tick_params(axis='both', labelsize=fs)
 
 # Create colorbar and set label size
 cbar = plt.colorbar(im)
-cbar.set_label('Output firing rate', fontsize=fs)          # label size
+cbar.set_label('Mean # of postsynaptic APs', fontsize=fs, rotation=270, 
+               labelpad=20)
+          # label size
 cbar.ax.tick_params(labelsize=fs)            # tick label size
 
 plt.show()
