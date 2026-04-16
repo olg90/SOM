@@ -4637,14 +4637,14 @@ for idnum in range(4):
     v, tmean, naps, aptimes = gettmean(r, Iext, g, vb, dnum, C, Cr, vd, f)
     
     plt.subplot(2, 4, idnum + 1)
-    plt.plot(Is[idnum], label='data')
-    plt.plot(Iext, alpha=0.5, label='simulation')
+    plt.plot(np.linspace(0, len(Is[idnum]), len(Is[idnum]))*dt, Is[idnum], label='data')
+    plt.plot(np.linspace(0, len(Iext), len(Iext))*dt, Iext, alpha=0.5, label='simulation')
     plt.title(names[nnames[idnum]])
     plt.legend()
     plt.subplot(2, 4, idnum + 5)
-    plt.plot(vs[idnum])
+    plt.plot(np.linspace(0, len(vs[idnum]), len(vs[idnum]))*dt, vs[idnum])
     
-    plt.plot(v, alpha=0.8)
+    plt.plot(np.linspace(0, len(v), len(v))*dt, v, alpha=0.8)
     
 
 plt.tight_layout()
@@ -9069,18 +9069,16 @@ def getiext(f, template0, template1,
 # Additive up to 10
 def getiext(f, template0, template1,
             dt, r, p1,
-            tmax,
             A0, A1,
             c0, c1,
             H0, H1,
             slope0, slope1):
 
-    import numpy as np
 
     # ---------- generate base spike train ----------
     pretimes = []
     tcurr = 0.0
-    while tcurr < tmax:
+    while len(pretimes) <= 11:
         tcurr += np.random.exponential(1.0 / f)
         pretimes.append(tcurr)
 
@@ -9307,11 +9305,11 @@ H1=H_fast
 slope0=m0_slow
 slope1=m0_fast
 
-scale_I1 = 0.1 # fast peak
-scale_I0 = 0.6*scale_I1 # slow peak
+scale_I0 = 0.07 # slow peak
+scale_I1 = 0.2 # fast peak
 
-tr0=0.5e-3 # slow rise
-td0=1.2e-3 # slow decay
+tr0=0.7e-3 # slow rise
+td0=0.9e-3 # slow decay
 
 tr1=0.1e-3 # fast rise
 td1=0.5e-3 # fast decay
@@ -9327,7 +9325,6 @@ t, temp1 = make_normalized_template(td1, tr1, ttemp, dt, scale_I1)
 
 Iext, I0, I1, runtime, spike_idx, spike_y0, spike_y1 = getiext(f, temp0, temp1,
             dt, r, p1,
-            tmax,
             scale_I0, scale_I1, 
             c0, c1,
             H0, H1,
@@ -9506,11 +9503,11 @@ H1=H_fast
 slope0=m0_slow
 slope1=m0_fast
 
-scale_I1 = 1 # fast peak
-scale_I0 = 0.6*scale_I1 # slow peak
+scale_I0 = 0.07 # slow peak
+scale_I1 = 0.2 # fast peak
 
-tr0=0.5e-3 # slow rise
-td0=1.2e-3 # slow decay
+tr0=0.7e-3 # slow rise
+td0=0.9e-3 # slow decay
 
 tr1=0.1e-3 # fast rise
 td1=0.5e-3 # fast decay
@@ -9519,8 +9516,7 @@ td1=0.5e-3 # fast decay
 t, temp0 = make_normalized_template(td0, tr0, ttemp, dt, scale_I0)
 t, temp1 = make_normalized_template(td1, tr1, ttemp, dt, scale_I1)
 
-tmax = 20
-navgs = 5
+navgs = 20
 f = 40  # fixed input rate for heatmap (change if needed)
 
 rlist = np.linspace(0, 1, 40)
@@ -9539,8 +9535,8 @@ for i, p1 in enumerate(p1list):
 
         for q in range(navgs):
             print(i, len(p1list), j, len(rlist), q, navgs)
-            ret = getiext(f, temp0, temp1, dt, r, p1, tmax, 
-                          scale_I0, scale_I1, c0, c1, H0, H1, slope0, slope1)
+            ret = getiext(f, temp0, temp1, dt, 
+                r, p1, scale_I0, scale_I1, c0, c1, H0, H1, slope0, slope1)
 
             v, tmean, naps, aptimes = gettmean(
                 r, ret[0], g, vb, C, Cr, f
@@ -9953,7 +9949,7 @@ dt=1e-4
 f=40 # <---------- Input frequency
 
 r = 1
-p1 = 0 # probability spikes occur together
+p1 = 0.8 # probability spikes occur together
 
 delta_t_slow, slopes_slow, dt_dense_slow, fit_slow, \
 m0_slow, c_slow, H_slow = get_slopes_and_fit(
@@ -9986,7 +9982,6 @@ td0=0.9e-3 # slow decay
 
 tr1=0.1e-3 # fast rise
 td1=0.5e-3 # fast decay
-
 
 t, temp0 = make_normalized_template(td0, tr0, ttemp, dt, scale_I0)
 t, temp1 = make_normalized_template(td1, tr1, ttemp, dt, scale_I1)
@@ -10049,6 +10044,8 @@ plt.tick_params(axis='both', labelsize=fs)
 
 plt.show()
 
+
+
 #%% 11 - Calculate heatmap fout vs (r and p1) - deterministic
 
 # ======================
@@ -10097,7 +10094,7 @@ t, temp0 = make_normalized_template(td0, tr0, ttemp, dt, scale_I0)
 t, temp1 = make_normalized_template(td1, tr1, ttemp, dt, scale_I1)
 
 navgs = 10
-f = 10  # fixed input rate for heatmap (change if needed)
+f = 40  # fixed input rate for heatmap (change if needed)
 
 rlist = np.linspace(0, 1, 40)
 p1list = np.linspace(0, 1, 40)
@@ -10123,6 +10120,9 @@ for i, p1 in enumerate(p1list):
                 r, ret[0], g, vb, C, Cr, f
             )
 
+# =============================================================================
+#             fav.append(1/np.mean(np.diff(aptimes)))
+# =============================================================================
             fav.append(naps)
 
         if len(fav) > 0:
@@ -10156,19 +10156,81 @@ cbar.ax.tick_params(labelsize=fs)            # tick label size
 
 plt.show()
 
+#%% 11 - Mechanistic model with fitting (deterministic) - linear m(f)
 
-
-#%% Testing spikes
 import numpy as np
 import matplotlib.pyplot as plt
+import os
+import pandas as pd
+from scipy.signal import find_peaks
+from scipy.stats import linregress
 
 # =========================================================
-# ORIGINAL FUNCTIONS (UNCHANGED LOGIC)
+# HELPERS (UNCHANGED)
 # =========================================================
 
-def spike_amplitude(delta_t, slope0, A, c, H):
-    return A + slope0 * delta_t / (1 + (delta_t / c)**H)
+def zform(z1,z2, f1,f2,f):
+    return z1+(z2-z1)/(f2-f1)*(f-f1)
 
+def linfun(s1,s4,fast1,fast4,f,r):
+    return zform(s1,s4, 10,40,f)*(1-r)+zform(fast1,fast4, 10,40,f)*r
+
+# =========================================================
+# NEW LINEAR MODEL
+# =========================================================
+
+def model(delta_t, a, b):
+    return a / delta_t + b
+
+def spike_amplitude(delta_t, a, b, S_prev):
+    # S(n+1) = S(n) + m(dt)*dt
+    return S_prev + model(delta_t, a, b) * delta_t
+
+# =========================================================
+# FITTING (UNCHANGED LOGIC)
+# =========================================================
+
+def compute_slopes(file_path):
+    df = pd.read_excel(file_path)
+
+    col_slopes = []
+    for col in df.columns:
+        y = df[col].dropna().values
+        x = np.arange(len(y))
+        if len(y) > 1:
+            slope, _, _, _, _ = linregress(x, y)
+            col_slopes.append(slope)
+        else:
+            col_slopes.append(np.nan)
+
+    col_slopes = np.array(col_slopes)
+
+    freq = np.array([5, 10, 20, 40])
+    delta_t = 1 / freq
+
+    return delta_t, col_slopes
+
+def fit_linear_model(delta_t, col_slopes):
+    valid = ~np.isnan(col_slopes)
+
+    x = 1.0 / delta_t[valid]
+    y = col_slopes[valid]
+
+    a, b, _, _, _ = linregress(x, y)
+    return a, b
+
+def get_slopes_and_fit(file_path):
+    delta_t, col_slopes = compute_slopes(file_path)
+    a, b = fit_linear_model(delta_t, col_slopes)
+
+    dt_dense = np.linspace(np.min(delta_t), np.max(delta_t), 200)
+    fit_curve = model(dt_dense, a, b)
+
+    return delta_t, col_slopes, dt_dense, fit_curve, a, b
+
+# =========================================================
+# TEMPLATE (UNCHANGED)
+# =========================================================
 
 def make_normalized_template(td, tr, tmax, dt, scale_I):
     t = np.arange(0, tmax, dt)
@@ -10176,130 +10238,158 @@ def make_normalized_template(td, tr, tmax, dt, scale_I):
     template = A * (np.exp(-t / td) - np.exp(-t / tr))
     return t, template
 
-
 # =========================================================
-# TWO SPIKE DETERMINISTIC SYSTEM (NO ROUTING, NO RANDOMNESS)
+# CORE FUNCTION (ONLY AMPLITUDE RULE CHANGED)
 # =========================================================
 
-def two_spike_system(
-    dt,
-    tmax,
-    delta_t,
-    temp0,
-    temp1,
-    A0,
-    A1,
-    slope0,
-    slope1,
-    c0,
-    c1,
-    H0,
-    H1
-):
+def getiextd(f, template0, template1,
+             dt, r, p1,
+             scale_I0, scale_I1,
+             a0, a1,
+             b0, b1):
 
-    runtime = int(tmax / dt)
+    isi = 1.0 / f
+    pretimes = np.arange(0, 1000, isi)
 
-    # -------------------------
-    # FIXED SPIKE TIMES
-    # -------------------------
-    start = 200
-    spike_idx = np.array([
-        start,
-        start + int(delta_t / dt)
-    ])
+    spike_idx = (pretimes / dt).astype(int)
+    spike_idx = spike_idx[:11]
 
-    # safety clamp
-    spike_idx = np.clip(spike_idx, 0, runtime - 1)
+    if len(spike_idx) >= 11:
+        runtime = spike_idx[10]
+    else:
+        runtime = spike_idx[-1] + 1
 
-    # -------------------------
-    # separate amplitudes per branch
-    # -------------------------
-    amps0 = np.array([
-        A0,
-        spike_amplitude(delta_t, slope0, A0, c0, H0)
-    ])
+    route = np.random.rand(len(spike_idx)) < r
+    duplicate = np.random.rand(len(spike_idx)) < p1
 
-    amps1 = np.array([
-        A1,
-        spike_amplitude(delta_t, slope1, A1, c1, H1)
-    ])
+    spike_y0 = list(spike_idx[~route]) + list(spike_idx[route & duplicate])
+    spike_y1 = list(spike_idx[route]) + list(spike_idx[~route & duplicate])
 
-    # -------------------------
-    # currents
-    # -------------------------
+    spike_y0 = np.array(sorted(spike_y0))
+    spike_y1 = np.array(sorted(spike_y1))
+
+    spike_y0 = spike_y0[spike_y0 < runtime]
+    spike_y1 = spike_y1[spike_y1 < runtime]
+
+    isi_y0 = np.diff(spike_y0) * dt if len(spike_y0) > 1 else np.array([])
+    isi_y1 = np.diff(spike_y1) * dt if len(spike_y1) > 1 else np.array([])
+
+    amps_y0 = np.zeros(len(spike_y0))
+    amps_y1 = np.zeros(len(spike_y1))
+
+    # ---------------- SLOW ----------------
+    if len(spike_y0) > 0:
+        amps_y0[0] = scale_I0
+        for i in range(1, len(spike_y0)):
+            dt_i = isi_y0[i-1] if len(isi_y0) > 0 else 0.0
+            amps_y0[i] = spike_amplitude(dt_i, a0, b0, amps_y0[i-1])
+
+    # ---------------- FAST ----------------
+    if len(spike_y1) > 0:
+        amps_y1[0] = scale_I1
+        for i in range(1, len(spike_y1)):
+            dt_i = isi_y1[i-1] if len(isi_y1) > 0 else 0.0
+            amps_y1[i] = spike_amplitude(dt_i, a1, b1, amps_y1[i-1])
+
+    runtime = int(runtime)
+
     I0 = np.zeros(runtime)
     I1 = np.zeros(runtime)
 
-    L0 = len(temp0)
-    L1 = len(temp1)
+    L0 = len(template0)
+    L1 = len(template1)
 
-    # slow branch
-    for i, idx in enumerate(spike_idx):
+    for idx, a in zip(spike_y0, amps_y0):
         end = min(idx + L0, runtime)
-        if end > idx:
-            I0[idx:end] += amps0[i] * temp0[:end - idx]
+        I0[idx:end] += a * template0[:end - idx]
 
-    # fast branch
-    for i, idx in enumerate(spike_idx):
+    for idx, a in zip(spike_y1, amps_y1):
         end = min(idx + L1, runtime)
-        if end > idx:
-            I1[idx:end] += amps1[i] * temp1[:end - idx]
+        I1[idx:end] += a * template1[:end - idx]
 
-    return I0, I1, spike_idx
+    Iext = (1 - r) * I0 + r * I1
 
+    return Iext, I0, I1, runtime, spike_idx, spike_y0, spike_y1
 
 # =========================================================
-# RUN
+# EVERYTHING BELOW THIS IS YOUR ORIGINAL FLOW (UNCHANGED STYLE)
 # =========================================================
+
+# load slopes
+delta_t_slow, slopes_slow, dt_dense_slow, fit_slow, a0, b0 = get_slopes_and_fit(
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx')
+
+delta_t_fast, slopes_fast, dt_dense_fast, fit_fast, a1, b1 = get_slopes_and_fit(
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx')
 
 dt = 1e-4
+f = 40
+r = 0.5
+p1 = 0.5
 
+scale_I0 = 0.07
+scale_I1 = 0.2
 
-delta_t = 0.  # control spacing between spikes
-tmax = delta_t+50e-3
+tr0 = 0.7e-3
+td0 = 0.9e-3
+tr1 = 0.1e-3
+td1 = 0.5e-3
 
-# templates (your original idea preserved)
-t, temp0 = make_normalized_template(1.2e-3, 0.5e-3, tmax, dt, 0.6*3)
-t, temp1 = make_normalized_template(0.5e-3, 0.1e-3, tmax, dt, 3.0)
+t, temp0 = make_normalized_template(td0, tr0, 0.2, dt, scale_I0)
+t, temp1 = make_normalized_template(td1, tr1, 0.2, dt, scale_I1)
 
-I0, I1, spikes = two_spike_system(
-    dt=dt,
-    tmax=tmax,
-    delta_t=delta_t,
-    temp0=temp0,
-    temp1=temp1,
-    A0=0.1,
-    A1=0.1,
-    slope0=100,
-    slope1=100,
-    c0=0.01,
-    c1=0.01,
-    H0=2,
-    H1=2
+Iext, I0, I1, runtime, spike_idx, spike_y0, spike_y1 = getiextd(
+    f, temp0, temp1,
+    dt, r, p1,
+    scale_I0, scale_I1,
+    a0, a1,
+    b0, b1
 )
 
-t = np.arange(len(I0)) * dt
+v, tmean, naps, aptimes = gettmean(r, Iext, g, vb, C, Cr, f)
 
-# =========================================================
-# PLOT 2x1 (as requested)
-# =========================================================
+fs=12
+lw=2
 
-plt.subplot(2,1,1)
-plt.plot(t, I0)
-plt.title("Slow current (2 spikes)")
-plt.ylabel("I0")
+t = np.arange(len(v)) * dt
 
-plt.subplot(2,1,2)
-plt.plot(t, I1)
-plt.title("Fast current (2 spikes)")
-plt.ylabel("I1")
-plt.xlabel("Time (s)")
+plt.subplot(4,1,1)
+plt.title('Fast synapse proportion (r)={}\nCoincidence proportion (p1)={}\nInput frequency={} Hz'.format(r, p1, f),
+          fontsize=fs)
+plt.plot(t, I0, linewidth=lw)
+for x in spike_y0:
+    plt.axvline(x*dt, color='r', alpha=0.3)
+plt.ylabel('Slow\ncurrent', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+plt.xticks([])
 
-plt.tight_layout()
+plt.subplot(4,1,2)
+plt.plot(t, I1, linewidth=lw)
+plt.ylabel('Fast\ncurrent', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+for x in spike_y1:
+    plt.axvline(x*dt, color='r', alpha=0.3)
+plt.xticks([])
+
+plt.subplot(4,1,3)
+plt.plot(t, Iext, linewidth=lw)
+plt.ylabel('Slow\n+\nFast\nCurrent', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+plt.xticks([])
+
+plt.subplot(4,1,4)
+plt.plot(t * 1000, v, linewidth=lw)
+plt.plot(t * 1000,
+         linfun(vth[10], vth[11], vth[6], vth[7], f, r) * np.ones(len(v)),
+         color='k')
+plt.xlabel('Time (ms)', fontsize=fs)
+plt.ylabel('Membrane\npotential (mV)', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+
 plt.show()
 
-print("spike times (ms):", spikes * dt * 1000)
-#%% 11 - Plots
+#%% Meeting 12 - finding the tr and td time constants for the
+# mechanistic model
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10307,1486 +10397,248 @@ import os
 import pandas as pd
 from scipy.signal import find_peaks
 
-def zform(z1,z2, f1,f2,f):
+def zform(z1, z2, f1, f2, f):
     return z1+(z2-z1)/(f2-f1)*(f-f1)
+
+def getiext(f, taui0, tauy0, kiy0,
+            taui1, tauy1, kiy1,
+            dt, r,
+            m01, b01, m04, b04,
+            m11, b11, m14, b14):
+
+    pretimes = [int(i / f / dt) + 1002 for i in range(0, 10)]
+    extra = 0
+    runtime = pretimes[-1] + extra
+
+    # Frequency scaling for slopes and intercepts
+    m0f = zform(m01, m04, 10, 40, f)
+    b0f = zform(b01, b04, 10, 40, f)
+    m1f = zform(m11, m14, 10, 40, f)
+    b1f = zform(b11, b14, 10, 40, f)
+
+    # Presizes for each current
+    presizes0 = m0f * np.linspace(0, runtime * dt, runtime) + b0f
+    presizes1 = m1f * np.linspace(0, runtime * dt, runtime) + b1f
+
+    # Initialize arrays
+    I0 = np.zeros(runtime)
+    I1 = np.zeros(runtime)
+    y0 = np.zeros(runtime)
+    y1 = np.zeros(runtime)
+
+    # Time evolution
+    for i in range(0, runtime):
+        if i in pretimes:
+            y0[i - 1] = presizes0[i]  # reset just before update
+            y1[i - 1] = presizes1[i]
+
+        # Separate y decays
+        dy0 = -y0[i - 1] / tauy0
+        dy1 = -y1[i - 1] / tauy1
+        y0[i] = y0[i - 1] + dy0 * dt
+        y1[i] = y1[i - 1] + dy1 * dt
+
+        # Update each current separately
+        dI0 = -I0[i - 1] / taui0 + kiy0 * y0[i - 1]
+        dI1 = -I1[i - 1] / taui1 + kiy1 * y1[i - 1]
+        I0[i] = I0[i - 1] + dI0 * dt
+        I1[i] = I1[i - 1] + dI1 * dt
+
+    # Weighted sum for Iext
+    Iext = (1 - r) * I0 + r * I1
+
+    return Iext, I0, I1, y0, y1, runtime, presizes0, presizes1
 
 
 def getstats(f, taui0, tauy0, kiy0, taui1, tauy1, kiy1, dt, r, 
-                                 g, vb, C, Cr,
-                                 m0, m1, b):
+                                 m01, b01, m04, b04, m11, 
+                                 b11, m14, b14, g, vb, dnum, C, Cr, vd):
+    # Fix fin plot
     rlist=np.linspace(0,1,100)
     tlist=[]
     rateslist=[]
     napslist=[]
     for ind,r in enumerate(rlist):
         print(ind, len(rlist))
-        Iext, _, _, _, _, runtime, _, _ = getiext(
-            f, taui0, tauy0, kiy0, taui1,
-            tauy1, kiy1, dt, r, m0, m1, b,
-            A0, A1, c, H
-        )
-        peaks, _ = find_peaks(Iext)
-        Inorm=Iext/Iext[peaks[0]]*b
-        _, tmean, naps, _ = gettmean(r, Inorm, g, vb, C, Cr, f)
+        Iext, _, _, _, _, runtime, _, _ = getiext(f, taui0, tauy0, kiy0, 
+                                         taui1, tauy1, kiy1, dt, r, 
+                                         m01, b01, m04, b04, m11, 
+                                         b11, m14, b14)
+        _, tmean, naps, _ = gettmean(r, Iext, g, vb, dnum, C, Cr, vd, f)
         rateslist.append(naps/runtime/dt)
         tlist.append(tmean)
         napslist.append(naps)
     foutlist=1/np.array(tlist)
     return rlist, foutlist, napslist
 
+# 10 spike version
+def getiextd(f, template0, template1,
+             dt, r, p1,
+             A0, A1,
+             c0, c1,
+             H0, H1,
+             slope0, slope1):
+
+    import numpy as np
+
+    # ---------- deterministic spike train ----------
+    isi = 1.0 / f
+    pretimes = np.arange(0, 1000, isi)  # large placeholder horizon
+
+    spike_idx = (pretimes / dt).astype(int)
+
+    # keep at least 11 spikes if available
+    spike_idx = spike_idx[:11]
+
+    # ---------- define runtime as JUST BEFORE 11th spike ----------
+    if len(spike_idx) >= 11:
+        runtime = spike_idx[10]  # stop before 11th spike
+    else:
+        runtime = spike_idx[-1] + 1 if len(spike_idx) > 0 else 0
+
+    # ---------- routing + duplication ----------
+    route = np.random.rand(len(spike_idx)) < r
+    duplicate = np.random.rand(len(spike_idx)) < p1
+
+    spike_y0 = list(spike_idx[~route]) + list(spike_idx[route & duplicate])
+    spike_y1 = list(spike_idx[route]) + list(spike_idx[~route & duplicate])
+
+    spike_y0 = np.array(sorted(spike_y0))
+    spike_y1 = np.array(sorted(spike_y1))
+
+    # ---------- keep only spikes before runtime ----------
+    spike_y0 = spike_y0[spike_y0 < runtime]
+    spike_y1 = spike_y1[spike_y1 < runtime]
+
+    # ---------- ISI ----------
+    isi_y0 = np.diff(spike_y0) * dt if len(spike_y0) > 1 else np.array([])
+    isi_y1 = np.diff(spike_y1) * dt if len(spike_y1) > 1 else np.array([])
+
+    # ---------- increment ----------
+    def increment(dt_i, slope, c, H):
+        return slope * dt_i / (1 + (dt_i / c)**H)
+
+    # ---------- amplitudes ----------
+    amps_y0 = np.zeros(len(spike_y0))
+    amps_y1 = np.zeros(len(spike_y1))
+
+    # ----- slow pathway -----
+    if len(spike_y0) > 0:
+        A_state = A0
+        amps_y0[0] = A_state
+
+        for i in range(1, len(spike_y0)):
+            dt_i = isi_y0[i-1] if len(isi_y0) > 0 else 0.0
+            A_state += increment(dt_i, slope0, c0, H0)
+            amps_y0[i] = A_state
+
+    # ----- fast pathway -----
+    if len(spike_y1) > 0:
+        A_state = A1
+        amps_y1[0] = A_state
+
+        for i in range(1, len(spike_y1)):
+            dt_i = isi_y1[i-1] if len(isi_y1) > 0 else 0.0
+            A_state += increment(dt_i, slope1, c1, H1)
+            amps_y1[i] = A_state
+
+    # ---------- build signals ----------
+    runtime = int(runtime) if runtime > 0 else 1
+
+    I0 = np.zeros(runtime)
+    I1 = np.zeros(runtime)
+
+    L0 = len(template0)
+    L1 = len(template1)
+
+    for idx, a in zip(spike_y0, amps_y0):
+        if idx >= runtime:
+            continue
+        end = min(idx + L0, runtime)
+        I0[idx:end] += a * template0[:end - idx]
+
+    for idx, a in zip(spike_y1, amps_y1):
+        if idx >= runtime:
+            continue
+        end = min(idx + L1, runtime)
+        I1[idx:end] += a * template1[:end - idx]
+
+    Iext = (1 - r) * I0 + r * I1
+
+    return Iext, I0, I1, runtime, spike_idx, spike_y0, spike_y1
+
 
 def linfun(s1,s4,fast1,fast4,f,r):
     return zform(s1,s4, 10,40,f)*(1-r)+zform(fast1,fast4, 10,40,f)*r
 
+dt=1e-4 
+ttemp=0.4 
 
-def make_normalized_template(td, tr, tmax, dt, scale_I):
-    t = np.arange(0, tmax, dt)
-    A = scale_I / (-(tr/td)**(td/(td-tr)) + (tr/td)**(tr/(td-tr)))
-    template = A * (np.exp(-t / td) - np.exp(-t / tr))
-    return t, template
+scale_I0 = 0.07 # slow peak
+scale_I1 = 0.2 # fast peak
 
+tr0=0.7e-3 # slow rise
+td0=2.6e-3 # slow decay
 
-# exponential saturation version (replaces sigmoid-like behavior)
-def spike_amplitude(delta_t, A0, A1, c, H):
-    return A0 + (A1 - A0) * (1 - np.exp(-(delta_t / c)**H))
+tr1=0.29e-3 # fast rise
+td1=1.35e-3 # fast decay
 
+# ----------------------
 
-def getiext(f, template0, template1,
-            dt, r, p1,
-            tmax,
-            A0, A1, c, H,
-            extra=0, seed=None):
+# Fixed 
+m01=1.55 # S10
+b01=0.58
 
-    if seed is not None:
-        np.random.seed(seed)
+m04=12.3 # S40
+b04=0.9
 
-    pretimes = []
-    tcurr = 0.0
-    while tcurr < tmax:
-        tcurr += np.random.exponential(1.0 / f)
-        pretimes.append(tcurr)
+m11=3.92 # F10
+b11=1.01
 
-    pretimes = np.array(pretimes)
-    spike_idx = (pretimes / dt).astype(int)
+m14=16.95 # F40
+b14=-1.2
 
-    runtime = int(tmax / dt)
+taui0 = 0.00265 # Slow
+tauy0 = 0.00075
+kiy0 = 360
 
-    valid = spike_idx < runtime
-    spike_idx = spike_idx[valid]
+taui1 = 0.0014 # Fast
+tauy1 = 0.00034
+kiy1 = 860
 
-    route = np.random.rand(len(spike_idx)) < r
-    duplicate = np.random.rand(len(spike_idx)) < p1
-
-    spike_y0 = list(spike_idx[~route])
-    spike_y1 = list(spike_idx[route])
-
-    spike_y0 += list(spike_idx[route & duplicate])
-    spike_y1 += list(spike_idx[~route & duplicate])
-
-    spike_y0 = np.array(sorted(spike_y0))
-    spike_y1 = np.array(sorted(spike_y1))
-
-    isi_y0 = np.diff(np.concatenate(([0], spike_y0))) * dt
-    isi_y1 = np.diff(np.concatenate(([0], spike_y1))) * dt
-
-    amps_y0 = np.array([spike_amplitude(dt_i, A0, A1, c, H) for dt_i in isi_y0])
-    amps_y1 = np.array([spike_amplitude(dt_i, A0, A1, c, H) for dt_i in isi_y1])
-
-    I0 = np.zeros(runtime)
-    I1 = np.zeros(runtime)
-
-    L0 = len(template0)
-    L1 = len(template1)
-
-    for idx, a in zip(spike_y0, amps_y0):
-        end = min(idx + L0, runtime)
-        I0[idx:end] += a * template0[:end - idx]
-
-    for idx, a in zip(spike_y1, amps_y1):
-        end = min(idx + L1, runtime)
-        I1[idx:end] += a * template1[:end - idx]
-
-    Iext = (1 - r) * I0 + r * I1
-
-    return Iext, I0, I1, runtime, spike_idx
-
-
-def gettmean(r, Iext, g, vb, C, Cr, f):
-    v=np.zeros(len(Iext))
-    v[0]=-60
-    apinds=[]
-    refper=40
-    aptimer=np.inf
-    posttimer=False
-
-    gfast=zform(g[6], g[7], 10, 40, f)
-    gslow=zform(g[10], g[11], 10, 40, f)
-    gfast2=zform(gr[6], gr[7], 10, 40, f)
-    gslow2=zform(gr[10], gr[11], 10, 40, f)
-
-    vbslow=zform(vb[10], vb[11], 10, 40, f)
-    vbfast=zform(vb[6], vb[7], 10, 40, f)
-
-    C1=linfun(C[10], C[11], C[6], C[7], f, r)
-    C2=linfun(Cr[10], Cr[11], Cr[6], Cr[7], f, r)
-
-    vreset=linfun(vbr[10], vbr[11], vbr[6], vbr[7], f, r)
-
-    for i in range(1,len(Iext)):
-        if posttimer==False:
-            icurr = r*gfast*(v[i-1]-vbfast)+(1-r)*gslow*(v[i-1]-vbslow)
-            dvdt=((-icurr+Iext[i-1]))/C1
-        else:
-            icurr = r*gfast2*(v[i-1]-vbfast)+(1-r)*gslow2*(v[i-1]-vbslow)
-            dvdt=((-icurr+Iext[i-1]))/C2
-
-        if aptimer == np.inf:
-            v[i] = v[i-1] + dvdt*dt
-        else:
-            v[i] = v[i-1]
-
-        if Iext[i] > Iext[i-1]:
-            posttimer=False
-
-        if aptimer != np.inf:
-            aptimer -= 1
-
-        if v[i-1] > linfun(vth[10], vth[11], vth[6], vth[7], f, r):
-            v[i] = vreset
-            apinds.append(i)
-            aptimer = refper
-            posttimer=True
-
-        if aptimer == 0:
-            aptimer = np.inf
-
-    aptimes=np.array(apinds)*dt
-    naps=len(aptimes)
-    ssaptimes=aptimes[int(0.3*len(aptimes)):]
-    tmean=np.mean(np.diff(ssaptimes))
-
-    return v, tmean, naps, aptimes
-
-
-dtype=0
-if dtype==0:
-    dir1=r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal'
-else:
-    dir1=r'C:\Users\Oliver\Desktop\PhD\3-Research\Neuron\SOM'
-
-os.chdir(dir1)
-
-df = pd.read_csv("Table0.csv")
-data=np.array(df)
-
-names = {
-    0: 'DE-F-10 Hz', 1: 'DE-F-40 Hz',
-    2: 'DE-M-10 Hz', 3: 'DE-M-40 Hz',
-    4: 'DE-S-10 Hz', 5: 'DE-S-40 Hz',
-    6: 'NR-F-10 Hz', 7: 'NR-F-40 Hz',
-    8: 'NR-M-10 Hz', 9: 'NR-M-40 Hz',
-    10: 'NR-S-10 Hz', 11: 'NR-S-40 Hz'
-}
-
-vb=np.array([-60.5,-60,-60,-60,-64.2,-64.2,-61.75,-63,-64,-65.5,-64,-63.8])
-vbr=np.array([-60.5,-60,-60,-60,-64.2,-64.2,-61.75,-50,-50,-47,-64,-50])
-
-C=[0.00011]*12
-Cr=[0.00011]*12
-
-g=[0.0037]*12
-gr=[0.0037]*12
-
-vth=[-40]*12
-
-dt=1e-4
-tmax=0.2
-ttemp=0.2
-
-f=40
-
-M0=5
-M1=5
-r=M1/(M1+M0)
-p1=0
-
-scale_I1=3
-scale_I0=0.6*scale_I1
-
-tr0=0.5e-3
-td0=1.2e-3
-tr1=0.1e-3
-td1=0.5e-3
-
-c = 0.005
-H = 1.0
+Iext100, _, _, _, _, _, _, _ =getiext(10, taui0,tauy0,kiy0,taui1,tauy1,kiy1, dt, 0, m01,b01,m04,b04,m11,b11,m14,b14)
+Iext400, _, _, _, _, _, _, _ =getiext(40, taui0,tauy0,kiy0,taui1,tauy1,kiy1, dt, 0, m01,b01,m04,b04,m11,b11,m14,b14)
+Iext101, _, _, _, _, _, _, _ =getiext(10, taui0,tauy0,kiy0,taui1,tauy1,kiy1, dt, 1, m01,b01,m04,b04,m11,b11,m14,b14)
+Iext401, _, _, _, _, _, _, _ =getiext(40, taui0,tauy0,kiy0,taui1,tauy1,kiy1, dt, 1, m01,b01,m04,b04,m11,b11,m14,b14)
 
 t, temp0 = make_normalized_template(td0, tr0, ttemp, dt, scale_I0)
 t, temp1 = make_normalized_template(td1, tr1, ttemp, dt, scale_I1)
 
-A0 = scale_I0
-A1 = scale_I1
+Iext, I0, _, runtime, spike_idx, spike_y0, spike_y1 = getiextd(f, temp0, temp1,
+            dt, 0, p1,
+            scale_I0, scale_I1, 
+            c0, c1,
+            H0, H1,
+            slope0, slope1)
 
-Iext, I0, I1, runtime, spike_idx = getiext(
-    f, temp0, temp1, dt, r, p1, tmax,
-    A0, A1, c, H
-)
+Iext, _, I1, runtime, spike_idx, spike_y0, spike_y1 = getiextd(f, temp0, temp1,
+            dt, 1, p1,
+            scale_I0, scale_I1, 
+            c0, c1,
+            H0, H1,
+            slope0, slope1)
 
-v, tmean, naps, aptimes = gettmean(r, Iext, g, vb, C, Cr, f)
-
-fs=10
-lw=2
-
-t=np.arange(len(v))*dt
-
-plt.subplot(4,1,1)
-plt.plot(t, I0, linewidth=lw)
-plt.ylabel('slow current', fontsize=fs)
-plt.xticks([])
-
-plt.subplot(4,1,2)
-plt.plot(t, I1, linewidth=lw)
-plt.ylabel('fast current', fontsize=fs)
-plt.xticks([])
-
-plt.subplot(4,1,3)
-plt.plot(t, Iext, linewidth=lw)
-plt.ylabel('total current', fontsize=fs)
-plt.xticks([])
-
-plt.subplot(4,1,4)
-plt.plot(t*1000, v, linewidth=lw)
-plt.xlabel('time (ms)', fontsize=fs)
-plt.ylabel('membrane potential', fontsize=fs)
-
-plt.show()
-
-
-#%%  11 - Sigmoidal fit
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.stats import linregress
-from scipy.optimize import curve_fit
-
-
-# model to fit
-def model(delta_t, m0, c, H):
-    return m0 * delta_t / (1 + (delta_t / c)**H)
-
-
-def compute_slopes(file_path):
-    df = pd.read_excel(file_path)
-
-    col_slopes = []
-    for col in df.columns:
-        y = df[col].dropna().values
-        x = np.arange(len(y))
-        if len(y) > 1:
-            slope, _, _, _, _ = linregress(x, y)
-            col_slopes.append(slope)
-        else:
-            col_slopes.append(np.nan)
-
-    col_slopes = np.array(col_slopes)
-
-    freq = np.array([5, 10, 20, 40])
-    delta_t = 1 / freq
-
-    return delta_t, col_slopes
-
-
-def fit_model(delta_t, col_slopes):
-    valid = ~np.isnan(col_slopes)
-
-    popt, _ = curve_fit(
-        model,
-        delta_t[valid],
-        col_slopes[valid],
-        p0=[1.0, 0.05, 2.0],
-        maxfev=10000
-    )
-
-    m0, c, H = popt
-    return m0, c, H
-
-
-def get_slopes_and_fit(file_path):
-    delta_t, col_slopes = compute_slopes(file_path)
-    m0, c, H = fit_model(delta_t, col_slopes)
-
-    dt_dense = np.linspace(np.min(delta_t), np.max(delta_t), 200)
-    fit_curve = model(dt_dense, m0, c, H)
-
-    return delta_t, col_slopes, dt_dense, fit_curve, m0, c, H
-
-
-delta_t_slow, slopes_slow, dt_dense_slow, fit_slow, m0_slow, c_slow, H_slow = get_slopes_and_fit(
-    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx'
-)
-
-delta_t_fast, slopes_fast, dt_dense_fast, fit_fast, m0_fast, c_fast, H_fast = get_slopes_and_fit(
-    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx'
-)
-
-print("slow params:", m0_slow, c_slow, H_slow)
-print("fast params:", m0_fast, c_fast, H_fast)
-
-
-colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red']
-
-plt.figure(figsize=(6, 4))
-
-for i, dt in enumerate(delta_t_slow):
-    plt.plot(dt, slopes_slow[i], 'o',
-             markerfacecolor='white',
-             markeredgecolor=colors[i],
-             markersize=8,
-             label='slow synapses' if i == 0 else "")
-    
-plt.plot(dt_dense_slow, fit_slow, '--', color='black',
-         label=f'slow fit (m0={m0_slow:.3f}, c={c_slow:.3f}, H={H_slow:.3f})')
-
-
-for i, dt in enumerate(delta_t_fast):
-    plt.plot(dt, slopes_fast[i], 'o',
-             color=colors[i],
-             markersize=8,
-             label='fast synapses' if i == 0 else "")
-
-
-plt.plot(dt_dense_fast, fit_fast, '-', color='gray',
-         label=f'fast fit (m0={m0_fast:.3f}, c={c_fast:.3f}, H={H_fast:.3f})')
-
-plt.xlabel('inter-spike interval Δt (s)')
-plt.ylabel('slope of best fit line')
-plt.title('nonlinear fits: slow vs fast')
+plt.figure(figsize=(6,3))
+plt.subplot(1,2,1)
+plt.plot(Iext400[1001:1200], label='fit')
+plt.plot(I0[:100]/np.max(I0[:100])*np.max(Iext400[1001:1200]), label='temp')
 plt.legend()
-plt.tight_layout()
-plt.show()
+plt.subplot(1,2,2)
+plt.plot(Iext401[1001:1200], label='fit')
+plt.plot(I1[:100]/np.max(I1[:100])*np.max(Iext401[1001:1200]), label='temp')
 
-
-dt_dense = np.linspace(1e-6, 0.2, 200)
-
-plt.figure()
-
-plt.plot(
-    dt_dense,
-    model(dt_dense, m0_slow, c_slow, H_slow),
-    '--',
-    color='black',
-    label=f'slow fit (m0={m0_slow:.3f}, c={c_slow:.3f}, H={H_slow:.3f})'
-)
-
-plt.plot(
-    dt_dense,
-    model(dt_dense, m0_fast, c_fast, H_fast),
-    '-',
-    color='black',
-    label=f'fast fit (m0={m0_fast:.3f}, c={c_fast:.3f}, H={H_fast:.3f})'
-)
-
-plt.xlabel('inter-spike interval Δt (s)')
-plt.ylabel('model output')
-plt.title('fitted functions (0–0.2 s)')
+# =============================================================================
+# temp0=Iext400[1001:1200]
+# temp1=Iext401[1001:1200]
+# =============================================================================
 plt.legend()
-plt.show()
-
-#%% 11 - fit 2
-
-import numpy as np
-import matplotlib.pyplot as plt
-import os
-import pandas as pd
-from scipy.signal import find_peaks
-
-
-def zform(z1, z2, f1, f2, f):
-    return z1 + (z2 - z1) / (f2 - f1) * (f - f1)
-
-
-def linfun(s1, s4, fast1, fast4, f, r):
-    return zform(s1, s4, 10, 40, f) * (1 - r) + zform(fast1, fast4, 10, 40, f) * r
-
-
-# ----------------------------
-# exponential saturation amplitude (replaces unstable model)
-# ----------------------------
-def spike_amplitude(delta_t, A0, Amax, tau):
-    dt = max(delta_t, 1e-12)
-    return A0 + Amax * (1 - np.exp(-dt / tau))
-
-
-def make_normalized_template(td, tr, tmax, dt, scale_I):
-    t = np.arange(0, tmax, dt)
-    A = scale_I / (-(tr / td)**(td / (td - tr)) + (tr / td)**(tr / (td - tr)))
-    template = A * (np.exp(-t / td) - np.exp(-t / tr))
-    return t, template
-
-
-# ----------------------------
-# updated getiext using exp saturation amplitudes
-# ----------------------------
-def getiext(f, template0, template1,
-            dt, r, p1,
-            tmax,
-            A0, Amax, tau,
-            seed=None):
-
-    if seed is not None:
-        np.random.seed(seed)
-
-    pretimes = []
-    tcurr = 0.0
-    while tcurr < tmax:
-        tcurr += np.random.exponential(1.0 / f)
-        pretimes.append(tcurr)
-
-    pretimes = np.array(pretimes)
-    spike_idx = (pretimes / dt).astype(int)
-
-    runtime = int(tmax / dt)
-    valid = spike_idx < runtime
-    spike_idx = spike_idx[valid]
-
-    route = np.random.rand(len(spike_idx)) < r
-    duplicate = np.random.rand(len(spike_idx)) < p1
-
-    spike_y0 = list(spike_idx[~route])
-    spike_y1 = list(spike_idx[route])
-
-    spike_y0 += list(spike_idx[route & duplicate])
-    spike_y1 += list(spike_idx[~route & duplicate])
-
-    spike_y0 = np.array(sorted(spike_y0))
-    spike_y1 = np.array(sorted(spike_y1))
-
-    isi_y0 = np.diff(np.concatenate(([0], spike_y0))) * dt
-    isi_y1 = np.diff(np.concatenate(([0], spike_y1))) * dt
-
-    # exponential saturation amplitudes
-    amps_y0 = np.array([spike_amplitude(dt_i, A0, Amax, tau) for dt_i in isi_y0])
-    amps_y1 = np.array([spike_amplitude(dt_i, A0, Amax, tau) for dt_i in isi_y1])
-
-    I0 = np.zeros(runtime)
-    I1 = np.zeros(runtime)
-
-    L0 = len(template0)
-    L1 = len(template1)
-
-    for idx, a in zip(spike_y0, amps_y0):
-        end = min(idx + L0, runtime)
-        I0[idx:end] += a * template0[:end - idx]
-
-    for idx, a in zip(spike_y1, amps_y1):
-        end = min(idx + L1, runtime)
-        I1[idx:end] += a * template1[:end - idx]
-
-    Iext = (1 - r) * I0 + r * I1
-
-    return Iext, I0, I1, runtime, spike_idx
-
-
-# ----------------------------
-# remaining code unchanged except function signature update
-# ----------------------------
-def gettmean(r, Iext, g, vb, C, Cr, f):
-    v = np.zeros(len(Iext))
-    v[0] = -60
-
-    apinds = []
-    refper = 40
-    aptimer = np.inf
-    posttimer = False
-
-    gfast = zform(g[6], g[7], 10, 40, f)
-    gslow = zform(g[10], g[11], 10, 40, f)
-    gfast2 = zform(gr[6], gr[7], 10, 40, f)
-    gslow2 = zform(gr[10], gr[11], 10, 40, f)
-
-    vbfast = zform(vb[6], vb[7], 10, 40, f)
-    vbslow = zform(vb[10], vb[11], 10, 40, f)
-
-    C1 = linfun(C[10], C[11], C[6], C[7], f, r)
-    C2 = linfun(Cr[10], Cr[11], Cr[6], Cr[7], f, r)
-
-    vreset = -60  # keep simple unless defined elsewhere
-
-    for i in range(1, len(Iext)):
-
-        if not posttimer:
-            icurr = r * gfast * (v[i-1] - vbfast) + (1-r) * gslow * (v[i-1] - vbslow)
-            dvdt = (-icurr + Iext[i-1]) / C1
-        else:
-            icurr = r * gfast2 * (v[i-1] - vbfast) + (1-r) * gslow2 * (v[i-1] - vbslow)
-            dvdt = (-icurr + Iext[i-1]) / C2
-
-        if aptimer == np.inf:
-            v[i] = v[i-1] + dvdt * 1e-4
-        else:
-            v[i] = v[i-1]
-
-        if Iext[i] > Iext[i-1]:
-            posttimer = False
-
-        if aptimer != np.inf:
-            aptimer -= 1
-
-        if v[i-1] > -40:
-            v[i] = vreset
-            apinds.append(i)
-            aptimer = refper
-            posttimer = True
-
-        if aptimer == 0:
-            aptimer = np.inf
-
-    aptimes = np.array(apinds) * 1e-4
-    naps = len(aptimes)
-
-    if len(aptimes) > 5:
-        tmean = np.mean(np.diff(aptimes[int(0.3 * len(aptimes)):]))
-    else:
-        tmean = np.nan
-
-    return v, tmean, naps, aptimes
-
-#%% 11 - Other fits
-
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.stats import linregress
-from scipy.optimize import curve_fit
-
-
-# ----------------------------
-# data
-# ----------------------------
-def compute_slopes(file_path):
-    df = pd.read_excel(file_path)
-
-    col_slopes = []
-    for col in df.columns:
-        y = df[col].dropna().values
-        x = np.arange(len(y))
-        if len(y) > 1:
-            slope, _, _, _, _ = linregress(x, y)
-            col_slopes.append(slope)
-        else:
-            col_slopes.append(np.nan)
-
-    col_slopes = np.array(col_slopes)
-
-    freq = np.array([5, 10, 20, 40])
-    delta_t = 1 / freq
-
-    return delta_t, col_slopes
-
-
-# ----------------------------
-# models (stable versions)
-# ----------------------------
-def model_rational(dt, m0, c, H):
-    dt_safe = np.maximum(dt, 1e-12)
-    return m0 * dt_safe / (1 + (dt_safe / c)**H)
-
-
-def model_exp_sat(dt, A, B, a):
-    dt_safe = np.maximum(dt, 1e-12)
-    return A + B * np.exp(-a * dt_safe)
-
-
-def model_hyperbolic(dt, A, B, c):
-    dt_safe = np.maximum(dt, 1e-12)
-    return A + B / (1 + dt_safe / c)
-
-
-def model_stretched_exp(dt, A, B, a, H):
-    dt_safe = np.maximum(dt, 1e-12)
-    return A + B * np.exp(-np.power(a * dt_safe, H))
-
-
-# ----------------------------
-# robust fitting (with bounds)
-# ----------------------------
-def fit_model(func, x, y, p0, bounds):
-    valid = ~np.isnan(y)
-
-    popt, _ = curve_fit(
-        func,
-        x[valid],
-        y[valid],
-        p0=p0,
-        bounds=bounds,
-        maxfev=50000
-    )
-    return popt
-
-
-# ----------------------------
-# run full model set
-# ----------------------------
-def run(file_path):
-
-    dt, slopes = compute_slopes(file_path)
-    dt_dense = np.linspace(1e-6, 0.2, 300)
-
-    # rational
-    p_r = fit_model(
-        model_rational,
-        dt,
-        slopes,
-        p0=[1, 0.05, 2],
-        bounds=([0, 1e-6, 0.1], [np.inf, 10, 10])
-    )
-
-    # exponential saturation
-    p_e = fit_model(
-        model_exp_sat,
-        dt,
-        slopes,
-        p0=[np.mean(slopes), 1, 1],
-        bounds=([-np.inf, 0, 0], [np.inf, np.inf, 100])
-    )
-
-    # hyperbolic
-    p_h = fit_model(
-        model_hyperbolic,
-        dt,
-        slopes,
-        p0=[np.mean(slopes), 1, 0.05],
-        bounds=([-np.inf, 0, 1e-6], [np.inf, np.inf, 10])
-    )
-
-    # stretched exponential
-    p_s = fit_model(
-        model_stretched_exp,
-        dt,
-        slopes,
-        p0=[np.mean(slopes), 1, 1, 1],
-        bounds=([-np.inf, 0, 1e-6, 0.1], [np.inf, np.inf, 100, 5])
-    )
-
-    return dt, slopes, dt_dense, (p_r, p_e, p_h, p_s)
-
-
-# ----------------------------
-# load data
-# ----------------------------
-dt_slow, y_slow, dt_dense, params_slow = run(
-    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx'
-)
-
-dt_fast, y_fast, _, params_fast = run(
-    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx'
-)
-
-p_r_s, p_e_s, p_h_s, p_st_s = params_slow
-p_r_f, p_e_f, p_h_f, p_st_f = params_fast
-
-
-print("slow rational:", p_r_s)
-print("slow exp sat:", p_e_s)
-print("slow hyperbolic:", p_h_s)
-print("slow stretched:", p_st_s)
-
-print("fast rational:", p_r_f)
-print("fast exp sat:", p_e_f)
-print("fast hyperbolic:", p_h_f)
-print("fast stretched:", p_st_f)
-
-
-# ----------------------------
-# plot 1: slow vs fast data + all fits
-# ----------------------------
-colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red']
-
-plt.figure(figsize=(7, 5))
-
-for i, dt in enumerate(dt_slow):
-    plt.plot(dt, y_slow[i], 'o',
-             markerfacecolor='white',
-             markeredgecolor=colors[i],
-             label='slow data' if i == 0 else "")
-
-for i, dt in enumerate(dt_fast):
-    plt.plot(dt, y_fast[i], 'o',
-             color=colors[i],
-             label='fast data' if i == 0 else "")
-
-plt.plot(dt_dense, model_rational(dt_dense, *p_r_s),
-         '--', color='black', label='slow rational')
-
-plt.plot(dt_dense, model_exp_sat(dt_dense, *p_e_s),
-         '--', color='blue', label='slow exp sat')
-
-plt.plot(dt_dense, model_hyperbolic(dt_dense, *p_h_s),
-         '--', color='green', label='slow hyperbolic')
-
-plt.plot(dt_dense, model_stretched_exp(dt_dense, *p_st_s),
-         '--', color='red', label='slow stretched exp')
-
-plt.xlabel('Δt (s)')
-plt.ylabel('slope')
-plt.title('model comparison (slow)')
-plt.legend()
-plt.tight_layout()
-plt.ylim([0,4])
-plt.show()
-
-
-# ----------------------------
-# plot 2: fast fits only
-# ----------------------------
-plt.figure(figsize=(7, 5))
-
-plt.plot(dt_dense, model_rational(dt_dense, *p_r_f),
-         '-', color='black', label='fast rational')
-
-plt.plot(dt_dense, model_exp_sat(dt_dense, *p_e_f),
-         '-', color='blue', label='fast exp sat')
-
-plt.plot(dt_dense, model_hyperbolic(dt_dense, *p_h_f),
-         '-', color='green', label='fast hyperbolic')
-
-plt.plot(dt_dense, model_stretched_exp(dt_dense, *p_st_f),
-         '-', color='red', label='fast stretched exp')
-
-plt.xlabel('Δt (s)')
-plt.ylabel('model output')
-plt.title('model comparison (fast)')
-plt.legend()
-plt.tight_layout()
-plt.ylim([0,4])
-plt.show()
-
-#%% 11 - separate
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.stats import linregress
-from scipy.optimize import curve_fit
-
-
-# ----------------------------
-# data
-# ----------------------------
-def compute_slopes(file_path):
-    df = pd.read_excel(file_path)
-
-    col_slopes = []
-    for col in df.columns:
-        y = df[col].dropna().values
-        x = np.arange(len(y))
-        if len(y) > 1:
-            slope, _, _, _, _ = linregress(x, y)
-            col_slopes.append(slope)
-        else:
-            col_slopes.append(np.nan)
-
-    col_slopes = np.array(col_slopes)
-
-    freq = np.array([5, 10, 20, 40])
-    delta_t = 1 / freq
-
-    return delta_t, col_slopes
-
-
-# ----------------------------
-# safe models (important fix)
-# ----------------------------
-def model_rational(dt, m0, c, H):
-    dt = np.maximum(dt, 1e-12)
-    return m0 * dt / (1 + (dt / c) ** H)
-
-
-def model_exp_sat(dt, A, B, a):
-    dt = np.maximum(dt, 1e-12)
-    return A + B * np.exp(-a * dt)
-
-
-def model_hyperbolic(dt, A, B, c):
-    dt = np.maximum(dt, 1e-12)
-    return A + B / (1 + dt / c)
-
-
-def model_stretched_exp(dt, A, B, a, H):
-    dt = np.maximum(dt, 1e-12)
-    return A + B * np.exp(-(a * dt) ** H)
-
-
-# ----------------------------
-# robust fit helper
-# ----------------------------
-def fit_model(func, x, y, p0, bounds):
-    valid = ~np.isnan(y)
-
-    popt, _ = curve_fit(
-        func,
-        x[valid],
-        y[valid],
-        p0=p0,
-        bounds=bounds,
-        maxfev=50000
-    )
-    return popt
-
-
-# ----------------------------
-# run fits for one dataset
-# ----------------------------
-def run(file_path):
-
-    dt, slopes = compute_slopes(file_path)
-    dt_dense = np.linspace(1e-6, 0.2, 400)
-
-    p_r = fit_model(
-        model_rational, dt, slopes,
-        p0=[np.mean(slopes), 0.1, 1],
-        bounds=([0, 1e-6, 0.1], [np.inf, 10, 10])
-    )
-
-    p_e = fit_model(
-        model_exp_sat, dt, slopes,
-        p0=[np.mean(slopes), 1, 1],
-        bounds=([-np.inf, 0, 0], [np.inf, np.inf, 100])
-    )
-
-    p_h = fit_model(
-        model_hyperbolic, dt, slopes,
-        p0=[np.mean(slopes), 1, 0.1],
-        bounds=([-np.inf, 0, 1e-6], [np.inf, np.inf, 10])
-    )
-
-    p_s = fit_model(
-        model_stretched_exp, dt, slopes,
-        p0=[np.mean(slopes), 1, 1, 1],
-        bounds=([-np.inf, 0, 1e-6, 0.1], [np.inf, np.inf, 100, 5])
-    )
-
-    return dt, slopes, dt_dense, (p_r, p_e, p_h, p_s)
-
-
-# ----------------------------
-# load data
-# ----------------------------
-dt_slow, y_slow, dt_dense, params_slow = run(
-    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx'
-)
-
-dt_fast, y_fast, _, params_fast = run(
-    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx'
-)
-
-p_r_s, p_e_s, p_h_s, p_st_s = params_slow
-p_r_f, p_e_f, p_h_f, p_st_f = params_fast
-
-
-# ----------------------------
-# print params
-# ----------------------------
-print("slow rational:", p_r_s)
-print("slow exp sat:", p_e_s)
-print("slow hyperbolic:", p_h_s)
-print("slow stretched:", p_st_s)
-
-print("fast rational:", p_r_f)
-print("fast exp sat:", p_e_f)
-print("fast hyperbolic:", p_h_f)
-print("fast stretched:", p_st_f)
-
-
-# ----------------------------
-# plot 1: slow data + slow fits
-# ----------------------------
-colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red']
-
-plt.figure(figsize=(7, 5))
-
-for i, dt in enumerate(dt_slow):
-    plt.plot(dt, y_slow[i], 'o',
-             markerfacecolor='white',
-             markeredgecolor=colors[i],
-             label='slow data' if i == 0 else "")
-
-plt.plot(dt_dense, model_rational(dt_dense, *p_r_s),
-         '--', color='black', label='rational')
-
-plt.plot(dt_dense, model_exp_sat(dt_dense, *p_e_s),
-         '--', color='blue', label='exp sat')
-
-plt.plot(dt_dense, model_hyperbolic(dt_dense, *p_h_s),
-         '--', color='green', label='hyperbolic')
-
-plt.plot(dt_dense, model_stretched_exp(dt_dense, *p_st_s),
-         '--', color='red', label='stretched exp')
-
-plt.xlabel('Δt (s)')
-plt.ylabel('slope')
-plt.title('slow dataset: model comparison')
-plt.legend()
-plt.tight_layout()
-plt.ylim([0,10])
-plt.show()
-
-
-# ----------------------------
-# plot 2: fast data + fast fits
-# ----------------------------
-plt.figure(figsize=(7, 5))
-
-for i, dt in enumerate(dt_fast):
-    plt.plot(dt, y_fast[i], 'o',
-             color=colors[i],
-             label='fast data' if i == 0 else "")
-
-plt.plot(dt_dense, model_rational(dt_dense, *p_r_f),
-         '-', color='black', label='rational')
-
-plt.plot(dt_dense, model_exp_sat(dt_dense, *p_e_f),
-         '-', color='blue', label='exp sat')
-
-plt.plot(dt_dense, model_hyperbolic(dt_dense, *p_h_f),
-         '-', color='green', label='hyperbolic')
-
-plt.plot(dt_dense, model_stretched_exp(dt_dense, *p_st_f),
-         '-', color='red', label='stretched exp')
-
-plt.xlabel('Δt (s)')
-plt.ylabel('slope')
-plt.title('fast dataset: model comparison')
-plt.legend()
-plt.tight_layout()
-plt.ylim([0,4])
-plt.show()
-
-
-#%%  exp fit
-
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.stats import linregress
-from scipy.optimize import curve_fit
-
-
-# --- exponential WITH amplitude ---
-def model(delta_t, A, a):
-    return A * np.exp(-a * delta_t)
-
-
-def process_file(file_path, title):
-    df = pd.read_excel(file_path)
-    colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red']
-
-    # Step 1: slope per column
-    col_slopes = []
-    for col in df.columns:
-        y = df[col].dropna().values
-        x = np.arange(len(y))
-        if len(y) > 1:
-            slope, _, _, _, _ = linregress(x, y)
-            col_slopes.append(slope)
-        else:
-            col_slopes.append(np.nan)
-
-    col_slopes = np.array(col_slopes)
-
-    # Δt axis
-    freq = np.array([5, 10, 20, 40])
-    delta_t = 1 / freq
-
-    valid = ~np.isnan(col_slopes)
-
-    # --- exponential fit (A, a) ---
-    popt, _ = curve_fit(
-        model,
-        delta_t[valid],
-        col_slopes[valid],
-        p0=[np.max(col_slopes), 1.0],
-        maxfev=10000
-    )
-
-    A, a = popt
-    fit_curve = model(delta_t, A, a)
-
-    # --- plot ---
-    plt.figure(figsize=(6, 4))
-
-    for i, dt in enumerate(delta_t):
-        plt.plot(dt, col_slopes[i], 'o',
-                 color=colors[i],
-                 label='Data points' if i == 0 else "")
-
-    plt.plot(delta_t, fit_curve, '-',
-             color='black',
-             label=f'Fit: A={A:.3f}, a={a:.3f}')
-
-    plt.xlabel('Inter-spike interval Δt (s)')
-    plt.ylabel('Slope of best fit line')
-    plt.title(f'{title}: Exponential amplitude fit')
-    plt.legend()
-    plt.tight_layout()
-    plt.show()
-
-    return A, a
-
-
-def get_slopes_and_fit(file_path):
-    df = pd.read_excel(file_path)
-
-    col_slopes = []
-    for col in df.columns:
-        y = df[col].dropna().values
-        x = np.arange(len(y))
-        if len(y) > 1:
-            slope, _, _, _, _ = linregress(x, y)
-            col_slopes.append(slope)
-        else:
-            col_slopes.append(np.nan)
-
-    col_slopes = np.array(col_slopes)
-
-    freq = np.array([5, 10, 20, 40])
-    delta_t = 1 / freq
-
-    valid = ~np.isnan(col_slopes)
-
-    popt, _ = curve_fit(
-        model,
-        delta_t[valid],
-        col_slopes[valid],
-        p0=[np.max(col_slopes), 1.0],
-        maxfev=10000
-    )
-
-    A, a = popt
-    fit_curve = model(delta_t, A, a)
-
-    return delta_t, col_slopes, fit_curve, A, a
-
-
-# --- run individual ---
-A_slow, a_slow = process_file(
-    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx',
-    'Slow synapses'
-)
-
-A_fast, a_fast = process_file(
-    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx',
-    'Fast synapses'
-)
-
-print("Slow:", A_slow, a_slow)
-print("Fast:", A_fast, a_fast)
-
-
-# --- combined plot ---
-delta_t_slow, slopes_slow, fit_slow, A_slow, a_slow = get_slopes_and_fit(
-    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx'
-)
-
-delta_t_fast, slopes_fast, fit_fast, A_fast, a_fast = get_slopes_and_fit(
-    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx'
-)
-
-colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red']
-
-plt.figure(figsize=(6, 4))
-
-# slow
-for i, dt in enumerate(delta_t_slow):
-    plt.plot(dt, slopes_slow[i], 'o',
-             markerfacecolor='white',
-             markeredgecolor=colors[i],
-             markersize=8,
-             label='Slow synapses' if i == 0 else "")
-
-plt.plot(delta_t_slow, fit_slow, '--', color='black', label='Slow fit')
-
-# fast
-for i, dt in enumerate(delta_t_fast):
-    plt.plot(dt, slopes_fast[i], 'o',
-             color=colors[i],
-             markersize=8,
-             label='Fast synapses' if i == 0 else "")
-
-plt.plot(delta_t_fast, fit_fast, '-', color='gray', label='Fast fit')
-
-plt.xlabel('Inter-spike interval Δt (s)')
-plt.ylabel('Slope of best fit line')
-plt.title('Exponential amplitude fits: Slow vs Fast')
-plt.legend()
-plt.tight_layout()
-plt.show()
-
-
-print("Slow A, a:", A_slow, a_slow)
-print("Fast A, a:", A_fast, a_fast)
-
-
-# =========================
-# SECOND FIGURE
-# =========================
-
-dt_dense = np.linspace(0, 1, 100)
-
-plt.figure()
-
-plt.plot(dt_dense,
-         model(dt_dense, A_slow, a_slow),
-         '--', color='black',
-         label='Slow fit')
-
-plt.plot(dt_dense,
-         model(dt_dense, A_fast, a_fast),
-         '-', color='gray',
-         label='Fast fit')
-
-plt.xlabel('Inter-spike interval Δt (s)')
-plt.ylabel('Model output')
-plt.title('Exponential amplitude fits (continuous)')
-plt.legend()
-
-plt.show()
-
-#%% 11 - stable model comparison fits
-
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.stats import linregress
-from scipy.optimize import curve_fit
-
-
-# =========================
-# MODELS
-# =========================
-
-def exp_model(x, A, a):
-    return A * np.exp(-a * x)
-
-def double_exp(x, A1, a1, A2, a2):
-    return A1 * np.exp(-a1 * x) + A2 * np.exp(-a2 * x)
-
-def power_model(x, A, a, b):
-    return A / (1 + a * x)**b
-
-def stretched_exp(x, A, a, b):
-    x = np.clip(x, 1e-12, None)
-    return A * np.exp(-(a * x)**b)
-
-
-# =========================
-# DATA
-# =========================
-
-def compute_slopes(file_path):
-    df = pd.read_excel(file_path)
-
-    col_slopes = []
-    for col in df.columns:
-        y = df[col].dropna().values
-        x = np.arange(len(y))
-        if len(y) > 1:
-            slope, _, _, _, _ = linregress(x, y)
-            col_slopes.append(slope)
-        else:
-            col_slopes.append(np.nan)
-
-    col_slopes = np.array(col_slopes)
-
-    freq = np.array([5, 10, 20, 40])
-    delta_t = 1 / freq
-
-    return delta_t, col_slopes
-
-
-# =========================
-# SAFE FIT WRAPPER
-# =========================
-
-def safe_curve_fit(model, x, y, p0, bounds=(-np.inf, np.inf)):
-    try:
-        popt, _ = curve_fit(
-            model, x, y,
-            p0=p0,
-            bounds=bounds,
-            maxfev=50000
-        )
-        return popt, model(x, *popt)
-    except Exception as e:
-        print(f"Fit failed for {model.__name__}: {e}")
-        return None, None
-
-
-# =========================
-# FIT + PLOT
-# =========================
-
-def fit_and_plot(x, y, title):
-
-    valid = ~np.isnan(y)
-    x = x[valid]
-    y = y[valid]
-
-    x_dense = np.linspace(np.min(x), np.max(x), 200)
-
-    plt.figure(figsize=(6,4))
-    plt.plot(x, y, 'ko', label='data')
-
-    # ---- EXP ----
-    p, _ = safe_curve_fit(exp_model, x, y,
-                          p0=[np.max(y), 1.0],
-                          bounds=(0, np.inf))
-    if p is not None:
-        plt.plot(x_dense, exp_model(x_dense, *p), label='exp')
-
-    # ---- DOUBLE EXP ----
-    p, _ = safe_curve_fit(double_exp, x, y,
-                          p0=[np.max(y)/2, 1.0, np.max(y)/2, 0.1],
-                          bounds=(0, np.inf))
-    if p is not None:
-        plt.plot(x_dense, double_exp(x_dense, *p), label='double exp')
-
-    # ---- POWER LAW ----
-    p, _ = safe_curve_fit(power_model, x, y,
-                          p0=[np.max(y), 1.0, 1.0],
-                          bounds=(0, np.inf))
-    if p is not None:
-        plt.plot(x_dense, power_model(x_dense, *p), label='power law')
-
-    # ---- STRETCHED EXP ----
-    p, _ = safe_curve_fit(stretched_exp, x, y,
-                          p0=[np.max(y), 1.0, 1.0],
-                          bounds=(0, np.inf))
-    if p is not None:
-        plt.plot(x_dense, stretched_exp(x_dense, *p), label='stretched exp')
-
-    plt.xlabel('Δt (s)')
-    plt.ylabel('slope')
-    plt.title(title)
-    plt.legend()
-    plt.tight_layout()
-    plt.show()
-
-
-# =========================
-# RUN
-# =========================
-
-def run(file_path, title):
-    x, y = compute_slopes(file_path)
-    fit_and_plot(x, y, title)
-
-
-run(r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx',
-    'Slow synapses')
-
-run(r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx',
-    'Fast synapses')
-
-#%% 11 - DOUBLE EXPONENTIAL FIT ONLY
-
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.stats import linregress
-from scipy.optimize import curve_fit
-
-
-# =========================
-# DOUBLE EXPONENTIAL MODEL
-# =========================
-def model(delta_t, A1, a1, A2, a2):
-    return A1 * np.exp(-a1 * delta_t) + A2 * np.exp(-a2 * delta_t)
-
-
-# =========================
-# SLOPE EXTRACTION
-# =========================
-def process_file(file_path, title):
-    df = pd.read_excel(file_path)
-    colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red']
-
-    col_slopes = []
-    for col in df.columns:
-        y = df[col].dropna().values
-        x = np.arange(len(y))
-        if len(y) > 1:
-            slope, _, _, _, _ = linregress(x, y)
-            col_slopes.append(slope)
-        else:
-            col_slopes.append(np.nan)
-
-    col_slopes = np.array(col_slopes)
-
-    freq = np.array([5, 10, 20, 40])
-    delta_t = 1 / freq
-
-    valid = ~np.isnan(col_slopes)
-
-    # =========================
-    # FIT DOUBLE EXPONENTIAL
-    # =========================
-    popt, _ = curve_fit(
-        model,
-        delta_t[valid],
-        col_slopes[valid],
-        p0=[np.max(col_slopes)/2, 1.0,
-            np.max(col_slopes)/2, 0.1],
-        maxfev=50000
-    )
-
-    A1, a1, A2, a2 = popt
-    fit_curve = model(delta_t, A1, a1, A2, a2)
-
-    # =========================
-    # PLOT
-    # =========================
-    plt.figure(figsize=(6, 4))
-
-    for i, dt in enumerate(delta_t):
-        plt.plot(dt, col_slopes[i], 'o',
-                 color=colors[i],
-                 label='Data points' if i == 0 else "")
-
-    plt.plot(delta_t, fit_curve, '-',
-             color='black',
-             label=f'Fit: A1={A1:.3f}, a1={a1:.3f}, A2={A2:.3f}, a2={a2:.3f}')
-
-    plt.xlabel('Inter-spike interval Δt (s)')
-    plt.ylabel('Slope of best fit line')
-    plt.title(f'{title}: Double exponential fit')
-    plt.legend()
-    plt.tight_layout()
-    plt.show()
-
-    return A1, a1, A2, a2
-
-
-# =========================
-# GET FIT CURVE
-# =========================
-def get_slopes_and_fit(file_path):
-    df = pd.read_excel(file_path)
-
-    col_slopes = []
-    for col in df.columns:
-        y = df[col].dropna().values
-        x = np.arange(len(y))
-        if len(y) > 1:
-            slope, _, _, _, _ = linregress(x, y)
-            col_slopes.append(slope)
-        else:
-            col_slopes.append(np.nan)
-
-    col_slopes = np.array(col_slopes)
-
-    freq = np.array([5, 10, 20, 40])
-    delta_t = 1 / freq
-
-    valid = ~np.isnan(col_slopes)
-
-    popt, _ = curve_fit(
-        model,
-        delta_t[valid],
-        col_slopes[valid],
-        p0=[np.max(col_slopes)/2, 1.0,
-            np.max(col_slopes)/2, 0.1],
-        maxfev=50000
-    )
-
-    A1, a1, A2, a2 = popt
-    fit_curve = model(delta_t, A1, a1, A2, a2)
-
-    return delta_t, col_slopes, fit_curve, A1, a1, A2, a2
-
-
-# =========================
-# RUN INDIVIDUAL
-# =========================
-A1_slow, a1_slow, A2_slow, a2_slow = process_file(
-    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx',
-    'Slow synapses'
-)
-
-A1_fast, a1_fast, A2_fast, a2_fast = process_file(
-    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx',
-    'Fast synapses'
-)
-
-print("Slow:", A1_slow, a1_slow, A2_slow, a2_slow)
-print("Fast:", A1_fast, a1_fast, A2_fast, a2_fast)
-
-
-# =========================
-# COMBINED PLOT
-# =========================
-delta_t_slow, slopes_slow, fit_slow, A1_slow, a1_slow, A2_slow, a2_slow = get_slopes_and_fit(
-    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx'
-)
-
-delta_t_fast, slopes_fast, fit_fast, A1_fast, a1_fast, A2_fast, a2_fast = get_slopes_and_fit(
-    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx'
-)
-
-colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red']
-
-plt.figure(figsize=(6, 4))
-
-# slow
-for i, dt in enumerate(delta_t_slow):
-    plt.plot(dt, slopes_slow[i], 'o',
-             markerfacecolor='white',
-             markeredgecolor=colors[i],
-             markersize=8,
-             label='Slow synapses' if i == 0 else "")
-
-plt.plot(delta_t_slow, fit_slow, '--', color='black', label='Slow fit')
-
-# fast
-for i, dt in enumerate(delta_t_fast):
-    plt.plot(dt, slopes_fast[i], 'o',
-             color=colors[i],
-             markersize=8,
-             label='Fast synapses' if i == 0 else "")
-
-plt.plot(delta_t_fast, fit_fast, '-', color='gray', label='Fast fit')
-
-plt.xlabel('Inter-spike interval Δt (s)')
-plt.ylabel('Slope of best fit line')
-plt.title('Double exponential fits: Slow vs Fast')
-plt.legend()
-plt.tight_layout()
-plt.show()
-
-
-print("Slow params:", A1_slow, a1_slow, A2_slow, a2_slow)
-print("Fast params:", A1_fast, a1_fast, A2_fast, a2_fast)
-
-
-# =========================
-# SECOND FIGURE
-# =========================
-dt_dense = np.linspace(1e-6, 0.1, 200)
-
-plt.figure()
-
-plt.plot(dt_dense,
-         model(dt_dense, A1_slow, a1_slow, A2_slow, a2_slow),
-         '--', color='black',
-         label='Slow fit')
-
-plt.plot(dt_dense,
-         model(dt_dense, A1_fast, a1_fast, A2_fast, a2_fast),
-         '-', color='gray',
-         label='Fast fit')
-
-plt.xlabel('Inter-spike interval Δt (s)')
-plt.ylabel('Model output')
-plt.title('Double exponential fits (continuous)')
-plt.legend()
-
-plt.show()
