@@ -10642,3 +10642,15 @@ plt.plot(I1[:100]/np.max(I1[:100])*np.max(Iext401[1001:1200]), label='temp')
 # temp1=Iext401[1001:1200]
 # =============================================================================
 plt.legend()
+
+# Check to see if both trains match up
+plt.figure(figsize=(6,3))
+plt.subplot(1,2,1)
+plt.plot(Iext400[1001:], label='data0')
+plt.plot(I0, label='model', alpha=0.5)
+plt.legend()
+plt.subplot(1,2,2)
+plt.plot(Iext401[1001:], label='data1')
+plt.plot(I1, label='model', alpha=0.5)
+plt.legend()
+
