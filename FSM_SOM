@@ -14726,19 +14726,19 @@ def getiext(f,
 
     nspikes = 10
     
-# =============================================================================
-#     # random code
-#     spiketimes = np.cumsum(np.random.exponential(1/(f+1e-12), nspikes))
-#     spiketimes = np.concatenate([[0], spiketimes])
-#     spikeindices = np.array([int(x/dt) for x in spiketimes])
-#     runtime = int(spiketimes[-1]/dt)
-# =============================================================================
+    # random code
+    spiketimes = np.cumsum(np.random.exponential(1/(f+1e-12), nspikes))
+    spiketimes = np.concatenate([[0], spiketimes])
+    spikeindices = np.array([int(x/dt) for x in spiketimes])
+    runtime = int(spiketimes[-1]/dt)
     
-    # deterministic test
-    isi = 1.0 / (f + 1e-12)
-    spiketimes = np.arange(0, nspikes + 1) * isi
-    spikeindices = (spiketimes / dt).astype(int)
-    runtime = int(spiketimes[-1] / dt) + 1
+# =============================================================================
+#     # deterministic test
+#     isi = 1.0 / (f + 1e-12)
+#     spiketimes = np.arange(0, nspikes + 1) * isi
+#     spikeindices = (spiketimes / dt).astype(int)
+#     runtime = int(spiketimes[-1] / dt) + 1
+# =============================================================================
     
     i0list = np.zeros(runtime)
     i1list = np.zeros(runtime)
@@ -14832,7 +14832,7 @@ def getiext(f,
                 tspikeprev0 += tspike
                 tspikeindprev0 += tspikeind
     I = (1 - r) * i0list + r * i1list
-    return I, i0list, i1list, A0list, A1list, spikeind0, spikeind1, spiketimes
+    return I, i0list, i1list, A0list, A1list, spikeind0, spikeind1, spiketimes[:-1]
 
 def zform(z1,z2, f1,f2,f):
     return z1+(z2-z1)/(f2-f1)*(f-f1)
@@ -15038,7 +15038,7 @@ dt=1e-4
 
 f=40
 
-r = 1
+r = 0
 p1=0 # probability spikes occur together
 
 delta_t_slow, slopes_slow, dt_dense_slow, fit_slow, \
