@@ -42,7 +42,7 @@ names=df.columns
 # 0-DF1, 1-DF4, 2-DM1, 3-DM4, 4-DS1, 5-DS4, 
 # 6-NF1, 7-NF4, 8-NM1, 9-NM4, 10-NS1, 11-NS4
 
-dnum= 11 # <----------------------------------- neuron number
+dnum= 9 # <----------------------------------- neuron number
 dsize= 'z' # f full, z zoomed
 dsnum= 1 if dnum in [0, 2, 4,6,8,10] else 0
 dlens=[4000,12000]
@@ -354,11 +354,11 @@ plt.legend(loc='upper left', fontsize=fs, bbox_to_anchor=(0.01,0.95))
 plt.tick_params(axis='both', labelsize=fs)
 plt.show()
 
-#%% Fifth method - ratio S/F (Mixed)
+ #%% Fifth method - ratio S/F (Mixed)
 # 0-DF1, 1-DF4, 2-DM1, 3-DM4, 4-DS1, 5-DS4,
 # 6-NF1, 7-NF4, 8-NM1, 9-NM4, 10-NS1, 11-NS4
 
-dnum= 9 # <----------------------------------- neuron number (8 or 9 here)
+dnum= 8 # <----------------------------------- neuron number (8 or 9 here)
 dsize= 'z' # f full, z zoomed
 dsnum= 1 if dnum in [0, 2, 4,6,8,10] else 0
 dlens=[4000,12000]
@@ -14767,13 +14767,13 @@ def getiextd2(f,
     import numpy as np
 
     nspikes = 10
-    runtime = int(nspikes / f * 1 / dt)
+    runtime = int((nspikes+1) / f * 1 / dt)
     i0list = np.zeros(runtime)
     i1list = np.zeros(runtime)
     A0list = [A0]
     A1list = [A1]
-    spikeind0 = [0]
-    spikeind1 = [0]
+    spikeind0 = [int(1/f/dt)]
+    spikeind1 = [int(1/f/dt)]
     tspikeprev0 = 0.0
     tspikeprev1 = 0.0
     tspikeindprev0 = 0
@@ -14787,7 +14787,6 @@ def getiextd2(f,
         if branch == 0: # slow spike
             deltat0=tspikeprev0 + tspike
             A0new = A0list[-1] + model(deltat0, slope0, c0, H0)*deltat0
-            print(i,deltat0, slope0, c0, H0, model(deltat0, slope0, c0, H0)*deltat0)
             A0list.append(A0new)
             spikeind0.append(spikeind0[-1] + tspikeind + tspikeindprev0)
             tspikeprev0 = 0
@@ -14806,7 +14805,6 @@ def getiextd2(f,
             deltat1=tspikeprev1 + tspike
             # print(i, model(deltat1, slope1, c1, H1))
             A1new = A1list[-1] + model(deltat1, slope1, c1, H1)*deltat1
-            print(i, A1list[-1], deltat1, slope1, c1, H1, model(deltat1, slope1, c1, H1)*deltat1)
             A1list.append(A1new)
             spikeind1.append(spikeind1[-1] + tspikeind + tspikeindprev1)
             tspikeprev1 = 0
@@ -14862,7 +14860,6 @@ def getstats(f, taui0, tauy0, kiy0, taui1, tauy1, kiy1, dt, r,
 def linfun(s1,s4,fast1,fast4,f,r):
     return zform(s1,s4, 10,40,f)*(1-r)+zform(fast1,fast4, 10,40,f)*r
 
-
 def make_normalized_template(td, tr, tmax, dt, scale_I):
     # SynKernel = A * ( exp(-(x)/tauDecay) - exp(-(x)/tauRise) )
     t = np.arange(0, tmax, dt)
@@ -14876,8 +14873,6 @@ def make_normalized_template(td, tr, tmax, dt, scale_I):
 
 def spike_amplitude(delta_t, slope0, A, c, H):
     return A+model(delta_t, slope0, c, H)
-
-
 
 def compute_slopes(file_path):
     df = pd.read_excel(file_path)
@@ -14971,8 +14966,6 @@ def gettmean(r, Iext, g, vb, C, Cr, f):
     tmean = np.mean(np.diff(ssaptimes))
     return v, tmean, naps, aptimes
 
-
-
 dtype=0
 if dtype==0:
     dir1=r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal'
@@ -15024,7 +15017,6 @@ vth=[-40, -40, -40, -40, -40, -40, -40, -40, -41, -40, -40, -39]
 
 dt=1e-4 # 10 kHz = 10 x 10^3 Hz = 1x10^4 Hz = 10000 Hz yields dt = 1x10^(-4) = 0.0001
 ttemp=0.2 
-dt=1e-4
 
 f = 40 # <---------- Input frequency
 r = 0
@@ -15044,7 +15036,7 @@ H1=H_fast
 slope0=m0_slow
 slope1=m0_fast
 
-scale_I0 = 0.25 # slow peak
+scale_I0 = 0.28 # slow peak
 scale_I1 = 0.53 # fast peak
 
 tr0=0.7e-3 # slow rise
@@ -15248,7 +15240,7 @@ def getiext(f,
                 A0new=A0
                 # print('A0', A0)
             else:
-                A0new = np.max(i0list) + model(deltat0, slope0, c0, H0)*deltat0-i0list[-1]
+                A0new = np.max(i0list) + model(deltat0, slope0, c0, H0)*deltat0+i0list[-1]
                 # print(i,np.max(i0list), deltat0, slope0, c0, H0, model(deltat0, slope0, c0, H0)*deltat0)
             A0list.append(A0new)
             #update the current trace
@@ -15261,7 +15253,7 @@ def getiext(f,
             tspikeindprev0 = 0
             if coincident: 
                 deltat1=tspikeprev1 + tspike
-                A1new = np.max(i1list) + model(deltat1, slope1, c1, H1, mfixed=1.6)*deltat1-i1list[-1]
+                A1new = np.max(i1list) + model(deltat1, slope1, c1, H1, mfixed=1.6)*deltat1+i1list[-1]
                 A1list.append(A1new)
                 spikeind1.append(spikeind1[-1] + tspikeind + tspikeindprev1)
                 #update the current trace
@@ -15280,7 +15272,7 @@ def getiext(f,
                 A1new=A1
                 # print('A1', A1)
             else:
-                A1new = np.max(i1list) + model(deltat1, slope1, c1, H1, mfixed=1.6)*deltat1-i1list[-1]
+                A1new = np.max(i1list) + model(deltat1, slope1, c1, H1, mfixed=1.6)*deltat1+i1list[-1]
                 # print(i, np.max(i1list), deltat1, slope1, c1, H1, model(deltat1, slope1, c1, H1)*deltat1)
                 # print('t', np.max(i1list), i1list[-1], np.max(i1list) -i1list[-1])
                 # print('tt', A1new)
@@ -15297,7 +15289,7 @@ def getiext(f,
                 if i==0:
                     A0new=A0
                 else:
-                    A0new = np.max(i0list) + model(deltat0, slope0, c0, H0)*deltat0-i0list[-1]
+                    A0new = np.max(i0list) + model(deltat0, slope0, c0, H0)*deltat0+i0list[-1]
                 A0list.append(A0new)
                 spikeind0.append(spikeind0[-1] + tspikeind + tspikeindprev0)
                 t, temp0 = make_normalized_template(td0, tr0, 11 / f, dt, A0list[-1])
@@ -15456,7 +15448,6 @@ if dtype == 1:
     dir1=r'C:\Users\Oliver\Desktop\PhD\3-Research\Neuron\SOM'
 os.chdir(dir1)
 
-
 df = pd.read_csv("Table0.csv")
 data=np.array(df)
 
@@ -15506,8 +15497,8 @@ dt=1e-4
 
 f=40
 
-r = 1
-p1 = 0 # probability spikes occur together
+r = 0.2
+p1 = 1 # probability spikes occur together
 
 delta_t_slow, slopes_slow, dt_dense_slow, fit_slow, \
 m0_slow, c_slow, H_slow = get_slopes_and_fit(
@@ -16154,3 +16145,1490 @@ plt.show()
 # plt.plot(vsim, label='sim')
 # plt.legend()
 # =============================================================================
+
+#%% 14 - Mechanistic model with fitting - (random)
+
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+import pandas as pd
+from scipy.signal import find_peaks
+from scipy.stats import linregress
+from scipy.optimize import curve_fit
+
+def model(dt_i, slope, c, H,
+          a=0.001,
+          b=0.01,
+          mfixed=7):
+
+    dt_i = np.asarray(dt_i)
+
+    mask = (dt_i >= a) & (dt_i <= b)
+
+    out = slope / (1.0 + (dt_i / (c + 1e-12))**H)
+
+    out = np.where(mask, mfixed, out)
+
+    return out
+
+def getiext(f,
+             dt, r, p1,
+             A0, A1,
+             slope0, slope1,
+             c0, c1,
+             H0, H1,
+             td0, tr0,
+             td1, tr1):
+
+    nspikes = 10
+    
+    # random code
+    spiketimes = np.cumsum(np.random.exponential(1/(f+1e-12), nspikes))
+    spiketimes = np.concatenate([[0], spiketimes])
+    spikeindices = np.array([int(x/dt) for x in spiketimes])
+    runtime = int(spiketimes[-1]/dt)
+    
+# =============================================================================
+#     # deterministic test
+#     isi = 1.0 / (f + 1e-12)
+#     spiketimes = np.arange(0, nspikes + 1) * isi
+#     spikeindices = (spiketimes / dt).astype(int)
+#     runtime = int(spiketimes[-1] / dt) + 1
+# =============================================================================
+    
+    i0list = np.zeros(runtime)
+    i1list = np.zeros(runtime)
+    A0list = [A0]
+    A1list = [A1]
+    spikeind0 = [0]
+    spikeind1 = [0]
+    tspikeprev0 = 0.0
+    tspikeprev1 = 0.0
+    tspikeindprev0 = 0
+    tspikeindprev1 = 0
+    # ---------- spike loop ----------
+    for i in range(0, nspikes):
+        if i == 0:
+            tspike = spiketimes[0]
+        else:
+            tspike = spiketimes[i]-spiketimes[i-1]
+        tspikeind = spikeindices[i]
+        branch = np.random.uniform(0, 1) < r
+        coincident = np.random.uniform(0, 1) < p1
+        if branch == 0: # ------------------------------------- slow spike
+            deltat0=tspikeprev0 + tspike
+            # Anext = max(I0) + g(deltat) - (residual up to this point in time),
+            # this should guarantee that the next spike matches the linear
+            # approximation in the data or the sigmoidal approixmation
+            # possibly remove the residual to allow for buildup in the other code
+            if i==0:
+                A0new=A0
+                # print('A0', A0)
+            else:
+                A0new = np.max(i0list) + model(deltat0, slope0, c0, H0)*deltat0+i0list[-1]
+                # print(i,np.max(i0list), deltat0, slope0, c0, H0, model(deltat0, slope0, c0, H0)*deltat0)
+            A0list.append(A0new)
+            #update the current trace
+            spikeind0.append(spikeind0[-1] + tspikeind + tspikeindprev0)
+            t, temp0 = make_normalized_template(td0, tr0, 11 / f, dt, A0list[-1])
+            end = min(spikeindices[i] + len(temp0), runtime)
+            i0list[spikeindices[i]:end] += temp0[:end - spikeindices[i]]
+            #reset the timers
+            tspikeprev0 = 0
+            tspikeindprev0 = 0
+            if coincident: 
+                deltat1=tspikeprev1 + tspike
+                A1new = np.max(i1list) + model(deltat1, slope1, c1, H1, mfixed=1.6)*deltat1+i1list[-1]
+                A1list.append(A1new)
+                spikeind1.append(spikeind1[-1] + tspikeind + tspikeindprev1)
+                #update the current trace
+                t, temp1 = make_normalized_template(td1, tr1, 11 / f, dt, A1list[-1])
+                end = min(spikeindices[i] + len(temp1), runtime)
+                i1list[spikeindices[i]:end] += temp1[:end - spikeindices[i]]
+                #reset timers
+                tspikeprev1 = 0
+                tspikeindprev1 = 0
+            else:
+                tspikeprev1 += tspike
+                tspikeindprev1 += tspikeind
+        else: # --------------------------------------- fast spike
+            deltat1=tspikeprev1 + tspike
+            if i==0:
+                A1new=A1
+                # print('A1', A1)
+            else:
+                A1new = np.max(i1list) + model(deltat1, slope1, c1, H1, mfixed=1.6)*deltat1+i1list[-1]
+                # print(i, np.max(i1list), deltat1, slope1, c1, H1, model(deltat1, slope1, c1, H1)*deltat1)
+                # print('t', np.max(i1list), i1list[-1], np.max(i1list) -i1list[-1])
+                # print('tt', A1new)
+            A1list.append(A1new)
+            spikeind1.append(spikeind1[-1] + tspikeind + tspikeindprev1)
+            #update the current trace
+            t, temp1 = make_normalized_template(td1, tr1, 11 / f, dt, A1list[-1])
+            end = min(spikeindices[i] + len(temp1), runtime)
+            i1list[spikeindices[i]:end] += temp1[:end - spikeindices[i]]
+            tspikeprev1 = 0
+            tspikeindprev1 = 0
+            if coincident:
+                deltat0=tspikeprev0 + tspike
+                if i==0:
+                    A0new=A0
+                else:
+                    A0new = np.max(i0list) + model(deltat0, slope0, c0, H0)*deltat0+i0list[-1]
+                A0list.append(A0new)
+                spikeind0.append(spikeind0[-1] + tspikeind + tspikeindprev0)
+                t, temp0 = make_normalized_template(td0, tr0, 11 / f, dt, A0list[-1])
+                end = min(spikeindices[i] + len(temp0), runtime)
+                i0list[spikeindices[i]:end] += temp0[:end - spikeindices[i]]
+
+                tspikeprev0 = 0
+                tspikeindprev0 = 0
+            else:
+                tspikeprev0 += tspike
+                tspikeindprev0 += tspikeind
+    I = (1 - r) * i0list + r * i1list
+    return I, i0list, i1list, A0list, A1list, spikeind0, spikeind1, spiketimes
+
+def zform(z1,z2, f1,f2,f):
+    return z1+(z2-z1)/(f2-f1)*(f-f1)
+
+
+def getstats(f, taui0, tauy0, kiy0, taui1, tauy1, kiy1, dt, r, 
+                                 g, vb, C, Cr,
+                                 m0, m1, b):
+    # Fix fin plot
+    rlist=np.linspace(0,1,100)
+    tlist=[]
+    rateslist=[]
+    napslist=[]
+    for ind,r in enumerate(rlist):
+        print(ind, len(rlist))
+        Iext, _, _, _, _, runtime, _, _ = getiext(f, taui0, tauy0, kiy0, taui1,
+                                                  tauy1, kiy1, dt, r, m0, m1, b)
+        peaks, _ = find_peaks(Iext)
+        Inorm=Iext/Iext[peaks[0]]*b
+        _, tmean, naps, _ = gettmean(r, Inorm, g, vb, C, Cr, f)
+        rateslist.append(naps/runtime/dt)
+        tlist.append(tmean)
+        napslist.append(naps)
+    foutlist=1/np.array(tlist)
+    return rlist, foutlist, napslist
+
+def linfun(s1,s4,fast1,fast4,f,r):
+    return zform(s1,s4, 10,40,f)*(1-r)+zform(fast1,fast4, 10,40,f)*r
+
+def make_normalized_template(td, tr, tmax, dt, scale_I):
+    # SynKernel = A * ( exp(-(x)/tauDecay) - exp(-(x)/tauRise) )
+    t = np.arange(0, tmax, dt)
+    A = scale_I / (-(tr/td)**(td/(td-tr)) + (tr/td)**(tr/(td-tr)))
+    template = A * (np.exp(-t / td) - np.exp(-t / tr))
+    return t, template
+
+# def spike_amplitude(delta_t, A0, A1, c, H):
+#     x = (c * delta_t)**H
+#     return (A1 + A0 * x) / (1 + x)
+
+def spike_amplitude(delta_t, slope0, A, c, H):
+    return A+model(delta_t, slope0, c, H)
+
+
+def compute_slopes(file_path):
+    df = pd.read_excel(file_path)
+
+    col_slopes = []
+    for col in df.columns:
+        y = df[col].dropna().values
+        x = np.arange(len(y))
+        if len(y) > 1:
+            slope, _, _, _, _ = linregress(x, y)
+            col_slopes.append(slope)
+        else:
+            col_slopes.append(np.nan)
+
+    col_slopes = np.array(col_slopes)
+
+    freq = np.array([5, 10, 20, 40])
+    delta_t = 1 / freq
+
+    return delta_t, col_slopes
+
+
+def fit_model(delta_t, col_slopes):
+    valid = ~np.isnan(col_slopes)
+
+    popt, _ = curve_fit(
+        model,
+        delta_t[valid],
+        col_slopes[valid],
+        p0=[1.0, 0.05, 2.0],
+        maxfev=10000
+    )
+
+    m0, c, H = popt
+    return m0, c, H
+
+
+def get_slopes_and_fit(file_path):
+    delta_t, col_slopes = compute_slopes(file_path)
+    m0, c, H = fit_model(delta_t, col_slopes)
+
+    dt_dense = np.linspace(np.min(delta_t), np.max(delta_t), 200)
+    fit_curve = model(dt_dense, m0, c, H)
+
+    return delta_t, col_slopes, dt_dense, fit_curve, m0, c, H
+
+
+def gettmean(r, Iext, g, vb, C, Cr, f):
+    v=np.zeros(len(Iext))
+    v[0]=-60
+    apinds=[]
+    refper=40 # refper *dt (sec) = 4ms
+    aptimer=np.inf
+    posttimer=False
+    gfast=zform(g[6], g[7], 10, 40, f)
+    gslow=zform(g[10], g[11], 10, 40, f)
+    gfast2=zform(gr[6], gr[7], 10, 40, f)
+    gslow2=zform(gr[10], gr[11], 10, 40, f)
+    vbslow=zform(vb[10], vb[11], 10, 40, f)
+    vbfast=zform(vb[6], vb[7], 10, 40, f)
+    C1=linfun(C[10], C[11], C[6], C[7], f, r)
+    C2=linfun(Cr[10], Cr[11], Cr[6], Cr[7], f, r)
+    vreset=linfun(vbr[10], vbr[11], vbr[6], vbr[7], f, r)
+    
+    for i in range(1,len(Iext)):
+        if posttimer==False:
+            icurr = r*gfast*(v[i-1]-vbfast)+(1-r)*gslow*(v[i-1]-vbslow)
+            dvdt=((-icurr+Iext[i-1]))/C1
+        if posttimer==True:
+            icurr = r*gfast2*(v[i-1]-vbfast)+(1-r)*gslow2*(v[i-1]-vbslow)
+            dvdt=((-icurr+Iext[i-1]))/C2
+            
+        if aptimer == np.inf:
+            v[i] = v[i-1]+dvdt*dt
+        else:
+            v[i] = v[i-1]
+
+        if Iext[i]>Iext[i-1]:
+            posttimer=False
+
+        if aptimer != np.inf:
+            aptimer-=1
+        if v[i-1]>linfun(vth[10], vth[11], vth[6], vth[7], f, r):
+            v[i]=vreset
+            apinds.append(i)
+            aptimer=refper
+            posttimer=True
+        if aptimer==0:
+            aptimer=np.inf
+    aptimes=np.array(apinds)*dt
+    naps=len(aptimes)
+    ssaptimes=aptimes[int(0.3*len(aptimes)):]
+    tmean = np.mean(np.diff(ssaptimes))
+    return v, tmean, naps, aptimes
+
+dtype=0
+if dtype==0:
+    dir1=r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal'
+if dtype == 1:
+    dir1=r'C:\Users\Oliver\Desktop\PhD\3-Research\Neuron\SOM'
+os.chdir(dir1)
+
+
+df = pd.read_csv("Table0.csv")
+data=np.array(df)
+
+names = {
+    0: 'DE-F-10 Hz', 1: 'DE-F-40 Hz',
+    2: 'DE-M-10 Hz', 3: 'DE-M-40 Hz',
+    4: 'DE-S-10 Hz', 5: 'DE-S-40 Hz',
+
+    6: 'NR-F-10 Hz', 7: 'NR-F-40 Hz',
+    8: 'NR-M-10 Hz', 9: 'NR-M-40 Hz',
+    10: 'NR-S-10 Hz', 11: 'NR-S-40 Hz'
+}
+
+# 0-DF1, 1-DF4, 2-DM1, 3-DM4, 4-DS1, 5-DS4, 
+# 6-NF1, 7-NF4, 8-NM1, 9-NM4, 10-NS1, 11-NS4
+
+# Different parameters for each dataset
+#                0   1   2   3   4    5     6      7    8   9  10  11
+vb=np.array([-60.5,-60,-60,-60,-64.2,-64.2,-61.75,-63,-64,-65.5,-64,-63.8])
+#                0   1   2   3   4    5     6       7    8   9     10    11
+vbr=np.array([-60.5,-60,-60,-60,-64.2,-64.2,-61.75,-50,-50,-47,-64,-50])
+#    0        1           2          3        4         5
+C=[0.00011,  0.00011,  0.00011,  0.00011,  0.00011,  0.00011,
+   0.00009, 0.0001,  0.00011,  0.00011,  0.00011, 0.000111]
+#    6        7          8        9          10       11
+#    0        1           2          3        4         5
+Cr=[0.00011,  0.00011,  0.00011,  0.00011,  0.00011,  0.00011,
+   0.00009, 0.0001,  0.00011,  0.00011,  0.00011, 0.0001]
+#    6        7          8        9          10       11
+#    0        1          2      3        4        5
+g=[0.0037,  0.0037,  0.0037,  0.0037,  0.0037,  0.0037,
+   0.0035, 0.0037,  0.0037,  0.0037,  0.0037, 0.003]
+#    6        7       8        9       10       11
+    # 0        1          2      3        4        5
+gr=[0.0037,  0.0037,  0.0037,  0.0037,  0.0037,  0.0037,
+   0.0035, 0.004,  0.0037,  0.0037,  0.0037, 0.005]
+#    6        7       8        9       10       11
+#     0    1    2     3    4    5    6    7    8   9    10   11
+vth=[-40, -40, -40, -40, -40, -40, -40, -40, -41, -40, -40, -39]
+
+dt=1e-4 # 10 kHz = 10 x 10^3 Hz = 1x10^4 Hz = 10000 Hz yields dt = 1x10^(-4) = 0.0001
+
+# Fixed 
+tmax = 0.3
+ttemp=0.2
+dt=1e-4
+
+f=10#40
+
+r = 0.5
+p1 = 0.5 # probability spikes occur together
+
+delta_t_slow, slopes_slow, dt_dense_slow, fit_slow, \
+m0_slow, c_slow, H_slow = get_slopes_and_fit(
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx')
+delta_t_fast, slopes_fast, dt_dense_fast, fit_fast, \
+m0_fast, c_fast, H_fast = get_slopes_and_fit(
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx')
+
+c0=c_slow
+c1=c_fast
+H0=H_slow
+H1=H_fast
+slope0=m0_slow
+slope1=m0_fast
+
+scale_I0 = 0.31 # slow peak
+scale_I1 = 0.53 # fast peak
+
+tr0=0.7e-3 # slow rise
+td0=2.6e-3 # slow decay
+
+tr1=0.29e-3 # fast rise
+td1=1.35e-3 # fast decay
+
+# =============================================================================
+# t, temp0 = make_normalized_template(td0, tr0, ttemp, dt, scale_I0)
+# t, temp1 = make_normalized_template(td1, tr1, ttemp, dt, scale_I1)
+# # =============================================================================
+# # plt.plot(t, temp0)
+# # plt.plot(t, temp1)
+# # plt.show()
+# # =============================================================================
+# 
+# Iext, I0, I1, runtime, spike_idx, spike_y0, spike_y1 = getiext(f, temp0, temp1,
+#             dt, r, p1,
+#             scale_I0, scale_I1, 
+#             c0, c1,
+#             H0, H1,
+#             slope0, slope1)
+# =============================================================================
+
+Iext, I0, I1, A0list, A1list, spikeind0, spikeind1, spiketimes = getiext(f,
+             dt, r, p1,
+             scale_I0, scale_I1,
+             slope0, slope1,
+             c0, c1,
+             H0, H1,
+             td0, tr0,
+             td1, tr1)
+v, tmean, naps, aptimes = gettmean(r, Iext, g, vb, C, Cr, f)
+
+fs = 10
+lw = 2
+
+t = np.arange(len(v)) * dt
+# =============================================================================
+# #%%
+# =============================================================================
+fs=12
+plt.subplot(4,1,1)
+plt.title('Fast synapse proportion (r)={}\nCoincidence proportion (p1)={}\nInput frequency={} Hz'.format(r, p1, f),
+          fontsize=fs)
+plt.plot(t, I0, linewidth=lw)
+# for x in spike_y0:
+#     plt.axvline(x*dt, color='r', alpha=0.3)
+plt.ylabel('Slow\ncurrent', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+plt.xticks([])
+
+plt.subplot(4,1,2)
+plt.plot(t, I1, linewidth=lw)
+plt.ylabel('Fast\ncurrent', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+# for x in spike_y1:
+#     plt.axvline(x*dt, color='r', alpha=0.3)
+plt.xticks([])
+
+plt.subplot(4,1,3)
+plt.plot(t, Iext, linewidth=lw)
+plt.ylabel('Slow\n+\nFast\nCurrent', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+for x in spiketimes:
+    plt.axvline(x, color='r', alpha=0.3)
+plt.xticks([])
+
+plt.subplot(4,1,4)
+plt.plot(t * 1000, v, linewidth=lw)
+plt.plot(t * 1000,
+         linfun(vth[10], vth[11], vth[6], vth[7], f, r) * np.ones(len(v)),
+         color='k')
+plt.xlabel('Time (ms)', fontsize=fs)
+plt.ylabel('Membrane\npotential (mV)', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+
+plt.show()
+
+
+#%% 14 - Heatmap  - random - 40
+
+rlist = np.linspace(0, 1, 40)
+p1list = np.linspace(0, 1, 40)
+navgs = 20
+
+
+fout_matrix = np.zeros((len(p1list), len(rlist)))
+
+# ======================
+# Sweep r and p1
+# ======================
+for i, p1 in enumerate(p1list):
+    for j, r in enumerate(rlist):
+        fav = []
+        for q in range(navgs):
+            print(i, len(p1list), j, len(rlist), q, navgs)
+            ret = getiext(f,
+                         dt, r, p1,
+                         scale_I0, scale_I1,
+                         slope0, slope1,
+                         c0, c1,
+                         H0, H1,
+                         td0, tr0,
+                         td1, tr1)
+            v, tmean, naps, aptimes = gettmean(r, ret[0], g, vb, C, Cr, f)
+            fav.append(naps)
+        if len(fav) > 0:
+            fout_matrix[i, j] = np.mean(fav)
+        else:
+            fout_matrix[i, j] = 0
+# =============================================================================
+# #%% 11 - Plot heatmap 
+# =============================================================================
+plt.figure()
+fs = 15
+im = plt.imshow(
+    fout_matrix,
+    cmap='nipy_spectral',
+    origin='lower',
+    aspect='auto',
+    extent=[rlist.min(), rlist.max(),
+            p1list.min(), p1list.max()]
+)
+
+plt.xlabel('Proportion of fast synapses (r)', fontsize=fs)
+plt.ylabel('Coincidence probability (c)', fontsize=fs)
+plt.title('Input frequency = {}'.format(f), fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+
+# Create colorbar and set label size
+cbar = plt.colorbar(im)
+cbar.set_label('Mean # of postsynaptic APs', fontsize=fs, rotation=270, 
+               labelpad=20)
+          # label size
+cbar.ax.tick_params(labelsize=fs)            # tick label size
+
+plt.show()
+
+#%% 14 - Delta_t version - good - 40 - deterministic
+
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+import pandas as pd
+from scipy.signal import find_peaks
+from scipy.stats import linregress
+from scipy.optimize import curve_fit
+
+def zform(z1,z2, f1,f2,f):
+    return z1+(z2-z1)/(f2-f1)*(f-f1)
+
+
+def getstats(f, taui0, tauy0, kiy0, taui1, tauy1, kiy1, dt, r, 
+                                 g, vb, C, Cr,
+                                 m0, m1, b):
+    # Fix fin plot
+    rlist=np.linspace(0,1,100)
+    tlist=[]
+    rateslist=[]
+    napslist=[]
+    for ind,r in enumerate(rlist):
+        print(ind, len(rlist))
+        Iext, _, _, _, _, runtime, _, _ = getiext(f, taui0, tauy0, kiy0, taui1,
+                                                  tauy1, kiy1, dt, r, m0, m1, b)
+        peaks, _ = find_peaks(Iext)
+        Inorm=Iext/Iext[peaks[0]]*b
+        _, tmean, naps, _ = gettmean(r, Inorm, g, vb, C, Cr, f)
+        rateslist.append(naps/runtime/dt)
+        tlist.append(tmean)
+        napslist.append(naps)
+    foutlist=1/np.array(tlist)
+    return rlist, foutlist, napslist
+
+def linfun(s1,s4,fast1,fast4,f,r):
+    return zform(s1,s4, 10,40,f)*(1-r)+zform(fast1,fast4, 10,40,f)*r
+
+def make_normalized_template(td, tr, tmax, dt, scale_I):
+    # SynKernel = A * ( exp(-(x)/tauDecay) - exp(-(x)/tauRise) )
+    t = np.arange(0, tmax, dt)
+    A = scale_I / (-(tr/td)**(td/(td-tr)) + (tr/td)**(tr/(td-tr)))
+    template = A * (np.exp(-t / td) - np.exp(-t / tr))
+    return t, template
+
+# def spike_amplitude(delta_t, A0, A1, c, H):
+#     x = (c * delta_t)**H
+#     return (A1 + A0 * x) / (1 + x)
+
+def spike_amplitude(delta_t, slope0, A, c, H):
+    return A+model(delta_t, slope0, c, H)
+
+# model to fit
+def model(delta_t, m0, c, H):
+    # print(m0 / (1 + (delta_t / c)**H))
+    return m0 / (1 + (delta_t / c)**H)
+
+def compute_slopes(file_path):
+    df = pd.read_excel(file_path)
+
+    col_slopes = []
+    for col in df.columns:
+        y = df[col].dropna().values
+        x = np.arange(len(y))
+        if len(y) > 1:
+            slope, _, _, _, _ = linregress(x, y)
+            col_slopes.append(slope)
+        else:
+            col_slopes.append(np.nan)
+
+    col_slopes = np.array(col_slopes)
+
+    freq = np.array([5, 10, 20, 40])
+    delta_t = 1 / freq
+
+    return delta_t, col_slopes
+
+def fit_model(delta_t, col_slopes):
+    valid = ~np.isnan(col_slopes)
+
+    popt, _ = curve_fit(
+        model,
+        delta_t[valid],
+        col_slopes[valid],
+        p0=[1.0, 0.05, 2.0],
+        maxfev=10000
+    )
+
+    m0, c, H = popt
+    return m0, c, H
+
+
+def get_slopes_and_fit(file_path):
+    delta_t, col_slopes = compute_slopes(file_path)
+    m0, c, H = fit_model(delta_t, col_slopes)
+
+    dt_dense = np.linspace(np.min(delta_t), np.max(delta_t), 200)
+    fit_curve = model(dt_dense, m0, c, H)
+
+    return delta_t, col_slopes, dt_dense, fit_curve, m0, c, H
+
+def gettmean(r, Iext, g, vb, C, Cr, f):
+    v=np.zeros(len(Iext))
+    v[0]=-60
+    apinds=[]
+    refper=40 # refper *dt (sec) = 4ms
+    aptimer=np.inf
+    posttimer=False
+    gfast=zform(g[6], g[7], 10, 40, f) 
+    gslow=zform(g[10], g[11], 10, 40, f)
+    gfast2=zform(gr[6], gr[7], 10, 40, f)
+    gslow2=zform(gr[10], gr[11], 10, 40, f)
+    vbslow=zform(vb[10], vb[11], 10, 40, f)
+    vbfast=zform(vb[6], vb[7], 10, 40, f)
+    C1=linfun(C[10], C[11], C[6], C[7], f, r)
+    C2=linfun(Cr[10], Cr[11], Cr[6], Cr[7], f, r)
+    vreset=linfun(vbr[10], vbr[11], vbr[6], vbr[7], f, r)
+    
+    for i in range(1,len(Iext)):
+        if posttimer==False:
+            icurr = r*gfast*(v[i-1]-vbfast)+(1-r)*gslow*(v[i-1]-vbslow)
+            dvdt=((-icurr+Iext[i-1]))/C1
+        if posttimer==True:
+            icurr = r*gfast2*(v[i-1]-vbfast)+(1-r)*gslow2*(v[i-1]-vbslow)
+            dvdt=((-icurr+Iext[i-1]))/C2
+
+        if aptimer == np.inf:
+            v[i] = v[i-1]+dvdt*dt
+        else:
+            v[i] = v[i-1]
+
+        if Iext[i]>Iext[i-1]:
+            posttimer=False
+
+        if aptimer != np.inf:
+            aptimer-=1
+        if v[i-1]>linfun(vth[10], vth[11], vth[6], vth[7], f, r):
+            v[i]=vreset
+            apinds.append(i)
+            aptimer=refper
+            posttimer=True
+        if aptimer==0:
+            aptimer=np.inf
+    aptimes=np.array(apinds)*dt
+    naps=len(aptimes)
+    ssaptimes=aptimes[int(0.3*len(aptimes)):]
+    tmean = np.mean(np.diff(ssaptimes))
+    return v, tmean, naps, aptimes
+
+def getiextd2(f,
+             dt, r, p1,
+             A0, A1,
+             slope0, slope1,
+             c0, c1,
+             H0, H1,
+             td0, tr0,
+             td1, tr1):
+
+
+    nspikes = 10
+    runtime = int((nspikes+1) / f * 1 / dt)
+    i0list = np.zeros(runtime)
+    i1list = np.zeros(runtime)
+    A0list = [A0]
+    A1list = [A1]
+    spikeind0 = [int(1/f/dt)]
+    spikeind1 = [int(1/f/dt)]
+    tspikeprev0 = 0.0
+    tspikeprev1 = 0.0
+    tspikeindprev0 = 0
+    tspikeindprev1 = 0
+    # ---------- spike loop ----------
+    for i in range(1, nspikes+1):
+        tspike = 1 / f
+        tspikeind = int(tspike / dt)
+        branch = np.random.uniform(0, 1) < r
+        coincident = np.random.uniform(0, 1) < p1
+        if branch == 0: # slow spike
+            deltat0=tspikeprev0 + tspike
+            A0new = A0list[-1] + model(deltat0, slope0, c0, H0)*deltat0
+            # print(i,deltat0, slope0, c0, H0, model(deltat0, slope0, c0, H0)*deltat0)
+            A0list.append(A0new)
+            spikeind0.append(spikeind0[-1] + tspikeind + tspikeindprev0)
+            tspikeprev0 = 0
+            tspikeindprev0 = 0
+            if coincident: 
+                deltat1=tspikeprev1 + tspike
+                A1new = A1list[-1] + model(deltat1, slope1, c1, H1)*deltat1
+                A1list.append(A1new)
+                spikeind1.append(spikeind1[-1] + tspikeind + tspikeindprev1)
+                tspikeprev1 = 0
+                tspikeindprev1 = 0
+            else:
+                tspikeprev1 += tspike
+                tspikeindprev1 += tspikeind
+        else: # fast spike
+            deltat1=tspikeprev1 + tspike
+            # print(i, model(deltat1, slope1, c1, H1))
+            A1new = A1list[-1] + model(deltat1, slope1, c1, H1)*deltat1
+            A1list.append(A1new)
+            spikeind1.append(spikeind1[-1] + tspikeind + tspikeindprev1)
+            tspikeprev1 = 0
+            tspikeindprev1 = 0
+            if coincident:
+                deltat0=tspikeprev0 + tspike
+                A0new = A0list[-1] + model(deltat0, slope0, c0, H0)*deltat0
+                A0list.append(A0new)
+                spikeind0.append(spikeind0[-1] + tspikeind + tspikeindprev0)
+                tspikeprev0 = 0
+                tspikeindprev0 = 0
+            else:
+                tspikeprev0 += tspike
+                tspikeindprev0 += tspikeind
+    # ---------- templates ----------
+    for i, idx in enumerate(spikeind0):
+        t, temp0 = make_normalized_template(td0, tr0, 11 / f, dt, A0list[i])
+        end = min(idx + len(temp0), runtime)
+        i0list[idx:end] += temp0[:end - idx]
+
+    for i, idx in enumerate(spikeind1):
+        t, temp1 = make_normalized_template(td1, tr1, 11 / f, dt, A1list[i])
+        end = min(idx + len(temp1), runtime)
+        i1list[idx:end] += temp1[:end - idx]
+    I = (1 - r) * i0list + r * i1list
+    return I, i0list, i1list, A0list, A1list, spikeind0, spikeind1
+
+dtype=0
+if dtype==0:
+    dir1=r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal'
+if dtype == 1:
+    dir1=r'C:\Users\Oliver\Desktop\PhD\3-Research\Neuron\SOM'
+os.chdir(dir1)
+
+df = pd.read_csv("Table0.csv")
+data=np.array(df)
+
+names = {
+    0: 'DE-F-10 Hz', 1: 'DE-F-40 Hz',
+    2: 'DE-M-10 Hz', 3: 'DE-M-40 Hz',
+    4: 'DE-S-10 Hz', 5: 'DE-S-40 Hz',
+
+    6: 'NR-F-10 Hz', 7: 'NR-F-40 Hz',
+    8: 'NR-M-10 Hz', 9: 'NR-M-40 Hz',
+    10: 'NR-S-10 Hz', 11: 'NR-S-40 Hz'
+}
+
+# 0-DF1, 1-DF4, 2-DM1, 3-DM4, 4-DS1, 5-DS4, 
+# 6-NF1, 7-NF4, 8-NM1, 9-NM4, 10-NS1, 11-NS4
+
+# Different parameters for each dataset
+#                0   1   2   3   4    5     6      7    8   9  10  11
+vb=np.array([-60.5,-60,-60,-60,-64.2,-64.2,-61.75,-63,-64,-65.5,-64,-63.8])
+#                0   1   2   3   4    5     6       7    8   9     10    11
+vbr=np.array([-60.5,-60,-60,-60,-64.2,-64.2,-61.75,-50,-50,-47,-64,-50])
+#    0        1           2          3        4         5
+C=[0.00011,  0.00011,  0.00011,  0.00011,  0.00011,  0.00011,
+   0.00009, 0.0001,  0.00011,  0.00011,  0.00011, 0.000111]
+#    6        7          8        9          10       11
+#    0        1           2          3        4         5
+Cr=[0.00011,  0.00011,  0.00011,  0.00011,  0.00011,  0.00011,
+   0.00009, 0.0001,  0.00011,  0.00011,  0.00011, 0.0001]
+#    6        7          8        9          10       11
+#    0        1          2      3        4        5
+g=[0.0037,  0.0037,  0.0037,  0.0037,  0.0037,  0.0037,
+   0.0035, 0.0037,  0.0037,  0.0037,  0.0037, 0.003]
+#    6        7       8        9       10       11
+    # 0        1          2      3        4        5
+gr=[0.0037,  0.0037,  0.0037,  0.0037,  0.0037,  0.0037,
+   0.0035, 0.004,  0.0037,  0.0037,  0.0037, 0.005]
+#    6        7       8        9       10       11
+#     0    1    2     3    4    5    6    7    8   9    10   11
+vth=[-40, -40, -40, -40, -40, -40, -40, -40, -41, -40, -40, -39]
+
+#------------------------------------------------
+
+dt=1e-4 # 10 kHz = 10 x 10^3 Hz = 1x10^4 Hz = 10000 Hz yields dt = 1x10^(-4) = 0.0001
+ttemp=0.2 
+
+f = 40 # <---------- Input frequency
+r = 0.38 # mixed best at r=0.38
+p1 = 1 # probability spikes occur together
+
+delta_t_slow, slopes_slow, dt_dense_slow, fit_slow, \
+m0_slow, c_slow, H_slow = get_slopes_and_fit(
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx')
+delta_t_fast, slopes_fast, dt_dense_fast, fit_fast, \
+m0_fast, c_fast, H_fast = get_slopes_and_fit(
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx')
+
+c0=c_slow
+c1=c_fast
+H0=H_slow
+H1=H_fast
+slope0=m0_slow
+slope1=m0_fast
+
+scale_I0 = 0.31 # slow peak
+scale_I1 = 0.53 # fast peak
+
+# =============================================================================
+# scale_I0 = 0.31 # slow peak
+# scale_I1 = 0.51 # fast peak
+# =============================================================================
+
+tr0=0.7e-3 # slow rise
+td0=2.6e-3 # slow decay
+
+tr1=0.29e-3 # fast rise
+td1=1.35e-3 # fast decay
+
+# =============================================================================
+# t, temp0 = make_normalized_template(td0, tr0, ttemp, dt, scale_I0)
+# t, temp1 = make_normalized_template(td1, tr1, ttemp, dt, scale_I1)
+# plt.plot(t, temp0)
+# plt.plot(t, temp1)
+# plt.show()
+# =============================================================================
+
+Iext, I0, I1, A0list, A1list, spikeind0, spikeind1 = getiextd2(f, dt, 
+    r, p1, scale_I0, scale_I1, slope0, slope1, c0, c1, H0, H1, td0, tr0, td1, tr1)
+
+v, tmean, naps, aptimes = gettmean(r, Iext, g, vb, C, Cr, f)
+
+# =============================================================================
+# vdata0, tmean, naps, aptimes = gettmean(r, I01, g, vb, C, Cr, f)
+# vdata0, tmean, naps, aptimes = gettmean(r, I01, g, vb, C, Cr, f)
+# =============================================================================
+
+I04=data[:,11]*25
+I14=data[:,7]*25
+I01=data[:,10]*25
+I11=data[:,6]*25
+
+v04 = data[:,11+13]*50
+v14 = data[:,7+13]*50
+v01 = data[:,10+13]*50
+v11 = data[:,6+13]*50
+
+Im1=data[:,8]*50
+vm1=data[:,8+13]*50
+Im4=data[:,9]*50
+vm4=data[:,9+13]*50
+
+vm, tmean, naps, aptimes = gettmean(r, Im4, g, vb, C, Cr, f)
+
+fs = 10
+lw = 2
+
+t = np.arange(len(v)) * dt
+# =============================================================================
+# #%%
+# =============================================================================
+fs=12
+plt.figure()
+plt.subplot(4,1,1)
+# =============================================================================
+# plt.title('Fast synapse proportion (r)={}\nCoincidence proportion (p1)={}\nInput frequency={} Hz'.format(r, p1, f),
+#           fontsize=fs)
+# =============================================================================
+plt.plot(t, I0, linewidth=lw)
+for x in spikeind0[:-2]:
+    plt.axvline(x*dt, color='r', alpha=0.3)
+plt.ylabel('Slow\ncurrent', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+plt.xticks([])
+
+plt.subplot(4,1,2)
+plt.plot(t, I1, linewidth=lw)
+plt.ylabel('Fast\ncurrent', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+for x in spikeind1[:-2]:
+    plt.axvline(x*dt, color='r', alpha=0.3)
+plt.xticks([])
+
+plt.subplot(4,1,3)
+plt.plot(t, Iext, linewidth=lw)
+plt.ylabel('Slow\n+\nFast\nCurrent', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+ps=750
+plen=4000
+plt.plot(np.linspace(0,len(Im4[ps:plen]),
+                     len(Im4[ps:plen]))*dt, Im4[ps:plen],alpha=0.4)
+plt.xticks([])
+
+plt.subplot(4,1,4)
+plt.plot(t * 1000, v, linewidth=lw)
+plt.plot(t * 1000,
+         linfun(vth[10], vth[11], vth[6], vth[7], f, r) * np.ones(len(v)),
+         color='k')
+plt.xlabel('Time (ms)', fontsize=fs)
+plt.ylabel('Membrane\npotential (mV)', fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+plt.plot(np.linspace(0, len(vm[ps:plen]), len(vm[ps:plen]))*dt, vm)
+
+plt.show()
+
+# =============================================================================
+# # Look at the v plots
+# Iext, I0, I1, A0list, A1list, spikeind0, spikeind1 = getiextd2(10, dt, 
+#     r, p1, scale_I0, scale_I1, slope0, slope1, c0, c1, H0, H1, td0, tr0, td1, tr1)
+# v, tmean, naps, aptimes = gettmean(r, I04, g, vb, C, Cr, f)
+# vsim, tmean, naps, aptimes = gettmean(r, I1, g, vb, C, Cr, f)
+# plt.plot(v11, label='data')
+# plt.plot(vsim, label='sim')
+# plt.legend()
+# =============================================================================
+
+#%% plot current and v for mixed
+
+r=0.38
+v1, tmean, naps, aptimes = gettmean(r, Im1, g, vb, C, Cr, 10)
+v4, tmean, naps, aptimes = gettmean(r, Im4, g, vb, C, Cr, 40)
+
+fig,ax=plt.subplots(2,2, figsize=(10,6))
+
+pmax=12000
+tplot=1000*np.linspace(0, len(v1[:pmax]), len(v1[:pmax]))*dt
+
+ax[0,0].plot(tplot, Im1[:pmax])
+ax[0,0].set_title('10 Hz Mixed Current')
+ax[0,0].set_ylabel('Current')
+
+ax[1,0].plot(tplot, vm1[:pmax], label='data')
+ax[1,0].plot(tplot, v1[:pmax], label='sim')
+ax[1,0].set_title('10 Hz Mixed')
+ax[1,0].legend(loc='upper left')
+ax[1,0].set_ylabel('Membrane potential (mV)')
+ax[1,0].set_xlabel('Time (ms)')
+
+pmax=5000
+tplot=1000*np.linspace(0, len(v4[:pmax]), len(v4[:pmax]))*dt
+
+ax[0,1].plot(tplot, Im4[:pmax])
+ax[0,1].set_title('40 Hz Mixed Current')
+
+ax[1,1].plot(tplot,vm4[:pmax], label='data')
+ax[1,1].plot(tplot,v4[:pmax], label='sim')
+ax[1,1].set_title('40 Hz Mixed')
+ax[1,1].legend(loc='upper left')
+ax[1,1].set_xlabel('Time (ms)')
+
+plt.tight_layout()
+plt.show()
+
+#%%
+import matplotlib.pyplot as plt
+import numpy as np
+
+t = np.arange(len(Im1)) * dt * 1000  # time in ms
+
+# maximum current value across all traces ignoring NaN and inf
+ymax = np.nanmax([
+    np.nanmax(I04[np.isfinite(I04)]),
+    np.nanmax(I14[np.isfinite(I14)]),
+    np.nanmax(I01[np.isfinite(I01)]),
+    np.nanmax(I11[np.isfinite(I11)]),
+    np.nanmax(Im1[np.isfinite(Im1)]),
+    np.nanmax(Im4[np.isfinite(Im4)])
+])
+
+fig, ax = plt.subplots(1,2, figsize=(10,4))
+
+# all 40 Hz currents
+ax[0].plot(t, I04, label='Slow 40 Hz', alpha=1.0, color='r')
+ax[0].plot(t, I14, label='Fast 40 Hz', alpha=0.8, color='b')
+ax[0].plot(t, Im4, label='Mixed 40 Hz', alpha=0.6, color='g')
+ax[0].set_title('40 Hz Currents')
+ax[0].set_xlabel('Time (ms)')
+ax[0].set_ylabel('Current')
+ax[0].set_ylim(0, ymax)
+ax[0].legend()
+
+# all 10 Hz currents
+ax[1].plot(t, I01, label='Slow 10 Hz', alpha=1.0, color='r')
+ax[1].plot(t, I11, label='Fast 10 Hz', alpha=0.8, color='b')
+ax[1].plot(t, Im1, label='Mixed 10 Hz', alpha=0.6, color='g')
+ax[1].set_title('10 Hz Currents')
+ax[1].set_xlabel('Time (ms)')
+ax[1].set_ylim(0, ymax)
+ax[1].legend()
+
+plt.tight_layout()
+plt.show()
+
+#%% plot current and v for mixed, run previous code first
+# 6-if10, 7-if40, 10-is10, 11-is40, 19-vf10, 20-vf40, 23-vs10, 24-vs40
+import matplotlib.pyplot as plt
+import numpy as np
+
+# =============================================================================
+# # set time index ranges, full
+# a40 = 1000
+# b40 = 3400
+# 
+# a10 = 500
+# b10 = 10500
+# =============================================================================
+
+# set time index ranges, zoom
+a40 = 1000
+b40 = 1500
+
+a10 = 950
+b10 = 2200
+
+t = np.arange(len(Im1)) * dt * 1000  # time in ms
+
+# maximum current value across all traces ignoring NaN and inf
+ymax = np.nanmax([
+    np.nanmax(I04[np.isfinite(I04)]),
+    np.nanmax(I14[np.isfinite(I14)]),
+    np.nanmax(I01[np.isfinite(I01)]),
+    np.nanmax(I11[np.isfinite(I11)]),
+    np.nanmax(Im1[np.isfinite(Im1)]),
+    np.nanmax(Im4[np.isfinite(Im4)])
+])
+
+fig, ax = plt.subplots(1,2, figsize=(10,4))
+
+# all 40 Hz currents
+ax[0].plot(t[a40:b40], I04[a40:b40], label='Slow 40 Hz', alpha=1.0, color='r')
+ax[0].plot(t[a40:b40], I14[a40:b40], label='Fast 40 Hz', alpha=0.8, color='b')
+ax[0].plot(t[a40:b40], Im4[a40:b40], label='Mixed 40 Hz', alpha=0.6, color='g')
+ax[0].set_title('40 Hz Currents')
+ax[0].set_xlabel('Time (ms)')
+ax[0].set_ylabel('Current')
+ax[0].set_ylim(0, ymax)
+ax[0].legend()
+
+# all 10 Hz currents
+ax[1].plot(t[a10:b10], I01[a10:b10], label='Slow 10 Hz', alpha=1.0, color='r')
+ax[1].plot(t[a10:b10], I11[a10:b10], label='Fast 10 Hz', alpha=0.8, color='b')
+ax[1].plot(t[a10:b10], Im1[a10:b10], label='Mixed 10 Hz', alpha=0.6, color='g')
+ax[1].set_title('10 Hz Currents')
+ax[1].set_xlabel('Time (ms)')
+ax[1].set_ylim(0, ymax)
+ax[1].legend()
+
+plt.tight_layout()
+plt.show()
+#%% plot normalized currents
+import matplotlib.pyplot as plt
+import numpy as np
+
+# set time index ranges
+a40 = 1000
+b40 = 3400
+
+a10 = 500
+b10 = 10500
+
+t = np.arange(len(Im1)) * dt * 1000  # time in ms
+
+# normalize by first peak value
+def normalize_first_peak(x, a, b):
+    segment = x[a:b]
+    peaks = np.where((segment[1:-1] > segment[:-2]) & (segment[1:-1] > segment[2:]))[0] + 1
+    
+    if len(peaks) > 0:
+        peak_value = segment[peaks[0]]
+    else:
+        peak_value = np.max(segment)
+        
+    return x / peak_value
+
+# normalized currents
+I04n = normalize_first_peak(I04, a40, b40)
+I14n = normalize_first_peak(I14, a40, b40)
+Im4n = normalize_first_peak(Im4, a40, b40)
+
+I01n = normalize_first_peak(I01, a10, b10)
+I11n = normalize_first_peak(I11, a10, b10)
+Im1n = normalize_first_peak(Im1, a10, b10)
+
+# maximum normalized value across all traces ignoring NaN and inf
+ymax_norm = np.nanmax([
+    np.nanmax(I04n[np.isfinite(I04n)]),
+    np.nanmax(I14n[np.isfinite(I14n)]),
+    np.nanmax(Im4n[np.isfinite(Im4n)]),
+    np.nanmax(I01n[np.isfinite(I01n)]),
+    np.nanmax(I11n[np.isfinite(I11n)]),
+    np.nanmax(Im1n[np.isfinite(Im1n)])
+])
+
+ymax_norm = 1.1 * ymax_norm
+
+fig, ax = plt.subplots(1,2, figsize=(10,4))
+
+# all 40 Hz currents
+ax[0].plot(t[a40:b40], I04n[a40:b40], label='Slow 40 Hz', alpha=1.0, color='r')
+ax[0].plot(t[a40:b40], I14n[a40:b40], label='Fast 40 Hz', alpha=0.8, color='b')
+ax[0].plot(t[a40:b40], Im4n[a40:b40], label='Mixed 40 Hz', alpha=0.6, color='g')
+ax[0].set_title('40 Hz Currents (normalized)')
+ax[0].set_xlabel('Time (ms)')
+ax[0].set_ylabel('Normalized Current')
+ax[0].set_ylim(0, ymax_norm)
+ax[0].legend()
+
+# all 10 Hz currents
+ax[1].plot(t[a10:b10], I01n[a10:b10], label='Slow 10 Hz', alpha=1.0, color='r')
+ax[1].plot(t[a10:b10], I11n[a10:b10], label='Fast 10 Hz', alpha=0.8, color='b')
+ax[1].plot(t[a10:b10], Im1n[a10:b10], label='Mixed 10 Hz', alpha=0.6, color='g')
+ax[1].set_title('10 Hz Currents (normalized)')
+ax[1].set_xlabel('Time (ms)')
+ax[1].set_ylabel('Normalized Current')
+ax[1].set_ylim(0, ymax_norm)
+ax[1].legend()
+
+plt.tight_layout()
+plt.show()
+
+#%% plot normalized currents unmax window
+import matplotlib.pyplot as plt
+import numpy as np
+
+# set time index ranges, zoom
+a40 = 950
+b40 = 1500
+
+a10 = 950
+b10 = 2200
+
+t = np.arange(len(Im1)) * dt * 1000  # time in ms
+
+# normalize by first peak value
+def normalize_first_peak(x, a, b):
+    segment = x[a:b]
+    peaks = np.where((segment[1:-1] > segment[:-2]) & (segment[1:-1] > segment[2:]))[0] + 1
+    
+    if len(peaks) > 0:
+        peak_value = segment[peaks[0]]
+    else:
+        peak_value = np.max(segment)
+        
+    return x / peak_value
+
+# normalized currents
+I04n = normalize_first_peak(I04, a40, b40)
+I14n = normalize_first_peak(I14, a40, b40)
+Im4n = normalize_first_peak(Im4, a40, b40)
+
+I01n = normalize_first_peak(I01, a10, b10)
+I11n = normalize_first_peak(I11, a10, b10)
+Im1n = normalize_first_peak(Im1, a10, b10)
+
+# fixed y-axis scaling
+ymax_norm = 1.2
+
+fig, ax = plt.subplots(1,2, figsize=(10,4))
+
+# all 40 Hz currents
+ax[0].plot(t[a40:b40], I04n[a40:b40], label='Slow 40 Hz', alpha=1.0, color='r')
+ax[0].plot(t[a40:b40], I14n[a40:b40], label='Fast 40 Hz', alpha=0.8, color='b')
+ax[0].plot(t[a40:b40], Im4n[a40:b40], label='Mixed 40 Hz', alpha=0.6, color='g')
+ax[0].set_title('40 Hz Currents (normalized)')
+ax[0].set_xlabel('Time (ms)')
+ax[0].set_ylabel('Normalized Current')
+ax[0].set_xlim(t[a40], t[b40])
+ax[0].set_ylim(0, 2)
+ax[0].legend()
+
+# all 10 Hz currents
+ax[1].plot(t[a10:b10], I01n[a10:b10], label='Slow 10 Hz', alpha=1.0, color='r')
+ax[1].plot(t[a10:b10], I11n[a10:b10], label='Fast 10 Hz', alpha=0.8, color='b')
+ax[1].plot(t[a10:b10], Im1n[a10:b10], label='Mixed 10 Hz', alpha=0.6, color='g')
+ax[1].set_title('10 Hz Currents (normalized)')
+ax[1].set_xlabel('Time (ms)')
+ax[1].set_ylabel('Normalized Current')
+ax[1].set_xlim(t[a10], t[b10])
+ax[1].set_ylim(0, 1.4)
+ax[1].legend()
+
+plt.tight_layout()
+plt.show()
+
+
+#%% plot normalized currents first spike only + manual simulation alignment
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+# generate summed simulated currents
+
+# slow r=0
+I_slow, _, _, _, _, _, _ = getiextd2(f, dt,
+    0, p1, scale_I0, scale_I1, slope0, slope1, c0, c1, H0, H1,
+    td0, tr0, td1, tr1)
+
+# fast r=1
+I_fast, _, _, _, _, _, _ = getiextd2(f, dt,
+    1, p1, scale_I0, scale_I1, slope0, slope1, c0, c1, H0, H1,
+    td0, tr0, td1, tr1)
+
+r=0.38 # mixed <------------------
+I_mix, _, _, _, _, _, _ = getiextd2(f, dt,
+    r, p1, scale_I0, scale_I1, slope0, slope1, c0, c1, H0, H1,
+    td0, tr0, td1, tr1)
+
+
+# find first simulated peak
+def get_first_peak(x):
+    peaks = np.where((x[1:-1] > x[:-2]) &
+                     (x[1:-1] > x[2:]))[0] + 1
+    
+    if len(peaks) > 0:
+        return peaks[0]
+    else:
+        return np.argmax(x)
+
+
+# normalize by first simulated peak
+def normalize_sim_first_peak(x):
+    peak = get_first_peak(x)
+    return x / x[peak], peak
+
+
+I_slow, peak_slow = normalize_sim_first_peak(I_slow)
+I_fast, peak_fast = normalize_sim_first_peak(I_fast)
+I_mix, peak_mix = normalize_sim_first_peak(I_mix)
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+# ---------------- normalize simulated currents ----------------
+
+def normalize_sim_first_peak(x):
+
+    first_spike = int(1/f/dt)
+
+    search_window = x[first_spike:first_spike+int(0.01/dt)]
+
+    peak = first_spike + np.argmax(search_window)
+
+    return x/x[peak]
+
+
+I_slow = normalize_sim_first_peak(I_slow)
+I_fast = normalize_sim_first_peak(I_fast)
+I_mix  = normalize_sim_first_peak(I_mix)
+
+
+
+# ---------------- normalize experimental currents ----------------
+
+def normalize_first_peak(x,a,b):
+
+    peak = a + np.argmax(x[a:b])
+
+    return x/x[peak]
+
+
+I04n = normalize_first_peak(I04,980,1100)
+I14n = normalize_first_peak(I14,980,1100)
+Im4n = normalize_first_peak(Im4,980,1100)
+
+I01n = normalize_first_peak(I01,980,1200)
+I11n = normalize_first_peak(I11,980,1200)
+Im1n = normalize_first_peak(Im1,980,1200)
+
+
+
+# ---------------- time arrays ----------------
+
+t_data = np.arange(len(Im1))*dt*1000
+
+
+
+# ---------------- experimental windows ----------------
+
+a40 = 980
+b40 = 1100
+
+a10 = 980
+b10 = 1200
+
+
+
+# ---------------- extract first simulated spike ----------------
+
+sim_start = int(1/f/dt)
+
+sim_length_40 = b40-a40
+sim_length_10 = b10-a10
+
+
+slow_first_40 = I_slow[sim_start:sim_start+sim_length_40]
+fast_first_40 = I_fast[sim_start:sim_start+sim_length_40]
+mix_first_40  = I_mix[sim_start:sim_start+sim_length_40]
+
+
+slow_first_10 = I_slow[sim_start:sim_start+sim_length_10]
+fast_first_10 = I_fast[sim_start:sim_start+sim_length_10]
+mix_first_10  = I_mix[sim_start:sim_start+sim_length_10]
+
+
+
+# ---------------- manual shifts (ms) ----------------
+# positive shifts right
+# negative shifts left
+
+shift_slow = 2.1
+shift_fast = 2.1
+shift_mix = 2.1
+
+
+
+# ---------------- simulation time axes ----------------
+
+t_sim_40 = t_data[a40:b40]
+
+t_sim_10 = t_data[a10:b10]
+
+
+t_sim_40_slow = t_sim_40 + shift_slow
+t_sim_40_fast = t_sim_40 + shift_fast
+t_sim_40_mix  = t_sim_40 + shift_mix
+
+
+t_sim_10_slow = t_sim_10 + shift_slow
+t_sim_10_fast = t_sim_10 + shift_fast
+t_sim_10_mix  = t_sim_10 + shift_mix
+
+
+
+# ---------------- plotting ----------------
+
+fig,ax = plt.subplots(1,2,figsize=(10,4))
+
+
+# ================= 40 Hz =================
+
+# =============================================================================
+# ax[0].plot(t_data[a40:b40],
+#            I04n[a40:b40],
+#            color='r',
+#            label='Slow data')
+# 
+# ax[0].plot(t_data[a40:b40],
+#            I14n[a40:b40],
+#            color='b',
+#            label='Fast data')
+# 
+# =============================================================================
+ax[0].plot(t_data[a40:b40],
+           Im4n[a40:b40],
+           color='g',
+           label='Mixed data')
+
+
+# =============================================================================
+# ax[0].plot(t_sim_40_slow,
+#            slow_first_40,
+#            '--',
+#            color='r',
+#            label='Slow sim')
+# 
+# ax[0].plot(t_sim_40_fast,
+#            fast_first_40,
+#            '--',
+#            color='b',
+#            label='Fast sim')
+# =============================================================================
+
+ax[0].plot(t_sim_40_mix,
+           mix_first_40,
+           '--',
+           color='g',
+           label='Mixed sim, r={}'.format(r))
+
+
+ax[0].set_title('40 Hz First Spike')
+ax[0].set_xlabel('Time (ms)')
+ax[0].set_ylabel('Normalized Current')
+ax[0].set_xlim(99, 110)
+ax[0].set_ylim(0,1.2)
+ax[0].legend(fontsize=8)
+
+
+
+# ================= 10 Hz =================
+
+# =============================================================================
+# ax[1].plot(t_data[a10:b10],
+#            I01n[a10:b10],
+#            color='r',
+#            label='Slow data')
+# 
+# ax[1].plot(t_data[a10:b10],
+#            I11n[a10:b10],
+#            color='b',
+#            label='Fast data')
+# 
+# =============================================================================
+ax[1].plot(t_data[a10:b10],
+           Im1n[a10:b10],
+           color='g',
+           label='Mixed data')
+
+
+# =============================================================================
+# ax[1].plot(t_sim_10_slow,
+#            slow_first_10,
+#            '--',
+#            color='r',
+#            label='Slow sim')
+# 
+# ax[1].plot(t_sim_10_fast,
+#            fast_first_10,
+#            '--',
+#            color='b',
+#            label='Fast sim')
+# 
+# =============================================================================
+ax[1].plot(t_sim_10_mix,
+           mix_first_10,
+           '--',
+           color='g',
+           label='Mixed sim, r={}'.format(r))
+
+
+ax[1].set_title('10 Hz First Spike')
+ax[1].set_xlabel('Time (ms)')
+ax[1].set_ylabel('Normalized Current')
+ax[1].set_xlim(99,112)
+ax[1].set_ylim(0,1.2)
+ax[1].legend(fontsize=8)
+
+
+plt.tight_layout()
+plt.show()
+
+
+#%% 14 - Heatmap  - Good - 40 - deterministic
+
+f = 40 #40  # <----------------- Input frequency
+
+t, temp0 = make_normalized_template(td0, tr0, ttemp, dt, scale_I0)
+t, temp1 = make_normalized_template(td1, tr1, ttemp, dt, scale_I1)
+
+rlist = np.linspace(0, 1, 40)
+p1list = np.linspace(0, 1, 40)
+
+navgs = 20
+
+
+fout_matrix = np.zeros((len(p1list), len(rlist)))
+
+# ======================
+# Sweep r and p1
+# ======================
+for i, p1 in enumerate(p1list):
+    for j, r in enumerate(rlist):
+        fav = []
+        for q in range(navgs):
+            print(i, len(p1list), j, len(rlist), q, navgs)
+            ret = getiextd2(f, dt, r, p1, scale_I0, scale_I1, slope0, slope1, 
+                            c0, c1, H0, H1, td0, tr0, td1, tr1)
+            v, tmean, naps, aptimes = gettmean(r, ret[0], g, vb, C, Cr, f)
+            fav.append(naps)
+        if len(fav) > 0:
+            fout_matrix[i, j] = np.mean(fav)
+        else:
+            fout_matrix[i, j] = 0
+# =============================================================================
+# #%% 11 - Plot heatmap 
+# =============================================================================
+plt.figure()
+fs = 15
+im = plt.imshow(
+    fout_matrix,
+    cmap='nipy_spectral',
+    origin='lower',
+    aspect='auto',
+    extent=[rlist.min(), rlist.max(),
+            p1list.min(), p1list.max()]
+)
+
+plt.xlabel('Proportion of fast synapses (r)', fontsize=fs)
+plt.ylabel('Coincidence probability (c)', fontsize=fs)
+plt.title('Input frequency = {}'.format(f), fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs)
+
+# Create colorbar and set label size
+cbar = plt.colorbar(im)
+cbar.set_label('Mean # of postsynaptic APs', fontsize=fs, rotation=270, 
+               labelpad=20)
+          # label size
+cbar.ax.tick_params(labelsize=fs)            # tick label size
+
+plt.show()
