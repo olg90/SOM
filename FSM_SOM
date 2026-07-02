@@ -17809,7 +17809,7 @@ vm4=data[:,9+13]*50
 # slow r=0
 s1=0.4
 s4=0.6
-r=0.1
+r=0.6
 p1=0
 
 # =============================================================================
@@ -17844,11 +17844,26 @@ Im1=Im1[ps+1:pe]/np.max(Im1[ps+1:pe])
 Im4s=Im4s[ps:pe]/np.max(Im4s[ps:pe])
 Im4=Im4[ps+1:pe]/np.max(Im4[ps+1:pe])
 
+mse10=np.mean(np.square(Im1s[:-1]-Im1))/len(Im1)
+mse40=np.mean(np.square(Im4s[:-1]-Im4))/len(Im4)
+
 fig,ax=plt.subplots(1,2)
-ax[0].plot(Im1)
-ax[0].plot(Im1s)
-ax[1].plot(Im4)
-ax[1].plot(Im4s)
+fig.suptitle('Fast synapse proportion (r)={}\nCoincidence probability (c)={}'.format(r,p1))
+t=np.linspace(0, len(Im1), len(Im1))*dt*1000
+
+ax[0].plot(t,Im1,label='data')
+t=np.linspace(0, len(Im1s), len(Im1s))*dt*1000
+ax[0].plot(t,Im1s,label='simulation\nMSE = {:.3}'.format(mse10))
+ax[0].legend(loc='upper right')
+ax[0].set_ylabel('Normalized first spike amplitude')
+ax[0].set_xlabel('Time (ms)')
+
+t=np.linspace(0, len(Im4), len(Im4))*dt*1000
+ax[1].plot(t,Im4,label='data')
+t=np.linspace(0, len(Im4s), len(Im4s))*dt*1000
+ax[1].plot(t,Im4s, label='simulation\nMSE = {:.3}'.format(mse40))
+ax[1].legend(loc='upper right')
+ax[1].set_xlabel('Time (ms)')
 plt.show()
 
 print(Im1s[20], Im4s[20])
@@ -17903,77 +17918,6 @@ Im1=Im1[ps+1:pe]/np.max(Im1[ps+1:pe])
 Im4s=Im4s[ps:pe]/np.max(Im4s[ps:pe])
 Im4=Im4[ps+1:pe]/np.max(Im4[ps+1:pe])
 
-
-
-#%% heatmaps
-
-import matplotlib.pyplot as plt
-import numpy as np
-
-s1 = 0.4
-s4 = 0.6
-
-ps = 1000
-pe = 1200
-
-p1_vals = np.linspace(0, 1, 20)
-r_vals = np.linspace(0, 1, 20)
-
-mse10 = np.zeros((len(p1_vals), len(r_vals)))
-mse40 = np.zeros((len(p1_vals), len(r_vals)))
-
-for i, p1 in enumerate(p1_vals):
-    for j, r in enumerate(r_vals):
-
-        Im1s, _, _, _, _, _, _ = getiextd2(
-            10, dt, r, p1, s1, s1,
-            slope0, slope1, c0, c1, H0, H1,
-            td0, tr0, td1, tr1)
-
-        Im4s, _, _, _, _, _, _ = getiextd2(
-            40, dt, r, p1, s4, s4,
-            slope0, slope1, c0, c1, H0, H1,
-            td0, tr0, td1, tr1)
-
-        # first peak normalization
-        Im1_sim = Im1s[ps:pe] / np.max(Im1s[ps:pe])
-
-        Im4_sim = Im4s[ps:pe] / np.max(Im4s[ps:pe])
-
-        mse10[i, j] = np.mean((Im1_sim[:-1] - Im1)**2)
-        mse40[i, j] = np.mean((Im4_sim[:-1] - Im4)**2)
-
-
-#%% plotting
-fig, ax = plt.subplots(1, 2, figsize=(10, 4), constrained_layout=True)
-
-cm='hot'
-im = ax[0].imshow(
-    mse10,
-    cmap=cm,
-    origin='lower',
-    extent=[0, 1, 0, 1],
-    aspect='auto'
-)
-ax[0].set_title('10 Hz')
-ax[0].set_xlabel('r')
-ax[0].set_ylabel('p1')
-plt.colorbar(im, ax=ax[0], label='MSE')
-
-im = ax[1].imshow(
-    mse40,
-    cmap=cm,
-    origin='lower',
-    extent=[0, 1, 0, 1],
-    aspect='auto'
-)
-ax[1].set_title('40 Hz')
-ax[1].set_xlabel('r')
-ax[1].set_ylabel('p1')
-plt.colorbar(im, ax=ax[1], label='MSE')
-
-plt.show()
-
 #%% first peak reference + heatmaps (combined)
 
 import matplotlib.pyplot as plt
@@ -17990,7 +17934,7 @@ s4 = 0.6
 ps = 1000
 pe = 1200
 
-navgs = 100
+navgs = 200
 
 # normalize experimental first peak (fixed reference)
 Im1_ref = Im1[ps+1:pe]
