@@ -17844,8 +17844,8 @@ Im1=Im1[ps+1:pe]/np.max(Im1[ps+1:pe])
 Im4s=Im4s[ps:pe]/np.max(Im4s[ps:pe])
 Im4=Im4[ps+1:pe]/np.max(Im4[ps+1:pe])
 
-mse10=np.mean(np.square(Im1s[:-1]-Im1))/len(Im1)
-mse40=np.mean(np.square(Im4s[:-1]-Im4))/len(Im4)
+mse10=np.mean(np.square(Im1s[:-1]-Im1))
+mse40=np.mean(np.square(Im4s[:-1]-Im4))
 
 fig,ax=plt.subplots(1,2)
 fig.suptitle('Fast synapse proportion (r)={}\nCoincidence probability (c)={}'.format(r,p1))
