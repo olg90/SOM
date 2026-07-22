@@ -18884,3 +18884,299 @@ plt.subplots_adjust(
 )
 
 plt.show()
+
+#%% Plot the mixed current for multiple r values (40 Hz only)
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+# ------------------------------------------------------------------
+# Experimental data
+# ------------------------------------------------------------------
+
+Im4 = data[:,9]*25
+vm4 = data[:,9+13]*50
+
+# ------------------------------------------------------------------
+# Parameters
+# ------------------------------------------------------------------
+
+s4 = 0.65
+p1 = 0
+n = 11
+dlen = 120
+
+# ------------------------------------------------------------------
+# Normalization function
+# ------------------------------------------------------------------
+
+def norm(x, dlen):
+    return np.concatenate([[0], x[x != 0][:dlen] / np.max(x[x != 0][:dlen])])
+
+Im4 = norm(Im4, dlen)
+
+# ------------------------------------------------------------------
+# Plot
+# ------------------------------------------------------------------
+
+plt.figure(figsize=(7,5))
+
+t4 = np.arange(len(Im4)) * dt * 1000
+
+rvals = np.linspace(0, 1, n)
+
+for r in rvals:
+
+    Im4s, _, _, _, _, _, _ = getiextd2(
+        40, dt,
+        r, p1,
+        s4, s4,
+        slope0, slope1,
+        c0, c1,
+        H0, H1,
+        td0, tr0,
+        td1, tr1
+    )
+
+    Im4s = norm(Im4s, dlen)
+
+    L24 = np.linalg.norm(Im4s - Im4) / np.linalg.norm(Im4)
+
+    t4s = np.arange(len(Im4s)) * dt * 1000
+
+    # --------------------------------------------------------------
+    # Line styles
+    # --------------------------------------------------------------
+
+    if np.isclose(r, 0):
+        color = 'k'
+        linestyle = '--'
+        linewidth = 3
+        zorder = 20
+
+    elif np.isclose(r, 1):
+        color = 'k'
+        linestyle = '-.'
+        linewidth = 3
+        zorder = 20
+
+    else:
+        color = None
+        linestyle = '-'
+        linewidth = 1.5
+        zorder = 1
+
+    plt.plot(
+        t4s,
+        Im4s,
+        color=color,
+        linestyle=linestyle,
+        linewidth=linewidth,
+        zorder=zorder,
+        label=f"r={r:.2f}  L2={100*L24:.1f}%"
+    )
+
+# ------------------------------------------------------------------
+# Experimental data on top
+# ------------------------------------------------------------------
+
+plt.plot(
+    t4,
+    Im4,
+    color='k',
+    linestyle='-',
+    linewidth=3,
+    label='Data',
+    zorder=30
+)
+
+# ------------------------------------------------------------------
+# Formatting
+# ------------------------------------------------------------------
+
+fs = 15
+
+plt.title("40 Hz", fontsize=fs)
+plt.xlabel("Time (ms)", fontsize=fs)
+plt.ylabel("Normalized first spike amplitude", fontsize=fs)
+
+plt.xticks(fontsize=fs)
+plt.yticks(fontsize=fs)
+
+plt.legend(fontsize=9)
+
+plt.tight_layout()
+plt.show()
+
+#%% Plot the mixed current for multiple r values (40 Hz only)
+
+import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib.cm as cm
+import matplotlib.colors as colors
+
+# ------------------------------------------------------------------
+# Experimental data
+# ------------------------------------------------------------------
+
+Im4 = data[:,9]*25
+vm4 = data[:,9+13]*50
+
+# ------------------------------------------------------------------
+# Parameters
+# ------------------------------------------------------------------
+
+s4 = 0.65
+p1 = 0
+n = 11
+dlen = 120
+
+# ------------------------------------------------------------------
+# Normalization function
+# ------------------------------------------------------------------
+
+def norm(x, dlen):
+    return np.concatenate([[0], x[x != 0][:dlen] / np.max(x[x != 0][:dlen])])
+
+Im4 = norm(Im4, dlen)
+
+# ------------------------------------------------------------------
+# Generate simulations and calculate errors
+# ------------------------------------------------------------------
+
+rvals = np.linspace(0, 1, n)
+
+sim_data = []
+
+for r in rvals:
+
+    Im4s, _, _, _, _, _, _ = getiextd2(
+        40, dt,
+        r, p1,
+        s4, s4,
+        slope0, slope1,
+        c0, c1,
+        H0, H1,
+        td0, tr0,
+        td1, tr1
+    )
+
+    Im4s = norm(Im4s, dlen)
+
+    L24 = np.linalg.norm(Im4s - Im4) / np.linalg.norm(Im4)
+
+    t4s = np.arange(len(Im4s)) * dt * 1000
+
+    sim_data.append([r, Im4s, t4s, L24])
+
+
+# ------------------------------------------------------------------
+# Color map based on L2 error
+# ------------------------------------------------------------------
+
+errors = [x[3] for x in sim_data]
+
+norm_error = colors.Normalize(
+    vmin=min(errors),
+    vmax=max(errors)
+)
+
+cmap = cm.viridis
+
+
+# ------------------------------------------------------------------
+# Plot
+# ------------------------------------------------------------------
+
+fig, ax = plt.subplots(figsize=(7,5))
+
+for r, Im4s, t4s, L24 in sim_data:
+
+    if np.isclose(r, 0):
+
+        ax.plot(
+            t4s,
+            Im4s,
+            color='k',
+            linestyle='--',
+            linewidth=3,
+            zorder=20,
+            label=f"r={r:.2f}  L2={100*L24:.1f}%"
+        )
+
+    elif np.isclose(r, 1):
+
+        ax.plot(
+            t4s,
+            Im4s,
+            color='k',
+            linestyle='-.',
+            linewidth=3,
+            zorder=20,
+            label=f"r={r:.2f}  L2={100*L24:.1f}%"
+        )
+
+    else:
+
+        ax.plot(
+            t4s,
+            Im4s,
+            color=cmap(norm_error(L24)),
+            linewidth=2,
+            zorder=1,
+            label=f"r={r:.2f}  L2={100*L24:.1f}%"
+        )
+
+
+# ------------------------------------------------------------------
+# Experimental data on top
+# ------------------------------------------------------------------
+
+t4 = np.arange(len(Im4)) * dt * 1000
+
+ax.plot(
+    t4,
+    Im4,
+    color='k',
+    linewidth=3,
+    linestyle='-',
+    zorder=30,
+    label='Data'
+)
+
+
+# ------------------------------------------------------------------
+# Formatting
+# ------------------------------------------------------------------
+
+fs = 15
+
+ax.set_title("40 Hz", fontsize=fs)
+ax.set_xlabel("Time (ms)", fontsize=fs)
+ax.set_ylabel("Normalized first spike amplitude", fontsize=fs)
+
+ax.tick_params(axis='both', labelsize=fs)
+
+ax.legend(fontsize=8)
+
+
+# ------------------------------------------------------------------
+# Colorbar
+# ------------------------------------------------------------------
+
+sm = cm.ScalarMappable(
+    norm=norm_error,
+    cmap=cmap
+)
+
+sm.set_array([])
+
+fig.colorbar(
+    sm,
+    ax=ax,
+    label="Relative L2 error"
+)
+
+
+plt.tight_layout()
+plt.show()
