@@ -19201,6 +19201,11 @@ def make_normalized_template(td, tr, tmax, dt, scale_I):
     template = A * (np.exp(-t / td) - np.exp(-t / tr))
     return t, template
 
+
+def linfun(s1,s4,fast1,fast4,f,r):
+    return zform(s1,s4, 10,40,f)*(1-r)+zform(fast1,fast4, 10,40,f)*r
+
+
 def spike_amplitude(delta_t, slope0, A, c, H):
     return A+model(delta_t, slope0, c, H)
 
@@ -19243,7 +19248,7 @@ def get_slopes_and_fit(file_path):
     fit_curve = model(dt_dense, m0, c, H)
     return delta_t, col_slopes, dt_dense, fit_curve, m0, c, H
 
-def gettmean(r, Iext, g, vb, C, Cr, f):
+def gettmean(r, Iext, g, vb, C, Cr, f, vth):
     v=np.zeros(len(Iext))
     v[0]=-65#-60
     apinds=[]
@@ -19256,8 +19261,8 @@ def gettmean(r, Iext, g, vb, C, Cr, f):
     gslow2=zform(gr[10], gr[11], 10, 40, f)
     vbslow=zform(vb[10], vb[11], 10, 40, f)
     vbfast=zform(vb[6], vb[7], 10, 40, f)
-    C1=linfun(C[10], C[11], C[6], C[7], f, r)
-    C2=linfun(Cr[10], Cr[11], Cr[6], Cr[7], f, r)
+    C1=C
+    C2=Cr
     vreset=linfun(vbr[10], vbr[11], vbr[6], vbr[7], f, r)
     
     for i in range(1,len(Iext)):
@@ -19278,7 +19283,7 @@ def gettmean(r, Iext, g, vb, C, Cr, f):
 
         if aptimer != np.inf:
             aptimer-=1
-        if v[i-1]>linfun(vth[10], vth[11], vth[6], vth[7], f, r):
+        if v[i-1]>vth:
             v[i]=vreset
             apinds.append(i)
             aptimer=refper
@@ -19404,28 +19409,51 @@ names = {
 # 6-NF1, 7-NF4, 8-NM1, 9-NM4, 10-NS1, 11-NS4
 
 # Different parameters for each dataset
+# =============================================================================
+# #                0   1   2   3   4    5     6      7    8   9  10  11
+# vb=np.array([-60.5,-60,-60,-60,-64.2,-64.2,-61.75,-63,-64,-65.5,-64,-63.8])
+# #                0   1   2   3   4    5     6       7    8   9     10    11
+# vbr=np.array([-60.5,-60,-60,-60,-64.2,-64.2,-61.75,-50,-50,-47,-64,-50])
+# #    0        1           2          3        4         5
+# C=[0.00011,  0.00011,  0.00011,  0.00011,  0.00011,  0.00011,
+#    0.00009, 0.0001,  0.00011,  0.00011,  0.00011, 0.000111]
+# #    6        7          8        9          10       11
+# #    0        1           2          3        4         5
+# Cr=[0.00011,  0.00011,  0.00011,  0.00011,  0.00011,  0.00011,
+#    0.00009, 0.0001,  0.00011,  0.00011,  0.00011, 0.0001]
+# #    6        7          8        9          10       11
+# #    0        1          2      3        4        5
+# g=[0.0037,  0.0037,  0.0037,  0.0037,  0.0037,  0.0037,
+#    0.0035, 0.0037,  0.0037,  0.0037,  0.0037, 0.003]
+# #    6        7       8        9       10       11
+#     # 0        1          2      3        4        5
+# gr=[0.0037,  0.0037,  0.0037,  0.0037,  0.0037,  0.0037,
+#    0.0035, 0.004,  0.0037,  0.0037,  0.0037, 0.005]
+# #    6        7       8        9       10       11
+# #     0    1    2     3    4    5    6    7    8   9    10   11
+# vth=[-40, -40, -40, -40, -40, -40, -40, -40, -41, -40, -40, -39]
+# =============================================================================
+
 #                0   1   2   3   4    5     6      7    8   9  10  11
 vb=np.array([-60.5,-60,-60,-60,-64.2,-64.2,-61.75,-63,-64,-65.5,-64,-63.8])
 #                0   1   2   3   4    5     6       7    8   9     10    11
 vbr=np.array([-60.5,-60,-60,-60,-64.2,-64.2,-61.75,-50,-50,-47,-64,-50])
 #    0        1           2          3        4         5
-C=[0.00011,  0.00011,  0.00011,  0.00011,  0.00011,  0.00011,
-   0.00009, 0.0001,  0.00011,  0.00011,  0.00011, 0.000111]
+C=0.00011
 #    6        7          8        9          10       11
 #    0        1           2          3        4         5
-Cr=[0.00011,  0.00011,  0.00011,  0.00011,  0.00011,  0.00011,
-   0.00009, 0.0001,  0.00011,  0.00011,  0.00011, 0.0001]
+Cr=0.00011
 #    6        7          8        9          10       11
 #    0        1          2      3        4        5
 g=[0.0037,  0.0037,  0.0037,  0.0037,  0.0037,  0.0037,
-   0.0035, 0.0037,  0.0037,  0.0037,  0.0037, 0.003]
+   0.0035, 0.0037,  0.0037,  0.0037,  0.0037, 0.0037]
 #    6        7       8        9       10       11
     # 0        1          2      3        4        5
 gr=[0.0037,  0.0037,  0.0037,  0.0037,  0.0037,  0.0037,
-   0.0035, 0.004,  0.0037,  0.0037,  0.0037, 0.005]
+   0.0035, 0.004,  0.0037,  0.0037,  0.0037, 0.009]
 #    6        7       8        9       10       11
 #     0    1    2     3    4    5    6    7    8   9    10   11
-vth=[-40, -40, -40, -40, -40, -40, -40, -40, -41, -40, -40, -39]
+vth=-41.5
 
 #------------------------------------------------
 
@@ -19483,16 +19511,16 @@ scales=[[0.25,0.53],[0.25,0.53],[0.1,0.2],[0.1,0.2],[0.4,0.35],[0.8,0.35]]
 for i in range(len(ilist)):
     #data current into model
     vdata0, tmean, naps, aptimes = \
-        gettmean(rlist[i], ilist[i], g, vb, C, Cr, flist[i])
+        gettmean(rlist[i], ilist[i], g, vb, C, Cr, flist[i], vth)
     vlist.append(vdata0)
     #sim current into  model
     Iext, I0, I1, A0list, A1list, spikeind0, spikeind1 = getiextd2(flist[i], dt, 
         rlist[i], p1, scales[i][0], scales[i][1], slope0, slope1, c0, c1, H0, H1, td0, tr0, td1, tr1)
     islist.append(Iext)
     vdata0, tmean, naps, aptimes = \
-        gettmean(rlist[i], Iext, g, vb, C, Cr, flist[i])
+        gettmean(rlist[i], Iext, g, vb, C, Cr, flist[i], vth)
     vslist.append(vdata0)
-    
+
 # =============================================================================
 # #%% Plotting
 # =============================================================================
@@ -19505,10 +19533,46 @@ fs=15
 z=0
 pranges=[[750,3500],[750,3500],[0,12000],[0,12000],[0,12000],[750,3500]]
 for i in range(len(islist)):
-    
     ax[i].plot(gett(vilist[i][pranges[i][0]:pranges[i][1]],dt),vilist[i][pranges[i][0]:pranges[i][1]],label='data',color='tab:blue')
     ax[i].plot(gett(vlist[i][pranges[i][0]:pranges[i][1]],dt),vlist[i][pranges[i][0]:pranges[i][1]],label='model',color='r')
     ax[i].set_ylabel(names[i])
     ax[i].set_xticks([])
-    
 plt.show()
+
+# =============================================================================
+# vplots=[vlist[i][pranges[i][0]:pranges[i][1]] for i in range(len(vlist))]
+# 
+# plt.figure()
+# for i,v in enumerate(vilist):#vplots:
+#     plt.plot(gett(v,dt),v,linewidth=1,label=names[i])
+# plt.legend(fontsize=fs)
+# 
+# =============================================================================
+# =============================================================================
+# start4,end4=250,500
+# start1,end1=1000,2000
+# 
+# iplots=[ilist[i][pranges[i][0]:pranges[i][1]] for i in range(len(ilist))]
+# 
+# vplots2=[]
+# iplots2=[]
+# for i in range(len(vplots)):
+#     if i in [0,1,5]:
+#         vplots2.append(vplots[i][start4:end4])
+#         iplots2.append(iplots[i][start4:end4])
+#     if i in [2,3,4]:
+#         vplots2.append(vplots[i][start1:end1])
+#         iplots2.append(iplots[i][start1:end1])
+# plt.figure()
+# for i,v in enumerate(vplots2):#vplots:
+#     plt.plot(v,linewidth=1,label=names[i])
+# plt.legend(fontsize=fs)
+# 
+# vplots3=[np.abs((v-v[0]))/np.max(np.abs(v-v[0])) for v in vplots2]
+# plt.figure()
+# for i,v in enumerate(vplots3):#vplots:
+#     plt.plot(v,linewidth=1,label=names[i])
+#     plt.plot(iplots2[i],label=names[i])
+# plt.legend(fontsize=fs)
+# 
+# =============================================================================
