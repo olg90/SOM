@@ -19614,9 +19614,7 @@ plt.show()
 # plt.legend(fontsize=fs)
 # =============================================================================
 
-#%% 17 - Plot all the current traces and membrane potential traces for the data,
-# the current data into the model, and the current simulation into the model
-
+#%% 17 - All the current and sim current and model v and data v together normalized
 import numpy as np
 import matplotlib.pyplot as plt
 import os
@@ -19925,13 +19923,13 @@ vm4=data[:,9+13]*50
 
 ilist= [I04, I14, I01, I11, Im1, Im4]
 vilist=[v04, v14, v01, v11, vm1, vm4]
-rlist=[0,1,0,1,0.38, 0.38]
+rlist=[0,1,0,1,0.676699, 0.676699]
 flist=[40,40,10,10,10,40]
 vlist=[]
 vslist=[]
 islist=[]
 #           I04         I14         I01      I11        Im1        Im4
-scales=[[0.28,0.53],[0.25,0.53],[0.1,0.2],[0.1,0.2],[0.4,0.5],[0.8,0.4]]
+scales=[[0.28,0.53],[0.25,0.53],[0.1,0.2],[0.1,0.2],[0.7,0.6],[0.9,1]]
 for i in range(len(ilist)):
     #data current into model
     vdata0, tmean, naps, aptimes = \
@@ -19992,4 +19990,287 @@ plt.subplots_adjust(
     wspace=0.27
 )
 
+plt.show()
+#%% 17 - Finding the r value for mixed 
+inames=['I04','I14','I01','I11','Im1','Im4']
+ilist= [I04, I14, I01, I11, Im1, Im4]
+vilist=[v04, v14, v01, v11, vm1, vm4]
+rlist=[0,1,0,1,0.45, 0.68]
+flist=[40,40,10,10,10,40]
+islist=[]
+p1=1
+#           I04         I14         I01      I11        Im1        Im4
+scales=[[0.28,0.53],[0.25,0.53],[0.1,0.2],[0.1,0.2],[0.4,0.5],[0.8,0.4]]
+for i in range(len(ilist)):
+    Iext, I0, I1, A0list, A1list, spikeind0, spikeind1 = getiextd2(flist[i], dt, 
+        rlist[i], p1, scales[i][0], scales[i][1], slope0, slope1, c0, c1, H0, H1, td0, tr0, td1, tr1)
+    islist.append(Iext)
+
+
+plt.figure()
+ist=1000
+ien=1100
+
+def pvar(x,ist,ien):
+    return x[ist:ien]/np.max(x[ist:ien])
+plt.plot(pvar(Im1,ist,ien),label='Im1',color='brown',alpha=0.3)
+plt.plot(pvar(islist[4],999,1100),label='Im1s',linestyle='--',color='brown')
+plt.plot(pvar(Im4,ist,ien),label='Im4',color='black',alpha=0.3)
+plt.plot(pvar(islist[5],999,1100),label='Im4s',linestyle='--',color='black')
+
+plt.plot(pvar(I04,ist,ien),label='I04',color='blue',alpha=0.3)
+plt.plot(pvar(islist[0],999,1100),label='I04s',linestyle='--',color='blue')
+plt.plot(pvar(I14,ist,ien),label='I14',color='red',alpha=0.3)
+plt.plot(pvar(islist[1],999,1100),label='I14s',linestyle='--',color='red')
+
+plt.legend()
+plt.show()
+
+# plot of all current traces unaligned
+fig,ax=plt.subplots(6,1,figsize=(8,4))
+mlen=10500
+fs=15
+for i in range(len(ilist)):
+    if i==0:
+        ax[0].set_title('Current traces: Blue=data, orange=simulation',
+                        fontsize=fs)
+    ax[i].plot(ilist[i][:mlen])
+    ax[i].plot(islist[i][:mlen],alpha=0.6)
+    ax[i].set_ylabel(inames[i],fontsize=fs)
+    if i!=len(ilist)-1:
+        ax[i].set_xticks([])
+    ax[i].tick_params(axis='both',labelsize=fs)
+plt.show()
+
+# plot of all current traces aligned to the first peak
+fig,ax=plt.subplots(6,1,figsize=(8,4))
+mlen=10500
+fs=15
+for i in range(len(ilist)):
+    if i==0:
+        ax[0].set_title('Current traces: Blue=data, orange=simulation',
+                        fontsize=fs)
+    if i==0 or i == 1 or i==len(ilist)-1:
+        ax[i].plot(ilist[i][750:mlen])
+        ax[i].plot(islist[i][:mlen],alpha=0.6)
+    else:
+        ax[i].plot(ilist[i][750:mlen])
+        ax[i].plot(islist[i][750:mlen],alpha=0.6)
+    ax[i].set_ylabel(inames[i],fontsize=fs)
+    if i!=len(ilist)-1:
+        ax[i].set_xticks([])
+    ax[i].tick_params(axis='both',labelsize=fs)
+plt.show()
+
+# plot of all current traces up to the first peak
+fig,ax=plt.subplots(6,1,figsize=(8,6))
+
+mlen=[[1001,1250,250,400],
+      [1001,1250,250,400],
+      [1001,1250,1000,1250],
+      [1001,1250,1000,1250],
+      [1001,1250,1000,1250],
+      [1001,1250,250,400]]
+fs=15
+for i in range(len(ilist)):
+    if i==0:
+        ax[0].set_title('Current traces: Blue=data, orange=simulation',
+                        fontsize=fs)
+    ax[i].plot(ilist[i][mlen[i][0]:mlen[i][1]])
+    ax[i].plot(islist[i][mlen[i][2]:mlen[i][3]],alpha=0.6)
+    ax[i].set_ylabel(inames[i],fontsize=fs)
+    if i!=len(ilist)-1:
+        ax[i].set_xticks([])
+    ax[i].tick_params(axis='both',labelsize=fs)
+plt.show()
+
+# plot of all current traces up to the first peak and normalize it
+fig,ax=plt.subplots(6,1,figsize=(8,6))
+
+mlen=[[1001,1100,250,350],
+      [1001,1100,250,350],
+      [1001,1100,1000,1100],
+      [1001,1100,1000,1100],
+      [1001,1100,1000,1100],
+      [1001,1100,250,350]]
+fs=15
+for i in range(len(ilist)):
+    if i==0:
+        ax[0].set_title('Current traces: Blue=data, orange=simulation',
+                        fontsize=fs)
+    ax[i].plot(ilist[i][mlen[i][0]:mlen[i][1]]/np.max(ilist[i][mlen[i][0]:mlen[i][1]]))
+    ax[i].plot(islist[i][mlen[i][2]:mlen[i][3]]/np.max(islist[i][mlen[i][2]:mlen[i][3]]),alpha=0.6)
+    ax[i].set_ylabel(inames[i],fontsize=fs)
+    if i!=len(ilist)-1:
+        ax[i].set_xticks([])
+    ax[i].tick_params(axis='both',labelsize=fs)
+plt.show()
+
+
+# Add all the peaks together 
+inames=['I04','I14','I01','I11','Im1','Im4']
+mlen=[[1001,1100,250,350],
+      [1001,1100,250,350],
+      [1001,1100,1000,1100],
+      [1001,1100,1000,1100],
+      [1001,1100,1000,1100],
+      [1001,1100,250,350]]
+fs=15
+plt.figure()
+for i in range(len(ilist)):
+    if i==0 or i == 2:
+        c='red'
+        print(i)
+    if i==1 or i == 3:
+        c='green'
+    if i==4 or i == 5:
+        c='blue'
+    plt.plot(ilist[i][mlen[i][0]:mlen[i][1]]/np.max(ilist[i][mlen[i][0]:mlen[i][1]]),label=inames[i],color=c,alpha=0.4)
+    plt.plot(islist[i][mlen[i][2]:mlen[i][3]]/np.max(islist[i][mlen[i][2]:mlen[i][3]]),label='{}s'.format(inames[i]),color=c,linestyle='--')
+plt.tick_params(axis='both',labelsize=fs)
+plt.legend()
+plt.show()
+
+# Only look at the 40 Hz nd mixed data
+
+inames=['I04','I14','I01','I11','Im1','Im4']
+ilist= [I04, I14, I01, I11, Im1, Im4]
+vilist=[v04, v14, v01, v11, vm1, vm4]
+rlin=np.linspace(0,1,10)
+ilistm=[]
+for r in rlin:
+    rlist=[0,1,0,1,0.45, r]
+    flist=[40,40,10,10,10,40]
+    p1=1
+    #           I04         I14         I01      I11        Im1        Im4
+    scales=[[0.28,0.53],[0.25,0.53],[0.1,0.2],[0.1,0.2],[0.4,0.5],[0.8,0.4]]
+    Iext, I0, I1, A0list, A1list, spikeind0, spikeind1 = getiextd2(flist[5], dt, 
+        rlist[5], p1, scales[5][0], scales[5][1], slope0, slope1, c0, c1, H0, H1, td0, tr0, td1, tr1)
+    ilistm.append(Iext)
+
+
+
+mlen=[[1001,1100,250,350],
+      [1001,1100,250,350],
+      [1001,1100,1000,1100],
+      [1001,1100,1000,1100],
+      [1001,1100,1000,1100],
+      [1001,1100,250,350]]
+fs=15
+plt.figure()
+j=5
+for i in range(len(ilistm)):
+    c='blue'
+    plt.plot(ilistm[i][mlen[j][2]:mlen[j][3]]/np.max(ilistm[i][mlen[j][2]:mlen[j][3]]),label='r={}'.format(np.around(rlin[i],3)),color=c,linestyle=(0,(1,50/(i+1)**2)))
+
+plt.tick_params(axis='both',labelsize=fs)
+
+
+for i in [0,1]:
+    if i==0 or i == 2:
+        c='red'
+    if i==1 or i == 3:
+        c='green'
+    if i==4 or i == 5:
+        c='blue'
+    plt.plot(ilist[i][mlen[i][0]:mlen[i][1]]/np.max(ilist[i][mlen[i][0]:mlen[i][1]]),label=inames[i],color=c,alpha=0.3)
+    plt.plot(islist[i][mlen[i][2]:mlen[i][3]]/np.max(islist[i][mlen[i][2]:mlen[i][3]]),label='{}s'.format(inames[i]),color=c,linestyle='--')
+
+i=5
+c='blue'
+plt.plot(ilist[i][mlen[i][0]:mlen[i][1]]/np.max(ilist[i][mlen[i][0]:mlen[i][1]]),label=inames[i],color=c,alpha=0.4)
+
+plt.legend()
+plt.show()
+
+# Find the best r that makes the Im4s fit the Im4 data
+from scipy.optimize import minimize_scalar
+
+inames=['I04','I14','I01','I11','Im1','Im4']
+ilist=[I04,I14,I01,I11,Im1,Im4]
+vilist=[v04,v14,v01,v11,vm1,vm4]
+
+rlist=[0,1,0,1,0.45,None]
+flist=[40,40,10,10,10,40]
+p1=1
+
+scales=[[0.28,0.53],
+        [0.25,0.53],
+        [0.1,0.2],
+        [0.1,0.2],
+        [0.4,0.5],
+        [0.8,0.4]]
+
+mlen=[[1001,1100,250,350],
+      [1001,1100,250,350],
+      [1001,1100,1000,1100],
+      [1001,1100,1000,1100],
+      [1001,1100,1000,1100],
+      [1001,1100,250,350]]
+
+# Experimental Im4
+Im4_exp=ilist[5][mlen[5][0]:mlen[5][1]]
+Im4_exp=Im4_exp/np.max(Im4_exp)
+
+# Generate Im4 simulation
+def get_Im4(r):
+    Iext,I0,I1,A0list,A1list,spikeind0,spikeind1=getiextd2(
+        flist[5],dt,r,p1,scales[5][0],scales[5][1],
+        slope0,slope1,c0,c1,H0,H1,td0,tr0,td1,tr1)
+    return Iext
+
+# MSE
+def mse(r):
+    Iext=get_Im4(r)
+    Im4_sim=Iext[mlen[5][2]:mlen[5][3]]
+    Im4_sim=Im4_sim/np.max(Im4_sim)
+    n=min(len(Im4_exp),len(Im4_sim))
+    return np.mean((Im4_exp[:n]-Im4_sim[:n])**2)
+
+# Optimize r
+result=minimize_scalar(mse,bounds=(0,1),method='bounded')
+r_opt=result.x
+mse_opt=result.fun
+
+print('Optimal r = {:.6f}'.format(r_opt))
+print('Minimum MSE = {:.6e}'.format(mse_opt))
+
+# Generate optimal Im4 simulation
+Im4_sim=get_Im4(r_opt)
+Im4_sim=Im4_sim[mlen[5][2]:mlen[5][3]]
+Im4_sim=Im4_sim/np.max(Im4_sim)
+
+n=min(len(Im4_exp),len(Im4_sim))
+Im4_exp_plot=Im4_exp[:n]
+Im4_sim_plot=Im4_sim[:n]
+
+# Plot
+fs=15
+plt.figure(figsize=(10,6))
+
+for i in [0,1]:
+    if i==0 or i==2:
+        c='red'
+    if i==1 or i==3:
+        c='green'
+    if i==4 or i==5:
+        c='blue'
+
+    plt.plot(ilist[i][mlen[i][0]:mlen[i][1]]/
+             np.max(ilist[i][mlen[i][0]:mlen[i][1]]),
+             label=inames[i],color=c,alpha=0.3)
+
+    plt.plot(islist[i][mlen[i][2]:mlen[i][3]]/
+             np.max(islist[i][mlen[i][2]:mlen[i][3]]),
+             label='{}s'.format(inames[i]),color=c,linestyle='--')
+
+plt.plot(Im4_exp_plot,
+         label='Im4',color='blue',alpha=0.4)
+
+plt.plot(Im4_sim_plot,
+         label='Im4s, r={:.3f}'.format(r_opt),
+         color='blue',linestyle='--',linewidth=2)
+
+plt.tick_params(axis='both',labelsize=fs)
+plt.legend()
 plt.show()
