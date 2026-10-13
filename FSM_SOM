@@ -26348,7 +26348,7 @@ names=['S40','F40','S10','F10','M10','M40']
 # vth=-39.934
 # =============================================================================
 
-# better fit
+# parameters for optimized fit
 C   = 0.0001179962
 g   = 0.0038755921
 gr  = 0.011278064
@@ -27644,6 +27644,479 @@ for i in range(len(idata)):
     vslist.append(v_sim)
 
 # Plot recorded data and model
+pmax4 = 2750
+pmax1 = 10000
+pmax = [pmax4, pmax4, pmax1, pmax1, pmax1, pmax4]
+
+fig, ax = plt.subplots(6, 1, figsize=(8, 6))
+
+for i in range(len(vmodel)):
+    n = min(pmax[i], len(vdata[i]), len(vmodel[i]))
+    t = np.arange(n)*dt*1000
+
+    ax[i].plot(t, vdata[i][:n])
+    ax[i].plot(t, vmodel[i][:n], alpha=0.6, color='r')
+    ax[i].set_ylabel(names[i])
+
+    if i < len(vmodel)-1:
+        ax[i].set_xticks([])
+    else:
+        ax[i].set_xlabel('Time (ms)')
+
+plt.tight_layout()
+plt.show()
+#%% 19 - Fit evolving-conductance membrane model with exact AP-interval constraints
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+import pandas as pd
+from scipy.stats import linregress
+from scipy.optimize import curve_fit, differential_evolution
+
+def zform(z1, z2, f1, f2, f):
+    return z1 + (z2-z1)/(f2-f1)*(f-f1)
+
+def make_normalized_template(td, tr, tmax, dt, scale_I):
+    t = np.arange(0, tmax, dt)
+    A = scale_I / (-(tr/td)**(td/(td-tr)) + (tr/td)**(tr/(td-tr)))
+    template = A * (np.exp(-t/td) - np.exp(-t/tr))
+    return t, template
+
+def model(delta_t, m0, c, H):
+    return m0 / (1 + (delta_t/c)**H)
+
+def compute_slopes(file_path):
+    df = pd.read_excel(file_path)
+    col_slopes = []
+    for col in df.columns:
+        y = df[col].dropna().values
+        x = np.arange(len(y))
+        if len(y) > 1:
+            slope, _, _, _, _ = linregress(x, y)
+            col_slopes.append(slope)
+        else:
+            col_slopes.append(np.nan)
+
+    col_slopes = np.array(col_slopes)
+    freq = np.array([5, 10, 20, 40])
+    delta_t = 1/freq
+    return delta_t, col_slopes
+
+def fit_model(delta_t, col_slopes):
+    valid = ~np.isnan(col_slopes)
+    popt, _ = curve_fit(
+        model, delta_t[valid], col_slopes[valid],
+        p0=[1.0, 0.05, 2.0], maxfev=10000
+    )
+    return popt
+
+def get_slopes_and_fit(file_path):
+    delta_t, col_slopes = compute_slopes(file_path)
+    m0, c, H = fit_model(delta_t, col_slopes)
+    dt_dense = np.linspace(np.min(delta_t), np.max(delta_t), 200)
+    fit_curve = model(dt_dense, m0, c, H)
+    return delta_t, col_slopes, dt_dense, fit_curve, m0, c, H
+
+def gettmean(Iext, g, gr, vb, vbr, C, vth, v0, dt,
+             presyn_inds=None, ginc_evolv=0.0004,
+             tau_evolv=20e-3, g_ss=0.0):
+
+    v = np.zeros(len(Iext))
+    v[0] = v0
+    apinds = []
+    refper = 40
+    aptimer = np.inf
+    posttimer = False
+    vreset = vbr
+
+    g_evolv = np.zeros(len(Iext))
+
+    presyn_mask = np.zeros(len(Iext), dtype=bool)
+    if presyn_inds is not None:
+        presyn_inds = np.asarray(presyn_inds, dtype=int)
+        presyn_inds = presyn_inds[
+            (presyn_inds >= 0) & (presyn_inds < len(Iext))
+        ]
+        presyn_mask[presyn_inds] = True
+
+    g_evolv[0] = g_ss
+    if presyn_mask[0]:
+        g_evolv[0] += ginc_evolv
+
+    for i in range(1, len(Iext)):
+
+        g_evolv[i] = (
+            g_ss
+            + (g_evolv[i-1] - g_ss)*np.exp(-dt/tau_evolv)
+        )
+
+        if presyn_mask[i]:
+            g_evolv[i] += ginc_evolv
+
+        g_tot = g + g_evolv[i]
+
+        if posttimer == False:
+            icurr = g_tot*(v[i-1] - vb)
+            dvdt = (-icurr + Iext[i-1])/C
+
+        if posttimer == True:
+            icurr = gr*(v[i-1] - vb)
+            dvdt = (-icurr + Iext[i-1])/C
+
+        if aptimer == np.inf:
+            v[i] = v[i-1] + dvdt*dt
+        else:
+            v[i] = v[i-1]
+
+        if Iext[i] > Iext[i-1]:
+            posttimer = False
+
+        if aptimer != np.inf:
+            aptimer -= 1
+
+        if v[i-1] > vth:
+            v[i] = vreset
+            apinds.append(i)
+            aptimer = refper
+            posttimer = True
+
+        if aptimer == 0:
+            aptimer = np.inf
+
+    aptimes = np.array(apinds)*dt
+    naps = len(aptimes)
+    ssaptimes = aptimes[int(0.3*len(aptimes)):]
+    tmean = np.mean(np.diff(ssaptimes)) if len(ssaptimes) > 1 else np.nan
+
+    return v, tmean, naps, aptimes
+
+def get_ap_intervals(aptimes, dt, frequency, n_intervals=10):
+    period_samples = int(1/(frequency*dt))
+    ap_indices = np.rint(np.asarray(aptimes)/dt).astype(int)
+
+    return {
+        int((idx-1)//period_samples + 1)
+        for idx in ap_indices
+        if idx >= 1
+        and 1 <= (idx-1)//period_samples + 1 <= n_intervals
+    }
+
+def getiextd2(f, dt, r, p1, A0, A1,
+              slope0, slope1, c0, c1, H0, H1,
+              td0, tr0, td1, tr1):
+
+    nspikes = 10
+    runtime = int((nspikes+1)/f/dt)
+
+    i0list = np.zeros(runtime)
+    i1list = np.zeros(runtime)
+
+    A0list = []
+    A1list = []
+    spikeind0 = []
+    spikeind1 = []
+
+    tspikeprev0 = 0.0
+    tspikeprev1 = 0.0
+    tspikeindprev0 = 0
+    tspikeindprev1 = 0
+
+    for i in range(nspikes):
+        tspike = 1/f
+        tspikeind = int(tspike/dt)
+
+        branch = np.random.uniform() < r
+        coincident = np.random.uniform() < p1
+
+        if i == 0:
+            tspike = 0.0
+            tspikeind = 0
+
+        if not branch:
+            deltat0 = tspikeprev0 + tspike
+            A0new = A0 if len(A0list) == 0 else (
+                A0list[-1] + model(deltat0, slope0, c0, H0)*deltat0
+            )
+            A0list.append(A0new)
+
+            if len(spikeind0) == 0:
+                spikeind0.append(tspikeind)
+            else:
+                spikeind0.append(
+                    spikeind0[-1] + tspikeind + tspikeindprev0
+                )
+
+            tspikeprev0 = 0
+            tspikeindprev0 = 0
+
+            if coincident:
+                deltat1 = tspikeprev1 + tspike
+                A1new = A1 if len(A1list) == 0 else (
+                    A1list[-1] + model(deltat1, slope1, c1, H1)*deltat1
+                )
+                A1list.append(A1new)
+
+                if len(spikeind1) == 0:
+                    spikeind1.append(tspikeind)
+                else:
+                    spikeind1.append(
+                        spikeind1[-1] + tspikeind + tspikeindprev1
+                    )
+
+                tspikeprev1 = 0
+                tspikeindprev1 = 0
+            else:
+                tspikeprev1 += tspike
+                tspikeindprev1 += tspikeind
+
+        else:
+            deltat1 = tspikeprev1 + tspike
+            A1new = A1 if len(A1list) == 0 else (
+                A1list[-1] + model(deltat1, slope1, c1, H1)*deltat1
+            )
+            A1list.append(A1new)
+
+            if len(spikeind1) == 0:
+                spikeind1.append(tspikeind)
+            else:
+                spikeind1.append(
+                    spikeind1[-1] + tspikeind + tspikeindprev1
+                )
+
+            tspikeprev1 = 0
+            tspikeindprev1 = 0
+
+            if coincident:
+                deltat0 = tspikeprev0 + tspike
+                A0new = A0 if len(A0list) == 0 else (
+                    A0list[-1] + model(deltat0, slope0, c0, H0)*deltat0
+                )
+                A0list.append(A0new)
+
+                if len(spikeind0) == 0:
+                    spikeind0.append(tspikeind)
+                else:
+                    spikeind0.append(
+                        spikeind0[-1] + tspikeind + tspikeindprev0
+                    )
+
+                tspikeprev0 = 0
+                tspikeindprev0 = 0
+            else:
+                tspikeprev0 += tspike
+                tspikeindprev0 += tspikeind
+
+    for i, idx in enumerate(spikeind0):
+        _, temp0 = make_normalized_template(
+            td0, tr0, 11/f, dt, A0list[i]
+        )
+        end = min(idx + len(temp0), runtime)
+        i0list[idx:end] += temp0[:end-idx]
+
+    for i, idx in enumerate(spikeind1):
+        _, temp1 = make_normalized_template(
+            td1, tr1, 11/f, dt, A1list[i]
+        )
+        end = min(idx + len(temp1), runtime)
+        i1list[idx:end] += temp1[:end-idx]
+
+    I = (1-r)*i0list + r*i1list
+
+    return I, i0list, i1list, A0list, A1list, spikeind0, spikeind1
+
+
+# Load data
+dtype = 0
+if dtype == 0:
+    dir1 = r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal'
+if dtype == 1:
+    dir1 = r'C:\Users\Oliver\Desktop\PhD\3-Research\Neuron\SOM'
+os.chdir(dir1)
+
+df = pd.read_csv("Table0.csv")
+data = np.array(df)
+
+dt = 1e-4
+p1 = 1
+
+delta_t_slow, slopes_slow, dt_dense_slow, fit_slow, \
+m0_slow, c0, H0 = get_slopes_and_fit(
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx'
+)
+delta_t_fast, slopes_fast, dt_dense_fast, fit_fast, \
+m0_fast, c1, H1 = get_slopes_and_fit(
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx'
+)
+
+slope0 = m0_slow
+slope1 = m0_fast
+
+tr0 = 0.7e-3
+td0 = 2.6e-3
+tr1 = 0.29e-3
+td1 = 1.35e-3
+
+I04 = data[:, 11]*25
+I14 = data[:, 7]*25
+I01 = data[:, 10]*25
+I11 = data[:, 6]*25
+Im1 = data[:, 8]*25
+Im4 = data[:, 9]*25
+
+v04 = data[:, 11+13]*50
+v14 = data[:, 7+13]*50
+v01 = data[:, 10+13]*50
+v11 = data[:, 6+13]*50
+vm1 = data[:, 8+13]*50
+vm4 = data[:, 9+13]*50
+
+idata0 = [I04, I14, I01, I11, Im1, Im4]
+vdata0 = [v04, v14, v01, v11, vm1, vm4]
+vmean = np.mean([v[1000] for v in vdata0])
+
+vdata = [v[1000:] - v[1000:][0] + vmean for v in vdata0]
+idata = [i[1000:] for i in idata0]
+
+names = ['S40', 'F40', 'S10', 'F10', 'M10', 'M40']
+frequencies = [40, 40, 10, 10, 10, 40]
+
+required_spikes = {
+    'S40': {3, 5, 7, 8, 9, 10},
+    'F40': {3, 5, 7, 8, 9, 10},
+    'S10': set(),
+    'F10': set(),
+    'M10': {6, 7, 8, 9, 10},
+    'M40': {2, 3, 4, 5, 6, 7, 8, 9, 10}
+}
+
+weights = np.array([1, 1, 5, 5, 1, 1], dtype=float)
+
+# Fixed input-current generation parameters
+scales = [
+    [0.28, 0.53],
+    [0.25, 0.53],
+    [0.1, 0.2],
+    [0.1, 0.2],
+    [0.7, 0.6],
+    [1, 1]
+]
+rlist = [0, 1, 0, 1, 0.676699, 0.75]
+
+# Fit these nine parameters:
+# C, g, gr, vb, vbr, vth, g_ss, ginc_evolv, tau_evolv
+def objective(params):
+    (C_fit, g_fit, gr_fit, vb_fit, vbr_fit, vth_fit,
+     g_ss_fit, ginc_fit, tau_fit) = params
+
+    total_error = 0.0
+    total_weight = 0.0
+    total_mismatch = 0
+
+    for name, I, V, w, freq in zip(
+        names, idata, vdata, weights, frequencies
+    ):
+        stim_period = int(round(1/(freq*dt)))
+        presyn_inds = np.arange(0, len(I), stim_period)[:10]
+
+        Vsim, _, _, aptimes = gettmean(
+            I, g_fit, gr_fit, vb_fit, vbr_fit, C_fit, vth_fit,
+            vmean, dt,
+            presyn_inds=presyn_inds,
+            ginc_evolv=ginc_fit,
+            tau_evolv=tau_fit,
+            g_ss=g_ss_fit
+        )
+
+        sim_spikes = get_ap_intervals(aptimes, dt, freq)
+        missing = len(required_spikes[name] - sim_spikes)
+        extra = len(sim_spikes - required_spikes[name])
+        total_mismatch += missing + extra
+
+        n = min(len(Vsim), len(V))
+        valid = np.isfinite(Vsim[:n]) & np.isfinite(V[:n])
+
+        if not np.any(valid):
+            return 1e100
+
+        mse = np.mean((Vsim[:n][valid] - V[:n][valid])**2)
+        total_error += w*mse
+        total_weight += w
+
+    weighted_mse = total_error/total_weight
+
+    # AP pattern has priority; MSE ranks candidates with equal mismatch.
+    if total_mismatch > 0:
+        return 1e6 + 1e4*total_mismatch + weighted_mse
+
+    return weighted_mse
+
+
+result = differential_evolution(
+    objective,
+    bounds=[
+        (5e-5, 3e-4),       # C
+        (1e-3, 1e-2),       # g
+        (1e-3, 2e-2),       # gr
+        (-75, -50),         # vb
+        (-65, -40),         # vbr
+        (-50, -30),         # vth
+        (0.0, 5e-3),        # g_ss
+        (0.0, 3e-3),        # ginc_evolv
+        (1e-3, 100e-3)      # tau_evolv
+    ],
+    seed=0,
+    maxiter=1000,
+    popsize=20,
+    tol=1e-7,
+    polish=False,
+    disp=True
+)
+
+(C, g, gr, vb, vbr, vth,
+ g_ss, ginc_evolv, tau_evolv) = result.x
+
+print(f"\nOptimization success = {result.success}")
+print(f"Optimization message = {result.message}")
+print(f"Optimized C             = {C:.8g}")
+print(f"Optimized g             = {g:.8g}")
+print(f"Optimized gr            = {gr:.8g}")
+print(f"Optimized vb            = {vb:.8g}")
+print(f"Optimized vbr           = {vbr:.8g}")
+print(f"Optimized vth           = {vth:.8g}")
+print(f"Optimized g_ss          = {g_ss:.8g}")
+print(f"Optimized ginc_evolv    = {ginc_evolv:.8g}")
+print(f"Optimized tau_evolv (s) = {tau_evolv:.8g}")
+print(f"Objective               = {result.fun:.8g}")
+
+# Simulate and report AP patterns using the fitted parameters
+vmodel = []
+all_patterns_match = True
+
+for i, (name, I, freq) in enumerate(zip(names, idata, frequencies)):
+    stim_period = int(round(1/(freq*dt)))
+    presyn_inds = np.arange(0, len(I), stim_period)[:10]
+
+    Vsim, _, _, aptimes = gettmean(
+        I, g, gr, vb, vbr, C, vth, vmean, dt,
+        presyn_inds=presyn_inds,
+        ginc_evolv=ginc_evolv,
+        tau_evolv=tau_evolv,
+        g_ss=g_ss
+    )
+    vmodel.append(Vsim)
+
+    sim_spikes = get_ap_intervals(aptimes, dt, freq)
+    matches = sim_spikes == required_spikes[name]
+    all_patterns_match = all_patterns_match and matches
+
+    print(
+        f"{name}: expected={sorted(required_spikes[name])}, "
+        f"simulated={sorted(sim_spikes)}, match={matches}"
+    )
+
+print(f"All six AP patterns match: {all_patterns_match}")
+
+# Plot recorded voltage and fitted model
 pmax4 = 2750
 pmax1 = 10000
 pmax = [pmax4, pmax4, pmax1, pmax1, pmax1, pmax4]
