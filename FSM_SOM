@@ -26054,9 +26054,18 @@ from scipy.optimize import curve_fit
 def zform(z1,z2, f1,f2,f):
     return z1+(z2-z1)/(f2-f1)*(f-f1)
 
+# =============================================================================
+# def make_normalized_template(td, tr, tmax, dt, scale_I):
+#     t = np.arange(0, tmax, dt)
+#     A = scale_I / (-(tr/td)**(td/(td-tr)) + (tr/td)**(tr/(td-tr)))
+#     template = A * (np.exp(-t / td) - np.exp(-t / tr))
+#     return t, template
+# =============================================================================
+
+# charge integral one
 def make_normalized_template(td, tr, tmax, dt, scale_I):
     t = np.arange(0, tmax, dt)
-    A = scale_I / (-(tr/td)**(td/(td-tr)) + (tr/td)**(tr/(td-tr)))
+    A = scale_I / (np.sum(np.exp(-t / td) - np.exp(-t / tr)) * dt)
     template = A * (np.exp(-t / td) - np.exp(-t / tr))
     return t, template
 
@@ -26275,18 +26284,6 @@ names = {
 # 0-DF1, 1-DF4, 2-DM1, 3-DM4, 4-DS1, 5-DS4, 
 # 6-NF1, 7-NF4, 8-NM1, 9-NM4, 10-NS1, 11-NS4
 
-
-# =============================================================================
-# # fits all the spikes
-# vb=-63
-# vbr=-52
-# C=0.00011
-# Cr=0.00011
-# g=0.0035 # 0.0035
-# gr=0.009
-# vth=-40
-# =============================================================================
-
 dt=1e-4 # 10 kHz = 10 x 10^3 Hz = 1x10^4 Hz = 10000 Hz yields dt = 1x10^(-4) = 0.0001
 ttemp=0.2 
 
@@ -26347,13 +26344,26 @@ names=['S40','F40','S10','F10','M10','M40']
 # vth=-39.934
 # =============================================================================
 
-# parameters for optimized fit
-C   = 0.0001179962
-g   = 0.0038755921
-gr  = 0.011278064
-vb  = -63.361435
-vbr = -42.314185
-vth = -42.163423
+# =============================================================================
+# # Bad fails the M40 but good everywhere else
+# C   = 0.0001179962
+# g   = 0.0038755921
+# gr  = 0.011278064
+# vb  = -63.361435
+# vbr = -42.314185
+# vth = -42.163423
+# =============================================================================
+
+# optimal fit
+C   = 0.00012308415
+g   = 0.003486944
+gr  = 0.0083698675
+vb  = -63.507014
+vbr = -55.821985
+vth = -41.574392
+
+
+
 
 #           I04         I14         I01      I11        Im1        Im4
 scales=[[0.28,0.53],[0.25,0.53],[0.1,0.2],[0.1,0.2],[0.7,0.6],[1,1]]
@@ -26413,16 +26423,21 @@ from scipy.signal import find_peaks
 from scipy.stats import linregress
 from scipy.optimize import curve_fit
 
+# =============================================================================
+# def make_normalized_template(td, tr, tmax, dt, scale_I):
+#     # SynKernel = A * ( exp(-t / tauDecay) - exp(-t / tauRise) )
+#     t = np.arange(0, tmax, dt)
+#     A = scale_I / (-(tr/td)**(td/(td-tr)) + (tr/td)**(tr/(td-tr)))
+#     template = A * (np.exp(-t / td) - np.exp(-t / tr))
+#     return t, template
+# =============================================================================
+
+# charge integral one
 def make_normalized_template(td, tr, tmax, dt, scale_I):
-    # SynKernel = A * ( exp(-t / tauDecay) - exp(-t / tauRise) )
     t = np.arange(0, tmax, dt)
-    A = scale_I / (-(tr/td)**(td/(td-tr)) + (tr/td)**(tr/(td-tr)))
+    A = scale_I * 1e-3 / (np.sum(np.exp(-t / td) - np.exp(-t / tr)) * dt)
     template = A * (np.exp(-t / td) - np.exp(-t / tr))
     return t, template
-
-# def spike_amplitude(delta_t, A0, A1, c, H):
-#     x = (c * delta_t)**H
-#     return (A1 + A0 * x) / (1 + x)
 
 def spike_amplitude(delta_t, slope0, A, c, H):
     return A+model(delta_t, slope0, c, H)
@@ -26663,6 +26678,16 @@ Cr=0.00011
 g=0.0035
 gr=0.009
 vth=-40
+
+# =============================================================================
+# # optimal fit
+# C   = 0.00012308415
+# g   = 0.003486944
+# gr  = 0.0083698675
+# vb  = -63.507014
+# vbr = -55.821985
+# vth = -41.574392
+# =============================================================================
 
 #------------------------------------------------
 
@@ -27736,7 +27761,8 @@ if ptype==1:
 plt.tight_layout()
 plt.show()
 
-#%% 19 - Fit membrane model with exact AP-interval constraints - exact 1 AP
+
+#%% 19 - Fit membrane model exactly 1 AP
 import numpy as np
 import matplotlib.pyplot as plt
 import os
@@ -27803,17 +27829,19 @@ def gettmean(Iext,g,gr,vb,vbr,C,vth,v0,dt,frequency,
     period_samples=int(1/(frequency*dt))
     n_check_intervals=10
     expected=set(required_spikes)
-    interval_counts=np.zeros(n_check_intervals+1,dtype=int)
+    observed_counts=np.zeros(n_check_intervals,dtype=int)
 
     for i in range(1,len(Iext)):
-        if not posttimer:
+        refractory_active=(aptimer!=np.inf)
+
+        if not refractory_active:
             icurr=g*(v[i-1]-vb)
         else:
             icurr=gr*(v[i-1]-vb)
 
         dvdt=(-icurr+Iext[i-1])/C
 
-        if aptimer==np.inf:
+        if not refractory_active:
             v[i]=v[i-1]+dvdt*dt
         else:
             v[i]=v[i-1]
@@ -27821,72 +27849,77 @@ def gettmean(Iext,g,gr,vb,vbr,C,vth,v0,dt,frequency,
         if Iext[i]>Iext[i-1]:
             posttimer=False
 
-        if aptimer!=np.inf:
+        if refractory_active:
             aptimer-=1
+            if aptimer<=0:
+                aptimer=np.inf
 
-        if v[i-1]>vth:
+        # Generate an AP only when not refractory.
+        # This prevents repeated APs while the voltage is above threshold.
+        if not refractory_active and v[i-1]>vth:
             interval=(i-1)//period_samples+1
 
-            if 1<=interval<=n_check_intervals:
-                interval_counts[interval]+=1
+            if interval<=n_check_intervals:
+                observed_counts[interval-1]+=1
 
-                # Reject immediately if any interval contains more than one AP.
-                if early_reject and interval_counts[interval]>1:
-                    return None,None,None,None
+                if early_reject:
+                    if observed_counts[interval-1]>1:
+                        return None,None,None,None
 
-                # Reject immediately if an AP occurs in an interval
-                # that is not supposed to contain one.
-                if early_reject and interval not in expected:
-                    return None,None,None,None
+                    if interval not in expected:
+                        return None,None,None,None
 
             v[i]=vreset
             apinds.append(i)
             aptimer=refper
             posttimer=True
 
-        if aptimer==0:
-            aptimer=np.inf
-
-        # At each interval boundary, require exactly one AP in expected
-        # intervals and zero APs in all other intervals.
         if early_reject and i%period_samples==0:
             completed_interval=i//period_samples
 
             if completed_interval<=n_check_intervals:
-                required_count=1 if completed_interval in expected else 0
+                for k in range(1,completed_interval+1):
+                    expected_count=int(k in expected)
 
-                if interval_counts[completed_interval]!=required_count:
-                    return None,None,None,None
+                    if observed_counts[k-1]!=expected_count:
+                        return None,None,None,None
 
     if early_reject:
-        completed_intervals=min((len(Iext)-1)//period_samples,n_check_intervals)
+        completed_intervals=min(
+            (len(Iext)-1)//period_samples,
+            n_check_intervals
+        )
 
         for k in range(1,completed_intervals+1):
-            required_count=1 if k in expected else 0
+            expected_count=int(k in expected)
 
-            if interval_counts[k]!=required_count:
+            if observed_counts[k-1]!=expected_count:
                 return None,None,None,None
 
     aptimes=np.array(apinds)*dt
     naps=len(aptimes)
     ssaptimes=aptimes[int(0.3*len(aptimes)):]
     tmean=np.mean(np.diff(ssaptimes)) if len(ssaptimes)>1 else np.nan
+
     return v,tmean,naps,aptimes
 
-def get_ap_interval_counts(aptimes,dt,frequency,n_intervals=10):
+# Count APs in each interval rather than using a set.
+# Multiple APs in one interval therefore cannot be mistaken for one AP.
+def get_ap_intervals(aptimes,dt,frequency,n_intervals=10):
     period_samples=int(1/(frequency*dt))
     ap_indices=np.rint(np.asarray(aptimes)/dt).astype(int)
-    counts=np.zeros(n_intervals+1,dtype=int)
+
+    counts=np.zeros(n_intervals,dtype=int)
 
     for idx in ap_indices:
         if idx>=1:
             interval=(idx-1)//period_samples+1
+
             if 1<=interval<=n_intervals:
-                counts[interval]+=1
+                counts[interval-1]+=1
 
     return counts
 
-# Restored original getiextd2 timing and input-current generation
 def getiextd2(f,dt,r,p1,A0,A1,slope0,slope1,c0,c1,H0,H1,td0,tr0,td1,tr1):
     nspikes=10
     runtime=int((nspikes+1)/f/dt)
@@ -27985,10 +28018,13 @@ def getiextd2(f,dt,r,p1,A0,A1,slope0,slope1,c0,c1,H0,H1,td0,tr0,td1,tr1):
     return I,i0list,i1list,A0list,A1list,spikeind0,spikeind1
 
 dtype=0
+
 if dtype==0:
     dir1=r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal'
+
 if dtype==1:
     dir1=r'C:\Users\Oliver\Desktop\PhD\3-Research\Neuron\SOM'
+
 os.chdir(dir1)
 
 df=pd.read_csv("Table0.csv")
@@ -27999,9 +28035,12 @@ ttemp=0.2
 p1=1
 
 delta_t_slow,slopes_slow,dt_dense_slow,fit_slow,m0_slow,c0,H0=get_slopes_and_fit(
-    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx')
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4.xlsx'
+)
+
 delta_t_fast,slopes_fast,dt_dense_fast,fit_fast,m0_fast,c1,H1=get_slopes_and_fit(
-    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx')
+    r'C:\Users\Oliver\Desktop\Research\FSM_pyramidal\slopes4-fast.xlsx'
+)
 
 slope0=m0_slow
 slope1=m0_fast
@@ -28031,6 +28070,7 @@ vmean=np.mean([v[1000] for v in vdata0])
 
 vdata=[v[1000:]-v[1000:][0]+vmean for v in vdata0]
 idata=[i[1000:] for i in idata0]
+
 names=['S40','F40','S10','F10','M10','M40']
 frequencies=[40,40,10,10,10,40]
 
@@ -28049,20 +28089,32 @@ def objective(params):
     C_fit,g_fit,gr_fit,vb_fit,vbr_fit,vth_fit=params
     total_error=0.0
     total_weight=0.0
+    total_mismatch=0
 
-    for name,I,V,w,freq in zip(names,idata,vdata,weights,frequencies):
+    for name,I,V,w,freq in zip(
+        names,idata,vdata,weights,frequencies
+    ):
         Vsim,_,_,aptimes=gettmean(
             I,g_fit,gr_fit,vb_fit,vbr_fit,C_fit,vth_fit,vmean,
-            dt,freq,required_spikes[name],early_reject=True
+            dt,freq,required_spikes[name],early_reject=False
         )
 
-        # Reject this parameter set immediately if any interval has
-        # too many APs, an unexpected AP, or a missing required AP.
-        if Vsim is None:
+        if Vsim is None or aptimes is None:
             return 1e100
+
+        sim_counts=get_ap_intervals(aptimes,dt,freq)
+
+        expected_counts=np.zeros(10,dtype=int)
+
+        for interval in required_spikes[name]:
+            expected_counts[interval-1]=1
+
+        mismatch=int(np.sum(np.abs(sim_counts-expected_counts)))
+        total_mismatch+=mismatch
 
         n=min(len(Vsim),len(V))
         valid=np.isfinite(Vsim[:n])&np.isfinite(V[:n])
+
         if not np.any(valid):
             return 1e100
 
@@ -28070,7 +28122,12 @@ def objective(params):
         total_error+=w*mse
         total_weight+=w
 
-    return total_error/total_weight
+    mean_error=total_error/total_weight
+
+    if total_mismatch>0:
+        return 1e6+1e4*total_mismatch+mean_error
+
+    return mean_error
 
 result=differential_evolution(
     objective,
@@ -28108,28 +28165,39 @@ islist=[]
 all_patterns_match=True
 
 rlist=[0,1,0,1,0.676699,0.75]
-scales=[[0.28,0.53],[0.25,0.53],[0.1,0.2],[0.1,0.2],[0.7,0.6],[1,1]]
+scales=[
+    [0.28,0.53],
+    [0.25,0.53],
+    [0.1,0.2],
+    [0.1,0.2],
+    [0.7,0.6],
+    [1,1]
+]
 
 for i in range(len(idata)):
     v0,_,_,aptimes=gettmean(
         idata[i],g,gr,vb,vbr,C,vth,vmean,dt,frequencies[i],
         required_spikes[names[i]],early_reject=False
     )
+
     vmodel.append(v0)
 
-    interval_counts=get_ap_interval_counts(
-        aptimes,dt,frequencies[i],n_intervals=10
+    sim_counts=get_ap_intervals(
+        aptimes,dt,frequencies[i]
     )
-    expected=required_spikes[names[i]]
-    matches=all(
-        interval_counts[k]==(1 if k in expected else 0)
-        for k in range(1,11)
-    )
+
+    expected_counts=np.zeros(10,dtype=int)
+
+    for interval in required_spikes[names[i]]:
+        expected_counts[interval-1]=1
+
+    matches=np.array_equal(sim_counts,expected_counts)
     all_patterns_match=all_patterns_match and matches
 
     print(
-        f"{names[i]}: expected={sorted(expected)}, "
-        f"interval AP counts={interval_counts[1:].tolist()}, "
+        f"{names[i]}: "
+        f"expected_counts={expected_counts.tolist()}, "
+        f"simulated_counts={sim_counts.tolist()}, "
         f"match={matches}"
     )
 
@@ -28138,15 +28206,17 @@ for i in range(len(idata)):
         scales[i][0],scales[i][1],
         slope0,slope1,c0,c1,H0,H1,td0,tr0,td1,tr1
     )
+
     islist.append(Iext)
 
     vdata0_sim,tmean,naps,aptimes=gettmean(
         Iext,g,gr,vb,vbr,C,vth,vmean,dt,frequencies[i],
         required_spikes[names[i]],early_reject=False
     )
+
     vslist.append(vdata0_sim)
 
-print(f"All six AP patterns match exactly: {all_patterns_match}")
+print(f"All six AP patterns match: {all_patterns_match}")
 
 pmax4=2750
 pmax1=10000
@@ -28165,12 +28235,15 @@ if ptype==0:
 
 if ptype==1:
     fig,ax=plt.subplots(6,1,figsize=(8,6))
+
     for i in range(len(vmodel)):
         n=min(pmax[i],len(vdata[i]),len(vmodel[i]))
         t=np.arange(n)*dt*1000
+
         ax[i].plot(t,vdata[i][:n])
         ax[i].plot(t,vmodel[i][:n],alpha=0.6,color='r')
         ax[i].set_ylabel(names[i])
+
         if i<len(vmodel)-1:
             ax[i].set_xticks([])
         else:
