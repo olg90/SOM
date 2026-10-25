@@ -26414,6 +26414,8 @@ if ptype==1:
 plt.tight_layout()
 plt.show()
 
+
+
 #%% 19 - All the current and sim current and model v and data v together normalized
 import numpy as np
 import matplotlib.pyplot as plt
@@ -26424,6 +26426,7 @@ from scipy.stats import linregress
 from scipy.optimize import curve_fit
 
 # =============================================================================
+# # amplitude version
 # def make_normalized_template(td, tr, tmax, dt, scale_I):
 #     # SynKernel = A * ( exp(-t / tauDecay) - exp(-t / tauRise) )
 #     t = np.arange(0, tmax, dt)
